@@ -62,6 +62,7 @@ namespace TastyBot
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<HttpClient>()
                 .AddSingleton<PictureService>()
+                .AddSingleton<RainbowService>()
                 .BuildServiceProvider();
         }
     }
