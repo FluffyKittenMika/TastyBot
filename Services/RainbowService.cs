@@ -9,20 +9,19 @@ namespace TastyBot.Services
     public class RainbowService
     {
         private readonly DiscordSocketClient _discord;
-        private readonly IServiceProvider _services;
 
         public RainbowService(IServiceProvider services)
         {
 
-            Console.WriteLine("started rainbow service");
             _discord = services.GetRequiredService<DiscordSocketClient>();
-            _services = services;
 
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
-            _discord.MessageReceived += MessageReceivedAsync; 
+            _discord.MessageReceived += MessageReceivedAsync;
+            Console.WriteLine("started rainbow service");
+
         }
 
-      
+
 
         private async Task MessageReceivedAsync(SocketMessage arg)
         {
@@ -30,12 +29,8 @@ namespace TastyBot.Services
             if (!(arg is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            Console.WriteLine($"{message.Author} : {message.Content}");
             foreach (SocketRole role in ((SocketGuildUser)message.Author).Roles)
             {
-                Console.WriteLine(role.Name);
-                Console.WriteLine(role.Color.RawValue);
-
                 if (role.Name.ToLower() == "team rainbow")
                 {
                     await role.ModifyAsync(x => {
