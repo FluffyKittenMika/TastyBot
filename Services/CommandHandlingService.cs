@@ -39,6 +39,9 @@ namespace TastyBot.Services
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
+            //Basically log everything to console just so i know
+            Console.WriteLine($"[{message.CreatedAt.ToLocalTime().DateTime}]:[{message.Channel}]:[{message.Author}]:[{message.Content}]");
+            
             // This value holds the offset where the prefix ends
             var argPos = 0;
             // Perform prefix check. You may want to replace this with

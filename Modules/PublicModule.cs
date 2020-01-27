@@ -14,6 +14,7 @@ namespace TastyBot.Modules
     {
         // Dependency Injection will fill this value in for us
         public PictureService PictureService { get; set; }
+        public RainbowService RainbowService { get; set; }
 
         [Command("ping")]
         [Alias("pong", "hello")]
