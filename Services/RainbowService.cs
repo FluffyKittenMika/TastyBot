@@ -9,15 +9,25 @@ namespace TastyBot.Services
     public class RainbowService
     {
         private readonly DiscordSocketClient _discord;
+        private readonly Random _random;
 
-        public RainbowService(IServiceProvider services)
+        public RainbowService(DiscordSocketClient discord, Random random, IServiceProvider services)
         {
-
-            _discord = services.GetRequiredService<DiscordSocketClient>();
-
+            _discord = discord;
+            _random = random;
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
             _discord.MessageReceived += MessageReceivedAsync;
-            Console.WriteLine("started rainbow service");
+
+            //This is just to be fancy
+            string rainbow = "started rainbow service";
+            var count = Enum.GetNames(typeof(ConsoleColor)).Length;
+            foreach (char c in rainbow)
+            {
+                Console.ForegroundColor = (ConsoleColor)typeof(ConsoleColor).GetEnumValues().GetValue(_random.Next(0, count));
+                Console.Write(c);
+            }
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green; //ye we'll just keep it green m'kay? Hack the planet!
 
         }
 
@@ -27,25 +37,32 @@ namespace TastyBot.Services
             if (!(arg is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            foreach (SocketRole role in ((SocketGuildUser)message.Author).Roles)
+            //The try is here to ignore anything that we don't give a shit about :)
+            try
             {
-                if (role.Name.ToLower() == "team rainbow")
+                foreach (SocketRole role in ((SocketGuildUser)message.Author).Roles)
                 {
-                    await role.ModifyAsync(x => {
-                        x.Color = Rainbow();
-                    });
+                    if (role.Name.ToLower() == "team rainbow")
+                    {
+                        await role.ModifyAsync(x => {
+                            x.Color = Rainbow();
+                        });
+                    }
                 }
             }
+            catch (Exception e)
+            {
+            }
+         
 
             return;
         }
 
-        public static Color Rainbow()
+        private Color Rainbow()
         {
-            Random rng = new Random();
-            int r = rng.Next(0, 255);
-            int g = rng.Next(0, 255);
-            int b = rng.Next(0, 255);
+            int r = _random.Next(0, 255);
+            int g = _random.Next(0, 255);
+            int b = _random.Next(0, 255);
             return new Color(r, g, b);
         }
 

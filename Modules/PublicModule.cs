@@ -2,19 +2,30 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.Configuration;
 using TastyBot.Services;
-using System.Drawing;
-using System.Drawing.Imaging;
-using ImageFormat = System.Drawing.Imaging.ImageFormat;
+using System.Linq;
 
 namespace TastyBot.Modules
 {
     // Modules must be public and inherit from an IModuleBase
+    [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
         // Dependency Injection will fill this value in for us
         public PictureService PictureService { get; set; }
         public RainbowService RainbowService { get; set; }
+
+        
+        private readonly CommandService _service;
+        private readonly IConfigurationRoot _config;
+
+        public PublicModule(CommandService service, IConfigurationRoot config)
+        {
+            _service = service;
+            _config = config;
+        }
+
 
         [Command("ping")]
         [Alias("pong", "hello")]
@@ -81,20 +92,10 @@ namespace TastyBot.Modules
         public Task GuildOnlyCommand()
             => ReplyAsync("Nothing to see here!");
 
+        // Throw Back Thursday, Tasty Specified command.
         [Command("tbt")]
         public Task ThrowBackThrsday()
             => ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
-        [Command("SecretShot")]
-        public async Task ScreenShot()
-        {
-            var captureBmp = new Bitmap(1920, 1024, PixelFormat.Format32bppArgb);
-            using (var captureGraphic = Graphics.FromImage(captureBmp))
-            {
-                captureGraphic.CopyFromScreen(0, 0, 0, 0, captureBmp.Size);
-                captureBmp.Save("screenie.png", ImageFormat.Png);
-            }
-            await Context.Channel.SendFileAsync("screenie.png");
-        }
     }
 }
