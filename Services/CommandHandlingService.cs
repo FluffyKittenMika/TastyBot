@@ -44,19 +44,17 @@ namespace TastyBot.Services
             
             // This value holds the offset where the prefix ends
             var argPos = 0;
-            // Perform prefix check. You may want to replace this with
-            // (!message.HasCharPrefix('!', ref argPos))
-            // for a more traditional command format like !help.
-            // if (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos)) return;
-            if (!message.HasCharPrefix('!', ref argPos)) return;
-
-            var context = new SocketCommandContext(_discord, message);
-            // Perform the execution of the command. In this method,
-            // the command service will perform precondition and parsing check
-            // then execute the command if one is matched.
-            await _commands.ExecuteAsync(context, argPos, _services);
-            // Note that normally a result will be returned by this format, but here
-            // we will handle the result in CommandExecutedAsync,
+            //TODO Load prefix from config
+            if (message.HasStringPrefix("!", ref argPos) || message.HasMentionPrefix(_discord.CurrentUser, ref argPos))
+            {
+                var context = new SocketCommandContext(_discord, message);
+                // Perform the execution of the command. In this method,
+                // the command service will perform precondition and parsing check
+                // then execute the command if one is matched.
+                await _commands.ExecuteAsync(context, argPos, _services);
+                // Note that normally a result will be returned by this format, but here
+                // we will handle the result in CommandExecutedAsync,
+            }
         }
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)

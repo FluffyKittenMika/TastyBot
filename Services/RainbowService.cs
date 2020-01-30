@@ -21,8 +21,6 @@ namespace TastyBot.Services
 
         }
 
-
-
         private async Task MessageReceivedAsync(SocketMessage arg)
         {
             // Ignore system messages, or messages from other bots
@@ -41,7 +39,6 @@ namespace TastyBot.Services
 
             return;
         }
-
 
         public static Color Rainbow()
         {
