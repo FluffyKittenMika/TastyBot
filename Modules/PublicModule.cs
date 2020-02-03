@@ -26,12 +26,6 @@ namespace TastyBot.Modules
             _config = config;
         }
 
-
-        [Command("ping")]
-        [Alias("pong", "hello")]
-        public Task PingAsync()
-            => ReplyAsync("pong!");
-
 		[Command("cat", true)]
 		public async Task CatAsync(params string[] objects)
 		{
@@ -54,14 +48,6 @@ namespace TastyBot.Modules
 		}
 
 
-		// Get info on a user, or the user who invoked the command if one is not specified
-		[Command("userinfo")]
-		public async Task UserInfoAsync(IUser user = null)
-		{
-			user = user ?? Context.User;
-			await ReplyAsync(user.ToString());
-		}
-
 		// Ban a user
 		[Command("ban")]
 		[RequireContext(ContextType.Guild)]
@@ -75,11 +61,30 @@ namespace TastyBot.Modules
 			await ReplyAsync("ok!");
 		}
 
+
+		// Throw Back Thursday, Tasty Specified command.
+		[Command("tbt")]
+		public Task ThrowBackThrsday()
+			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
+
+
+		/* Commenting out theese commands as they're really not needed, keeping them around for reference. 
+		 
+		// Get info on a user, or the user who invoked the command if one is not specified
+		[Command("userinfo")]
+		public async Task UserInfoAsync(IUser user = null)
+		{
+			user = user ?? Context.User;
+			await ReplyAsync(user.ToString());
+		}
+
+		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
 		[Command("echo")]
 		public Task EchoAsync([Remainder] string text)
 			// Insert a ZWSP before the text to prevent triggering other bots!
 			=> ReplyAsync('\u200B' + text);
+		
 
 		// 'params' will parse space-separated elements into a list
 		[Command("list")]
@@ -91,11 +96,8 @@ namespace TastyBot.Modules
 		[RequireContext(ContextType.Guild, ErrorMessage = "Sorry, this command must be ran from within a server, not a DM!")]
 		public Task GuildOnlyCommand()
 			=> ReplyAsync("Nothing to see here!");
+		*/
 
-        // Throw Back Thursday, Tasty Specified command.
-        [Command("tbt")]
-        public Task ThrowBackThrsday()
-            => ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
-    }
+	}
 }
