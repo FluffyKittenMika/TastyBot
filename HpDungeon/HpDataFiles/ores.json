@@ -1,0 +1,32 @@
+﻿{
+  "Iron ore": {
+    "ItemDefinition": 3,
+    "Description": "Some iron ore",
+    "ItemName": "Iron ore"
+  },
+  "Copper ore": {
+    "ItemDefinition": 3,
+    "Description": "Some Copper ore",
+    "ItemName": "Copper ore"
+  },
+  "Tin ore": {
+    "ItemDefinition": 3,
+    "Description": "Some Tin ore",
+    "ItemName": "Tin ore"
+  },
+  "HpItem": {
+    "ItemDefinition": 3,
+    "Description": "Some Coal ore",
+    "ItemName": "Coal ore"
+  },
+  "Coal ore": {
+    "ItemDefinition": 3,
+    "Description": "Some Gold ore",
+    "ItemName": "Gold ore"
+  },
+  "Silver ore": {
+    "ItemDefinition": 3,
+    "Description": "Some Silver ore",
+    "ItemName": "Silver ore"
+  }
+}

@@ -27,9 +27,9 @@ namespace TastyBot.Modules
         }
 
 		[Command("cat", true)]
-		public async Task CatAsync(params string[] objects)
+		public async Task CatAsync(params string[] args)
 		{
-			if (objects.Length == 0 || objects == null)
+			if (args.Length == 0 || args == null)
 			{
 				// Get a stream containing an image of a cat
 				var stream = await PictureService.GetCatPictureAsync();

@@ -65,7 +65,7 @@ namespace TastyBot.Data
 		/// <summary>
 		/// Loads a List of data from a json file
 		/// </summary>
-		/// <typeparam name="T">The type of data to save. Also the name of the file to load data from</typeparam>
+		/// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
 		public Task<List<T>> LoadData<T>(string id)
