@@ -57,7 +57,10 @@ namespace TastyBot.Data
 				string json = JsonConvert.SerializeObject(data, new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
 				lock (writeLock)
 				{
-					File.WriteAllText(Path.Combine(saveDirectory.FullName, id, $"{type}.json"), json);
+					DirectoryInfo StoragePath = new DirectoryInfo(Path.Combine(saveDirectory.FullName, id));
+					if (!StoragePath.Exists)
+						StoragePath.Create();
+					File.WriteAllText(Path.Combine(StoragePath.FullName, $"{type}.json"), json);
 				}
 			});
 		}

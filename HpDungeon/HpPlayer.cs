@@ -38,7 +38,7 @@ namespace TastyBot.HpDungeon
             {
                 s += item.ItemName + "; ";
             }
-            return "This is player with " + ID + "Inventory:" + s;
+            return "This is player " + ID + " Inventory:" + s;
         }
 
     }

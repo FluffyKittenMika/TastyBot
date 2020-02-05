@@ -48,7 +48,7 @@ namespace TastyBot.HpDungeon
 
             try
             {
-                p = fileManager.LoadData<HpPlayer>(user.Username).Result.FirstOrDefault();
+                p = fileManager.LoadData<HpPlayer>(user.Username + "#"+user.Discriminator).Result.FirstOrDefault();
             }
             catch (Exception e)
             {
@@ -58,8 +58,12 @@ namespace TastyBot.HpDungeon
             //if it's null, we make a new one, and init it
             if (p == null)
             {
-                p = new HpPlayer(user.Username);
-                p.Items = new List<HpItem>();
+                Console.WriteLine("New player: " + user.Username + "#" + user.Discriminator); //this means Earan fucked up
+                p = new HpPlayer(user.Username + "#" + user.Discriminator)
+                {
+                    Items = new List<HpItem>()
+                };
+                
             }
 
             return p;
@@ -89,7 +93,7 @@ namespace TastyBot.HpDungeon
 
             //now we gotta save it once we're done editing it.
             SavePlayer(p);
-            await ReplyAsync("You've gone mining, and probably got something, this is still debug :)" + p.ToString());
+            await ReplyAsync("You've gone mining, and probably got something, this is still debug :) " + p.ToString());
             //Get shit from an ore list, or just make ores? Hmmm.
 
             //load player, if one exist, if not, create object.
