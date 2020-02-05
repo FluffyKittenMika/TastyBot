@@ -16,6 +16,7 @@ namespace TastyBot.HpDungeon
         private string _Name;
         private int _minAttack;
         private int _maxAttack;
+        private int _level;
 
         //TODO: move random into a static global area
         readonly Random rng = new Random();
@@ -23,13 +24,14 @@ namespace TastyBot.HpDungeon
         /// <summary>
         /// Constructor
         /// </summary>
-        public HpCreature(string name = "No name", int maxhp = 100, int minattack = 1, int maxattack = 10)
+        public HpCreature(string name = "No name", int maxhp = 100,int level = 1, int minattack = 1, int maxattack = 10)
         {
             _Name = name;
             _maxHP = maxhp;
             _currentHP = _maxHP;
             _minAttack = minattack;
             _maxAttack = maxattack;
+            _level = level;
         }
 
         /// <summary>

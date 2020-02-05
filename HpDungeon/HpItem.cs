@@ -106,6 +106,12 @@ namespace TastyBot.HpDungeon
         /// </summary>
         public string ItemName { get; set; }
 
+
+        /// <summary>
+        /// The level required to use the item
+        /// </summary>
+        public int ItemLevel { get; set; }
+
         /// <summary>
         /// Use the item, atm does nothing
         /// </summary>

@@ -2,31 +2,37 @@
   "Iron ore": {
     "ItemDefinition": 3,
     "Description": "Some iron ore",
-    "ItemName": "Iron ore"
+    "ItemName": "Iron ore",
+    "ItemLevel": 15
   },
   "Copper ore": {
     "ItemDefinition": 3,
     "Description": "Some Copper ore",
-    "ItemName": "Copper ore"
+    "ItemName": "Copper ore",
+    "ItemLevel": 3
   },
   "Tin ore": {
     "ItemDefinition": 3,
     "Description": "Some Tin ore",
-    "ItemName": "Tin ore"
-  },
-  "HpItem": {
-    "ItemDefinition": 3,
-    "Description": "Some Coal ore",
-    "ItemName": "Coal ore"
+    "ItemName": "Tin ore",
+    "ItemLevel": 3
   },
   "Coal ore": {
     "ItemDefinition": 3,
+    "Description": "Some Coal ore",
+    "ItemName": "Coal ore",
+    "ItemLevel": 30
+  },
+  "Gold ore": {
+    "ItemDefinition": 3,
     "Description": "Some Gold ore",
-    "ItemName": "Gold ore"
+    "ItemName": "Gold ore",
+    "ItemLevel": 55
   },
   "Silver ore": {
     "ItemDefinition": 3,
     "Description": "Some Silver ore",
-    "ItemName": "Silver ore"
+    "ItemName": "Silver ore",
+    "ItemLevel": 50
   }
 }

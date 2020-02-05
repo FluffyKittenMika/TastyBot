@@ -86,12 +86,27 @@ namespace TastyBot.HpDungeon
             HpPlayer p = GetPlayer(user);
 
             //take 1 random item from the ore list, we'll do some level checking at a later date, this works for now.
-            HpItem item = Container.OreList.Take(1).FirstOrDefault().Value;
+            int index = _random.Next(Container.OreList.Count);
+            HpItem item = Container.OreList.ElementAt(index).Value;
+
+
             p.Items.Add(item);
+            int xpgained = (int)(item.ItemLevel * 1.25);
+
+            bool levelup = false;
+            int currlvl = p.GetSkillLevel("mining");
+            p.AddXP("mining", xpgained);
+            if (currlvl < p.GetSkillLevel("mining"))
+                levelup = true; 
 
             //now we gotta save it once we're done editing it.
             SavePlayer(p);
-            await ReplyAsync("You've gone mining, and got a " + item.ItemName);
+
+            await ReplyAsync("You've gone mining, and got an **" + item.ItemName + "**\n and gained " + xpgained + "xp");
+
+            if (levelup)
+                await ReplyAsync("You gained a **Mining level!** \n Your level is now **" + p.GetSkillLevel("mining") + "**");
+
         }
 
         [Command("inventory")]
@@ -112,7 +127,7 @@ namespace TastyBot.HpDungeon
                     group x by x.ItemName into g
                     let count = g.Count()
                     orderby count descending
-                    select new { Name = g.Key, Count = count, ID = g.First().Description};
+                    select new { Name = g.Key, Count = count, ID = g.First().Description + "/n ItemLevel:" + g.First().ItemLevel};
 
             foreach (var item in q)
             {
