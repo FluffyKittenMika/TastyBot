@@ -107,14 +107,21 @@ namespace TastyBot.HpDungeon
                 Description = "Your inventory mi lordship"
             };
 
-            foreach (var item in p.Items)
+            //Compact duplicates
+            var q = from x in p.Items
+                    group x by x.ItemName into g
+                    let count = g.Count()
+                    orderby count descending
+                    select new { Name = g.Key, Count = count, ID = g.First().Description};
+
+            foreach (var item in q)
             {
                 builder.AddField(x =>
                 {
-                    x.Name = item.ItemName;
-                    x.Value = item.Description;
+                    x.Name = item.Name + ": " + item.Count;
+                    x.Value = item.ID;
                     x.IsInline = false;
-                });
+                }); 
             }
             await ReplyAsync("", false, builder.Build());
 
