@@ -14,7 +14,8 @@ namespace TastyBot.HpDungeon
     /// </summary>
     public static class Container
     {
-        public static Dictionary<string,HpItem> ItemList = null;
+        public static Dictionary<string, HpItem> ItemList = null; //everything list
+        public static Dictionary<string, HpItem> OreList = null; //specialised
 
 
 
@@ -24,7 +25,7 @@ namespace TastyBot.HpDungeon
         public static void LoadItems()
         {
             ItemList = new Dictionary<string, HpItem>();
-
+            OreList = new Dictionary<string, HpItem>();
 
 
             //i'll just start with ores, and i'll simply add more files to keep it organised
@@ -32,7 +33,11 @@ namespace TastyBot.HpDungeon
             string json = File.ReadAllText(@".\HpDungeon\HpDataFiles\ores.json");
             Dictionary<string, HpItem> temp  = JsonConvert.DeserializeObject<Dictionary<string, HpItem>>(json);
             foreach (var item in temp)
+            {
+                OreList.Add(item.Key, item.Value);
                 ItemList.Add(item.Key, item.Value);
+
+            }
 
         }
 
@@ -85,7 +90,6 @@ namespace TastyBot.HpDungeon
             Description = description;
         }
 
-
         /// <summary>
         /// The type of item
         /// We use an enum here so we know what slot / effect it should iterate through
@@ -101,7 +105,6 @@ namespace TastyBot.HpDungeon
         /// Name of the item
         /// </summary>
         public string ItemName { get; set; }
-
 
         /// <summary>
         /// Use the item, atm does nothing

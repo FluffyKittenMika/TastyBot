@@ -35,10 +35,9 @@ namespace TastyBot.HpDungeon
         {
             string s = " ";
             foreach (var item in Items)
-            {
                 s += item.ItemName + "; ";
-            }
-            return "This is player " + ID + " Inventory:" + s;
+
+            return "This is player " + ID + " Inventory:" + s + " Base: " + base.ToString();
         }
 
     }

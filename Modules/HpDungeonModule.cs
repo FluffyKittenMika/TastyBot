@@ -18,21 +18,20 @@ namespace TastyBot.HpDungeon
         private readonly CommandService _service;
         private readonly IConfigurationRoot _config;
         private readonly FileManager fileManager;
+        private readonly Random _random;
         /// <summary>
         /// Constructor, this one is called automagically through reflection
         /// </summary>
         /// <param name="service">Relevant service</param>
         /// <param name="config">Relevant config</param>
-        public HpDungeonModule(CommandService service, IConfigurationRoot config)
+        public HpDungeonModule(CommandService service,Random random, IConfigurationRoot config)
         {
             _service = service;
             _config = config;
+            _random = random;
             fileManager = new FileManager();
             fileManager.Init();
         }
-
-
-
 
         /// <summary>
         /// This is run every time we get a command, it's how we fetch the player file, and actually do anything, it also checks if the item pool exists
@@ -86,17 +85,38 @@ namespace TastyBot.HpDungeon
             user ??= Context.User;
             HpPlayer p = GetPlayer(user);
 
-            p.Items.Add(new HpItem(ItemDefinition.CraftingMaterial,"Test ore"));
-
-
-
+            //take 1 random item from the ore list, we'll do some level checking at a later date, this works for now.
+            HpItem item = Container.OreList.Take(1).FirstOrDefault().Value;
+            p.Items.Add(item);
 
             //now we gotta save it once we're done editing it.
             SavePlayer(p);
-            await ReplyAsync("You've gone mining, and probably got something, this is still debug :) " + p.ToString());
-            //Get shit from an ore list, or just make ores? Hmmm.
+            await ReplyAsync("You've gone mining, and got a " + item.ItemName);
+        }
 
-            //load player, if one exist, if not, create object.
+        [Command("inventory")]
+        [Alias("inv")]
+        public async Task Inventory(IUser user = null)
+        {
+            user ??= Context.User;
+            HpPlayer p = GetPlayer(user);
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(255, 233, 0),
+                Description = "Your inventory mi lordship"
+            };
+
+            foreach (var item in p.Items)
+            {
+                builder.AddField(x =>
+                {
+                    x.Name = item.ItemName;
+                    x.Value = item.Description;
+                    x.IsInline = false;
+                });
+            }
+            await ReplyAsync("", false, builder.Build());
 
         }
 
