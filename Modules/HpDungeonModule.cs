@@ -57,12 +57,14 @@ namespace TastyBot.HpDungeon
             //if it's null, we make a new one, and init it
             if (p == null)
             {
-                Console.WriteLine("New player: " + user.Username + "#" + user.Discriminator); //this means Earan fucked up
+                Console.WriteLine("New player: " + user.Username + "#" + user.Discriminator);
                 p = new HpPlayer(user.Username + "#" + user.Discriminator)
                 {
-                    Items = new List<HpItem>()
+                    Items = new List<HpItem>(),
+                    ID = user.Username + "#" + user.Discriminator,
+                    Skills = new Dictionary<string, int>()
                 };
-                
+                SavePlayer(p); //make base save aswell.
             }
 
             return p;
@@ -80,54 +82,71 @@ namespace TastyBot.HpDungeon
 
         [Command("mine")]
         [Summary("Go gather ores")]
-        public async Task Mine(IUser user = null, params string[] args)
+        public async Task Mine([Remainder] string orename = null)
         {
-            user ??= Context.User;
-            HpPlayer p = GetPlayer(user);
+            HpPlayer p = GetPlayer(Context.User);                       //Get the relevant user context
 
-            //take 1 random item from the ore list, we'll do some level checking at a later date, this works for now.
-            int index = _random.Next(Container.OreList.Count);
-            HpItem item = Container.OreList.ElementAt(index).Value;
-
-
+            HpItem item = null;
+            if (!string.IsNullOrEmpty(orename))                         //get specified item
+            {
+                orename = orename.ToLower();                            //Make it all lowercase for key
+                try
+                {
+                     Container.OreList.TryGetValue(orename, out item);  //Try to get what the player wants
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);                        //truncate mistakes
+                }
+                if (item != null)                                       //if it fails, well then we can't go on anyways
+                    if (item.ItemLevel > p.GetSkillLevel("mining"))     //check if item is even minable at their level
+                        item = null;                                    //we should inform them but we're not for now
+            }
+            
+            if (item == null)                                           //if it fails, get a random item
+            {
+                                                                        //Keep getting items untill you get one you can Make/Gather, this is not efficient :)
+                item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
+                while (item.ItemLevel > p.GetSkillLevel("mining"))
+                    item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
+            }
+           
             p.Items.Add(item);
-            int xpgained = (int)(item.ItemLevel * 1.25);
+            int xpgained = (int)(item.ItemLevel * 1.25);                //Give xp based on item lvl, 25% ontop of base item lvl. so itemlvl 100 gives 125xp
+            bool levelup = false;                                       //Prepare to check if they got a lvl
+            int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
+            p.AddXP("mining", xpgained);                                //Add the gained xp
+            if (currlvl < p.GetSkillLevel("mining"))                    //Check if new current lvl is higher than old
+                levelup = true;                                         //If yes, then they've gained a lvl
 
-            bool levelup = false;
-            int currlvl = p.GetSkillLevel("mining");
-            p.AddXP("mining", xpgained);
-            if (currlvl < p.GetSkillLevel("mining"))
-                levelup = true; 
-
-            //now we gotta save it once we're done editing it.
-            SavePlayer(p);
-
-            await ReplyAsync("You've gone mining, and got an **" + item.ItemName + "**\n and gained " + xpgained + "xp");
-
+            SavePlayer(p);                                              //Now we save the player
+                                                                        //And compile the resposne
+            string response = $"You've gone mining, and got an **{item.ItemName}**\n and gained {xpgained}xp";
             if (levelup)
-                await ReplyAsync("You gained a **Mining level!** \n Your level is now **" + p.GetSkillLevel("mining") + "**");
+                response += $"\nYou gained a **Mining level!** \n Your level is now **{p.GetSkillLevel("mining")}**";
 
+            await ReplyAsync(response);
         }
 
         [Command("inventory")]
         [Alias("inv")]
-        public async Task Inventory(IUser user = null)
+        public async Task Inventory()
         {
-            user ??= Context.User;
-            HpPlayer p = GetPlayer(user);
+            HpPlayer p = GetPlayer(Context.User);
 
             var builder = new EmbedBuilder()
             {
                 Color = new Color(255, 233, 0),
-                Description = "Your inventory mi lordship"
+                Title = "Inventory"
             };
 
             //Compact duplicates
+            //Using black LINQ magic
             var q = from x in p.Items
                     group x by x.ItemName into g
                     let count = g.Count()
                     orderby count descending
-                    select new { Name = g.Key, Count = count, ID = g.First().Description + "/n ItemLevel:" + g.First().ItemLevel};
+                    select new { Name = g.Key, Count = count, ID = g.First().Description + "\n ItemLevel:" + g.First().ItemLevel}; 
 
             foreach (var item in q)
             {
@@ -138,6 +157,34 @@ namespace TastyBot.HpDungeon
                     x.IsInline = false;
                 }); 
             }
+            await ReplyAsync("", false, builder.Build());
+
+        }
+
+
+
+        [Command("skills")]
+        [Alias("skill")]
+        public async Task Skill()
+        {
+            HpPlayer p = GetPlayer(Context.User);
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(233, 255, 0),
+                Title = "Skills"
+            };
+
+            var skills = "";
+            foreach (var skill in p.Skills)
+                skills += $"{skill.Key}: Lvl {p.XPToLevel(skill.Value)} Exp:{skill.Value}\n";
+
+            builder.AddField(x =>
+            {
+                x.Name = "Skills";
+                x.Value = skills;
+                x.IsInline = false;
+            }); 
             await ReplyAsync("", false, builder.Build());
 
         }

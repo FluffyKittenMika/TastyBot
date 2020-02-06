@@ -68,8 +68,7 @@ namespace TastyBot.Modules
 			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
 
-		/* Commenting out theese commands as they're really not needed, keeping them around for reference. 
-		 
+		
 		// Get info on a user, or the user who invoked the command if one is not specified
 		[Command("userinfo")]
 		public async Task UserInfoAsync(IUser user = null)
@@ -78,6 +77,8 @@ namespace TastyBot.Modules
 			await ReplyAsync(user.ToString());
 		}
 
+		/* Commenting out theese commands as they're really not needed, keeping them around for reference. 
+		 
 		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
 		[Command("echo")]

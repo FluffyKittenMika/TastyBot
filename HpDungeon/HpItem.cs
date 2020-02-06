@@ -108,7 +108,7 @@ namespace TastyBot.HpDungeon
 
 
         /// <summary>
-        /// The level required to use the item
+        /// The level required to use the item/gather the item
         /// </summary>
         public int ItemLevel { get; set; }
 

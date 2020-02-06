@@ -61,16 +61,18 @@ namespace TastyBot.HpDungeon
         {
             //no Skills defined
             if (Skills == null)
-                return 0;
+                return 3; //minimum lvl 3
 
             if (Skills.ContainsKey(skill.ToLower()))
             {
                 int xp = Skills[skill.ToLower()];
 
+                if (XPToLevel(xp) < 3)
+                    return 3; //minimum lvl
                 return XPToLevel(xp);
             }
 
-            return 0;
+            return 3; //minimum lvl 3
         }
 
         /// <summary>

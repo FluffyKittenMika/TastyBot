@@ -1,38 +1,62 @@
 ﻿{
-  "Iron ore": {
-    "ItemDefinition": 3,
-    "Description": "Some iron ore",
-    "ItemName": "Iron ore",
-    "ItemLevel": 15
+  "clay": {
+    "Type": 3,
+    "Description": "Some clay",
+    "ItemName": "Clay",
+    "ItemLevel": 3
   },
-  "Copper ore": {
-    "ItemDefinition": 3,
+  "copper ore": {
+    "Type": 3,
     "Description": "Some Copper ore",
     "ItemName": "Copper ore",
     "ItemLevel": 3
   },
-  "Tin ore": {
-    "ItemDefinition": 3,
+  "tin ore": {
+    "Type": 3,
     "Description": "Some Tin ore",
     "ItemName": "Tin ore",
     "ItemLevel": 3
   },
-  "Coal ore": {
-    "ItemDefinition": 3,
+  "iron ore": {
+    "Type": 3,
+    "Description": "Some iron ore",
+    "ItemName": "Iron ore",
+    "ItemLevel": 10
+  },
+  "coal ore": {
+    "Type": 3,
     "Description": "Some Coal ore",
     "ItemName": "Coal ore",
     "ItemLevel": 30
   },
-  "Gold ore": {
-    "ItemDefinition": 3,
+  "gold ore": {
+    "Type": 3,
     "Description": "Some Gold ore",
     "ItemName": "Gold ore",
-    "ItemLevel": 55
+    "ItemLevel": 40
   },
-  "Silver ore": {
-    "ItemDefinition": 3,
+  "silver ore": {
+    "Type": 3,
     "Description": "Some Silver ore",
     "ItemName": "Silver ore",
     "ItemLevel": 50
+  },
+  "mithril": {
+    "Type": 3,
+    "Description": "Some mithril ore",
+    "ItemName": "Mithril ore",
+    "ItemLevel": 55
+  },
+  "adamantite ore": {
+    "Type": 3,
+    "Description": "Some Adamantite ore",
+    "ItemName": "Adamantite ore",
+    "ItemLevel": 70
+  },
+  "runite ore": {
+    "Type": 3,
+    "Description": "Some Runite ore",
+    "ItemName": "Runite ore",
+    "ItemLevel": 85
   }
 }
