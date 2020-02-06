@@ -113,6 +113,11 @@ namespace TastyBot.HpDungeon
         public int ItemLevel { get; set; }
 
         /// <summary>
+        /// This is only used if the item grants any XP on crafting
+        /// </summary>
+        public int ItemXp { get; set; }
+
+        /// <summary>
         /// Use the item, atm does nothing
         /// </summary>
         public void Use() {

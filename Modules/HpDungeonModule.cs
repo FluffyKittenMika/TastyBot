@@ -112,16 +112,15 @@ namespace TastyBot.HpDungeon
             }
            
             p.Items.Add(item);
-            int xpgained = (int)(item.ItemLevel * 1.25);                //Give xp based on item lvl, 25% ontop of base item lvl. so itemlvl 100 gives 125xp
             bool levelup = false;                                       //Prepare to check if they got a lvl
             int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
-            p.AddXP("mining", xpgained);                                //Add the gained xp
+            p.AddXP("mining", item.ItemXp);                             //Add the gained xp
             if (currlvl < p.GetSkillLevel("mining"))                    //Check if new current lvl is higher than old
                 levelup = true;                                         //If yes, then they've gained a lvl
 
             SavePlayer(p);                                              //Now we save the player
                                                                         //And compile the resposne
-            string response = $"You've gone mining, and got an **{item.ItemName}**\n and gained {xpgained}xp";
+            string response = $"You've gone mining, and got an **{item.ItemName}**\n and gained {item.ItemXp}xp";
             if (levelup)
                 response += $"\nYou gained a **Mining level!** \n Your level is now **{p.GetSkillLevel("mining")}**";
 
