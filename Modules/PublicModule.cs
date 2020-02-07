@@ -40,7 +40,7 @@ namespace TastyBot.Modules
 			}
 			else
 			{
-				if (args.ElementAt(0) == "gif" || args.ElementAt(0) == "Gif" || args.ElementAt(0) == "GIF" || args.ElementAt(0) == "g" || args.ElementAt(0) == "G")
+				if (args.ElementAt(0).ToLower() == "gif" || args.ElementAt(0).ToLower() == "g")
 				{
 					// Get a stream containing an image of a cat
 					var stream = await PictureService.GetCatGifAsync();
@@ -48,19 +48,16 @@ namespace TastyBot.Modules
 					stream.Seek(0, SeekOrigin.Begin);
 					await Context.Channel.SendFileAsync(stream, "cat.gif");
 				}
-				if (args.ElementAt(0) == "Txt" || args.ElementAt(0) == "txt" || args.ElementAt(0) == "TXT" || args.ElementAt(0) == "t" || args.ElementAt(0) == "T")
+				if (args.ElementAt(0).ToLower() == "txt" || args.ElementAt(0).ToLower() == "t")
 				{
 					if (args.Length == 1)
 					{
-						await ReplyAsync("You need to specify some text to write in an immage");
+						await ReplyAsync("You need to specify some text to write in an image");
 					}
 					else
 					{
-						
-						string TextVar = "";
 						int Num1 = 1;
-						
-						TextVar = args.ElementAt(Num1);
+						string TextVar = args.ElementAt(Num1);
 						if (args.Length == 2)
 						{
 							var stream = await PictureService.GetCatPictureWTxtAsync(TextVar);

@@ -31,15 +31,14 @@ namespace TastyBot.HpDungeon
         /// </summary>  
         /// <param name="target">What we want to make</param>
         /// <param name="inventory">Inventory we'll query items from</param>
-        public HpItem Craft(Recepie target, out List<HpItem> inventory)
+        public List<HpItem> Craft(Recepie target, List<HpItem> inventory)
         {
-            foreach (var needs in collection)
+            foreach (var needs in target.Requirements)
             {
-
+                //work in progesss
+                inventory = new List<HpItem>();
             }
-
-
-            inventory = inventory;
+            return inventory;
         }
     }
 }
