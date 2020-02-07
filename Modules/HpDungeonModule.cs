@@ -170,13 +170,13 @@ namespace TastyBot.HpDungeon
 
             var builder = new EmbedBuilder()
             {
-                Color = new Color(233, 255, 0),
+                Color = new Color(0, 255, 0),
                 Title = "Skills"
             };
 
             var skills = "";
             foreach (var skill in p.Skills)
-                skills += $"{skill.Key}: Lvl {p.XPToLevel(skill.Value)} Exp:{skill.Value}\n";
+                skills += $"{skill.Key}: Lvl {p.XPToLevel(skill.Value)} Exp: {skill.Value} / {p.LevelToXP(p.XPToLevel(skill.Value)+1)}\n";
 
             builder.AddField(x =>
             {
