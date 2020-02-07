@@ -29,6 +29,7 @@ namespace TastyBot.Modules
 		[Command("cat", true)]
 		public async Task CatAsync(params string[] args)
 		{
+			
 			if (args.Length == 0 || args == null)
 			{
 				// Get a stream containing an image of a cat
@@ -39,14 +40,65 @@ namespace TastyBot.Modules
 			}
 			else
 			{
-				// Get a stream containing an image of a cat
-				var stream = await PictureService.GetCatGifAsync();
-				// Streams must be seeked to their beginning before being uploaded!
-				stream.Seek(0, SeekOrigin.Begin);
-				await Context.Channel.SendFileAsync(stream, "cat.gif");
+				if (args.ElementAt(0).ToLower() == "gif" || args.ElementAt(0).ToLower() == "g")
+				{
+					// Get a stream containing an image of a cat
+					var stream = await PictureService.GetCatGifAsync();
+					// Streams must be seeked to their beginning before being uploaded!
+					stream.Seek(0, SeekOrigin.Begin);
+					await Context.Channel.SendFileAsync(stream, "cat.gif");
+				}
+				if (args.ElementAt(0).ToLower() == "txt" || args.ElementAt(0).ToLower() == "t")
+				{
+					if (args.Length == 1)
+					{
+						await ReplyAsync("You need to specify some text to write in an image");
+					}
+					else
+					{
+						int Num1 = 1;
+						string TextVar = args.ElementAt(Num1);
+						if (args.Length == 2)
+						{
+							var stream = await PictureService.GetCatPictureWTxtAsync(TextVar);
+							// Streams must be seeked to their beginning before being uploaded!
+							stream.Seek(0, SeekOrigin.Begin);
+							await Context.Channel.SendFileAsync(stream, "cat.png");
+						}
+						else
+						{
+							int len = args.Length - 1;
+							do
+							{
+								
+								Num1 = ++Num1;
+								TextVar = TextVar + " " + args.ElementAt(Num1);
+
+							} while (Num1 < len);
+							var stream = await PictureService.GetCatPictureWTxtAsync(TextVar);
+							// Streams must be seeked to their beginning before being uploaded!
+							stream.Seek(0, SeekOrigin.Begin);
+							await Context.Channel.SendFileAsync(stream, "cat.png");
+						}
+
+
+						// Get a stream containing an image of a cat
+
+
+					}
+
+
+				}
+
+
+
+
+
+
 			}
 		}
-
+		
+		
 
 		// Ban a user
 		[Command("ban")]
