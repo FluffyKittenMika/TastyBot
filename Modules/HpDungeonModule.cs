@@ -63,7 +63,7 @@ namespace TastyBot.HpDungeon
 				p = new HpPlayer(user.Username + "#" + user.Discriminator)
 				{
 					Items = new List<HpItem>(),
-					ID = user.Username + "#" + user.Discriminator,
+					ID = user.Id.ToString(),
 					Skills = new Dictionary<string, int>()
 				};
 				await SavePlayer(p); //make base save aswell.
@@ -123,16 +123,18 @@ namespace TastyBot.HpDungeon
 			bool levelup = false;                                       //Prepare to check if they got a lvl
 			int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
 			p.AddXP("mining", item.ItemXp);                             //Add the gained xp
-			if (currlvl < p.GetSkillLevel("mining"))                    //Check if new current lvl is higher than old
+			if (currlvl < p.GetSkillLevel("mining"))
+			{                                                           //Check if new current lvl is higher than old
 				levelup = true;                                         //If yes, then they've gained a lvl
+			}
 
 			await SavePlayer(p);                                              //Now we save the player
 																			  //And compile the resposne
-			string response = $"You've gone mining, and got an **{item.ItemName}**" +
-							  $"\r\n and gained {item.ItemXp}xp";
+			string response = $"You've gone mining, and got an **{item.ItemName}** \r\n" +
+							  $"and gained {item.ItemXp}xp";
 			if (levelup)
 			{
-				response += $"\r\nYou gained a **Mining level!** \n Your level is now **{p.GetSkillLevel("mining")}**";
+				response += $"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**";
 			}
 
 			await ReplyAsync(response);
