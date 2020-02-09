@@ -27,9 +27,10 @@ namespace TastyBot.HpDungeon
         /// </summary>
         public static void LoadItems()
         {
-            ItemList = new Dictionary<string, HpItem>();
-            OreList = new Dictionary<string, HpItem>();
-            Recepies = new Dictionary<string, Recepie>();
+            //Case insensetive dicts. For my sanity.
+            ItemList = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
+            OreList = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
+            Recepies = new Dictionary<string, Recepie>(StringComparer.OrdinalIgnoreCase);
 
             LoadItemList(@".\HpDungeon\HpDataFiles\ores.json", ref OreList);
             LoadItemRecepies(@".\HpDungeon\HpDataFiles\crafting_smelting.json", ref Recepies);

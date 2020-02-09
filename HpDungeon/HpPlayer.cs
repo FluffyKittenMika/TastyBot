@@ -9,7 +9,7 @@ namespace TastyBot.HpDungeon
     /// <summary>
     /// This class will mostly just be a Json logic bomb
     /// </summary>
-    class HpPlayer : HpCreature
+    public class HpPlayer : HpCreature
     {
 
 
@@ -89,7 +89,7 @@ namespace TastyBot.HpDungeon
         {
             //Make sure there's an inventory
             if (Items == null)
-                Items = new Dictionary<string, HpItem>();
+                Items = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
 
             if (Items.ContainsKey(item.ItemName))
                 Items[item.ItemName].ItemCount++;
@@ -115,7 +115,7 @@ namespace TastyBot.HpDungeon
             if (Items.ContainsKey(item))
             {
                 Items[item].ItemCount--;
-                if (Items[item].ItemCount == 0) //We remove this item
+                if (Items[item].ItemCount <= 0) //We remove this item
                     Items.Remove(item);
             }
             //Nothing to remove if not.

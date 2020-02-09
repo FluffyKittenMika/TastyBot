@@ -9,7 +9,7 @@ namespace TastyBot.HpDungeon
     /// That includes BIPEDALS, CATS, DOGS, ORCS, HUMANS, They DO NOT SHARE EQUIPMENT SLOTS.
     /// THEY DO NOT NEED EQUIPMENT SLOTS.
     /// </summary>
-    class HpCreature
+    public class HpCreature
     {
         private int _maxHP;
         private int _currentHP;

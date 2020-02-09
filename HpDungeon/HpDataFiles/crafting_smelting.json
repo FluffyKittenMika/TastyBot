@@ -1,8 +1,8 @@
 ﻿{
   "bronze bar": {
     "Requirements": {
-      "copper ore": 1,
-      "tin ore": 1
+      "Copper ore": 1,
+      "Tin ore": 1
     },
     "Result": {
       "ItemCount": 1,
@@ -16,7 +16,7 @@
   },
   "iron bar": {
     "Requirements": {
-      "iron ore": 1
+      "Iron ore": 1
     },
     "Result": {
       "ItemCount": 1,
@@ -30,7 +30,7 @@
   },
   "silver bar": {
     "Requirements": {
-      "silver ore": 1
+      "Silver ore": 1
     },
     "Result": {
       "ItemCount": 1,
@@ -44,8 +44,8 @@
   },
   "steel bar": {
     "Requirements": {
-      "iron ore": 1,
-      "coal ore": 2
+      "Iron ore": 1,
+      "Coal ore": 2
     },
     "Result": {
       "ItemCount": 1,
@@ -59,7 +59,7 @@
   },
   "gold bar": {
     "Requirements": {
-      "gold ore": 1
+      "Gold ore": 1
     },
     "Result": {
       "ItemCount": 1,
@@ -73,8 +73,8 @@
   },
   "mithril bar": {
     "Requirements": {
-      "mithril ore": 1,
-      "coal ore": 4
+      "Mithril ore": 1,
+      "Coal ore": 4
     },
     "Result": {
       "ItemCount": 1,
@@ -88,8 +88,8 @@
   },
   "adamantine bar": {
     "Requirements": {
-      "adamantine ore": 1,
-      "coal ore": 6
+      "Adamantine ore": 1,
+      "Coal ore": 6
     },
     "Result": {
       "ItemCount": 1,
@@ -103,8 +103,8 @@
   },
   "redite bar": {
     "Requirements": {
-      "redite ore": 1,
-      "coal ore": 8
+      "Redite ore": 1,
+      "Coal ore": 8
     },
     "Result": {
       "ItemCount": 1,
