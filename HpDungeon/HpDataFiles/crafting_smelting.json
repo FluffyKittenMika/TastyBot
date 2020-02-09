@@ -1,0 +1,119 @@
+﻿{
+  "bronze bar": {
+    "Requirements": {
+      "copper ore": 1,
+      "tin ore": 1
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "A bronze bar, brown and boring",
+      "ItemName": "Bronze Bar",
+      "ItemLevel": 3,
+      "ItemXp": 6
+    },
+    "Skill": "smithing"
+  },
+  "iron bar": {
+    "Requirements": {
+      "iron ore": 1
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "A Iron bar, hard and cold",
+      "ItemName": "Iron Bar",
+      "ItemLevel": 15,
+      "ItemXp": 13
+    },
+    "Skill": "smithing"
+  },
+  "silver bar": {
+    "Requirements": {
+      "silver ore": 1
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "The shiniest of bars",
+      "ItemName": "Silver Bar",
+      "ItemLevel": 20,
+      "ItemXp": 15
+    },
+    "Skill": "smithing"
+  },
+  "steel bar": {
+    "Requirements": {
+      "iron ore": 1,
+      "coal ore": 2
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "The most average metal",
+      "ItemName": "Steel Bar",
+      "ItemLevel": 30,
+      "ItemXp": 18
+    },
+    "Skill": "smithing"
+  },
+  "gold bar": {
+    "Requirements": {
+      "gold ore": 1
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "Shiny and rich metal",
+      "ItemName": "Gold Bar",
+      "ItemLevel": 40,
+      "ItemXp": 23
+    },
+    "Skill": "smithing"
+  },
+  "mithril bar": {
+    "Requirements": {
+      "mithril ore": 1,
+      "coal ore": 4
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "Super light, and blue",
+      "ItemName": "Mithril Bar",
+      "ItemLevel": 50,
+      "ItemXp": 30
+    },
+    "Skill": "smithing"
+  },
+  "adamantine bar": {
+    "Requirements": {
+      "adamantine ore": 1,
+      "coal ore": 6
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "Extremely heavy material, but atleast it's green",
+      "ItemName": "Adamantine Bar",
+      "ItemLevel": 70,
+      "ItemXp": 38
+    },
+    "Skill": "smithing"
+  },
+  "redite bar": {
+    "Requirements": {
+      "redite ore": 1,
+      "coal ore": 8
+    },
+    "Result": {
+      "ItemCount": 1,
+      "Type": 3,
+      "Description": "Red and powerfull material",
+      "ItemName": "Redite Bar",
+      "ItemLevel": 85,
+      "ItemXp": 50
+    },
+    "Skill": "smithing"
+  }
+}

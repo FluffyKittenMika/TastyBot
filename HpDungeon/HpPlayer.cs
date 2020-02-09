@@ -96,7 +96,8 @@ namespace TastyBot.HpDungeon
             else
             {
                 //We do not want it to say, you got 0 apples. when we do have 1.
-                item.ItemCount = 1;
+                if (item.ItemCount == 0)
+                    item.ItemCount = 1;
                 Items.Add(item.ItemName, item);
             }
         }
@@ -105,17 +106,17 @@ namespace TastyBot.HpDungeon
         /// <summary>
         /// Use this to substract 1 from any item in an inventory
         /// </summary>
-        /// <param name="item">The item you want to remove</param>
-        public void RemoveItem(HpItem item)
+        /// <param name="item">The name of the item you want to remove</param>
+        public void RemoveItem(string item)
         {
             if (Items == null) //HALT ERAN, HE'S ESCAPING
                 return;
 
-            if (Items.ContainsKey(item.ItemName))
+            if (Items.ContainsKey(item))
             {
-                Items[item.ItemName].ItemCount--;
-                if (Items[item.ItemName].ItemCount == 0) //We remove this item
-                    Items.Remove(item.ItemName);
+                Items[item].ItemCount--;
+                if (Items[item].ItemCount == 0) //We remove this item
+                    Items.Remove(item);
             }
             //Nothing to remove if not.
         }

@@ -14,7 +14,7 @@ namespace TastyBot.HpDungeon
         /// The Requirements for the result
         /// 
         /// </summary>
-        public Dictionary<HpItem, int> Requirements { get; set; }
+        public Dictionary<string, int> Requirements { get; set; }
        
         /// <summary>
         /// Output
@@ -25,13 +25,6 @@ namespace TastyBot.HpDungeon
         /// The relevant skill
         /// </summary>
         public string Skill { get; set; }
-
-        public int RequiredLVL { get; set; }
-
-        /// <summary>
-        /// The amount of XP rewarded for crafting said item
-        /// </summary>
-        public int ResultXP { get; set; }
     }
 
 
@@ -48,12 +41,16 @@ namespace TastyBot.HpDungeon
         /// <returns>True if it was a success, otherwise false.</returns>
         public bool Craft(Recepie target, HpPlayer player)
         {
+            //Initialise the list if it's not done so already Eran.
+            if (Container.Recepies == null)
+                Container.LoadItems();
+
             bool CanCraft = true;
             foreach (var targetItemReq in target.Requirements) //for every requirement, we check if they have enough of the required item.
             {
-                if (player.Items.ContainsKey(targetItemReq.Key.ItemName)) //check if they got the item
+                if (player.Items.ContainsKey(targetItemReq.Key)) //check if they got the item
                 {
-                    if (targetItemReq.Value > player.Items[targetItemReq.Key.ItemName].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
+                    if (targetItemReq.Value > player.Items[targetItemReq.Key].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
                     {
                         CanCraft = false;
                         break; //stop looping, and go on as we can't craft this item.
@@ -62,14 +59,14 @@ namespace TastyBot.HpDungeon
             }
 
             //we only go inn here if we can craft the item, and they passed the above requirements
-            if (CanCraft && target.RequiredLVL <= player.GetSkillLevel(target.Skill))
+            if (CanCraft && target.Result.ItemLevel <= player.GetSkillLevel(target.Skill))
             {
                 //remove the stuff the player has
                 foreach (var targetItemReq in target.Requirements)
                     player.RemoveItem(targetItemReq.Key);
 
                 //Rewards
-                player.AddXP(target.Skill, target.ResultXP);
+                player.AddXP(target.Skill, target.Result.ItemXp);
                 player.AddItem(target.Result);
             }
 
