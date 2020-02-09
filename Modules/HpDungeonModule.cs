@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -140,15 +141,18 @@ namespace TastyBot.HpDungeon
 				Title = "Inventory"
 			};
 
-			foreach (var item in p.Items)
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var item in p.Items) //TODO: Find a better padding method, discord hates whitespaces, and '\u202F' is not pretty..
+				sb.AppendFormat("{0,16} - {1,4} units - ILVL: {2,4}\n", item.Value.ItemName.PadRight(16, '	'), item.Value.ItemCount.ToString().PadRight(4, '	'), item.Value.ItemLevel.ToString().PadRight(4, '	'));
+
+			builder.AddField(x =>
 			{
-				builder.AddField(x =>
-				{
-					x.Name = item.Value.ItemName + ": " + item.Value.ItemCount;
-					x.Value = item.Value.ItemLevel;
-					x.IsInline = false;
-				});
-			}
+				//TODO: String format to make pretty
+				x.Name = "inv";
+				x.Value = sb.ToString();
+				x.IsInline = false;
+			});
 			await ReplyAsync("", false, builder.Build());
 		}
 
