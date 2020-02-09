@@ -11,7 +11,7 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly Random _random;
 
-        public RainbowService(DiscordSocketClient discord, Random random, IServiceProvider services)
+        public RainbowService(DiscordSocketClient discord, Random random)
         {
             _discord = discord;
             _random = random;

@@ -80,21 +80,9 @@ namespace TastyBot.Modules
 							stream.Seek(0, SeekOrigin.Begin);
 							await Context.Channel.SendFileAsync(stream, "cat.png");
 						}
-
-
 						// Get a stream containing an image of a cat
-
-
 					}
-
-
 				}
-
-
-
-
-
-
 			}
 		}
 		
@@ -125,7 +113,7 @@ namespace TastyBot.Modules
 		[Command("userinfo")]
 		public async Task UserInfoAsync(IUser user = null)
 		{
-			user = user ?? Context.User;
+			user ??= Context.User;
 			await ReplyAsync(user.ToString());
 		}
 

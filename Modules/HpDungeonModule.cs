@@ -59,10 +59,9 @@ namespace TastyBot.HpDungeon
 			//if it's null, we make a new one, and init it
 			if (p == null)
 			{
-				Console.WriteLine("New player: " + user.Username + "#" + user.Discriminator);
-				p = new HpPlayer(user.Username + "#" + user.Discriminator)
+				Console.WriteLine("New player: " + user.Id.ToString());
+				p = new HpPlayer(user.Id.ToString())
 				{
-					Items = new List<HpItem>(),
 					ID = user.Id.ToString(),
 					Skills = new Dictionary<string, int>()
 				};
@@ -93,49 +92,38 @@ namespace TastyBot.HpDungeon
 				orename = orename.ToLower();                            //Make it all lowercase for key
 				try
 				{
-					Container.OreList.TryGetValue(orename, out item);  //Try to get what the player wants
+					Container.OreList.TryGetValue(orename, out item);	//Try to get what the player wants
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine(e.Message);                        //truncate mistakes
+					Console.WriteLine(e.Message);                       //truncate mistakes
 				}
-				if (item != null)//if it fails, well then we can't go on anyways
-				{
-					//check if item is even minable at their level
-					if (item.ItemLevel > p.GetSkillLevel("mining"))
-					{
+				if (item != null && item.ItemLevel > p.GetSkillLevel("mining"))	//if it fails, well then we can't go on anyways
 						item = null;
-					}
-				}//we should inform them but we're not for now
+																		//we should inform them but we're not for now
 			}
 
 			if (item == null)                                           //if it fails, get a random item
 			{
-				//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
+																		//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
 				item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
 				while (item.ItemLevel > p.GetSkillLevel("mining"))
-				{
 					item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
-				}
 			}
 
-			p.Items.Add(item);
+			p.AddItem(item);
 			bool levelup = false;                                       //Prepare to check if they got a lvl
 			int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
 			p.AddXP("mining", item.ItemXp);                             //Add the gained xp
-			if (currlvl < p.GetSkillLevel("mining"))
-			{                                                           //Check if new current lvl is higher than old
+			if (currlvl < p.GetSkillLevel("mining"))					//Check if new current lvl is higher than old
 				levelup = true;                                         //If yes, then they've gained a lvl
-			}
 
-			await SavePlayer(p);                                              //Now we save the player
-																			  //And compile the resposne
+			await SavePlayer(p);                                        //Now we save the player
+																		//And compile the resposne
 			string response = $"You've gone mining, and got an **{item.ItemName}** \r\n" +
 							  $"and gained {item.ItemXp}xp";
 			if (levelup)
-			{
 				response += $"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**";
-			}
 
 			await ReplyAsync(response);
 		}
@@ -152,20 +140,12 @@ namespace TastyBot.HpDungeon
 				Title = "Inventory"
 			};
 
-			//Compact duplicates
-			//Using black LINQ magic
-			var q = from x in p.Items
-					group x by x.ItemName into g
-					let count = g.Count()
-					orderby count descending
-					select new { Name = g.Key, Count = count, ID = g.First().Description + "\n ItemLevel:" + g.First().ItemLevel };
-
-			foreach (var item in q)
+			foreach (var item in p.Items)
 			{
 				builder.AddField(x =>
 				{
-					x.Name = item.Name + ": " + item.Count;
-					x.Value = item.ID;
+					x.Name = item.Value.ItemName + ": " + item.Value.ItemCount;
+					x.Value = item.Value.ItemLevel;
 					x.IsInline = false;
 				});
 			}
@@ -192,7 +172,6 @@ namespace TastyBot.HpDungeon
 
 			builder.AddField(x =>
 			{
-				x.Name = "Skills";
 				x.Value = skills;
 				x.IsInline = false;
 			});

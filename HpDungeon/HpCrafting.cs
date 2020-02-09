@@ -20,6 +20,16 @@ namespace TastyBot.HpDungeon
         /// Output
         /// </summary>
         public HpItem Result { get; set; }
+
+        /// <summary>
+        /// The relevant skill
+        /// </summary>
+        public string Skill { get; set; }
+
+        /// <summary>
+        /// The amount of XP rewarded for crafting said item
+        /// </summary>
+        public int ResultXP { get; set; }
     }
 
 
@@ -29,44 +39,37 @@ namespace TastyBot.HpDungeon
         /// Makes an item
         /// </summary>  
         /// <param name="target">What we want to make</param>
-        /// <param name="inventory">Inventory we'll query items from</param>
+        /// <param name="player">player we'll query the inventory from</param>
         /// <returns></returns>
-        public List<HpItem> Craft(Recepie target, List<HpItem> inventory)
+        public void Craft(Recepie target, HpPlayer player)
         {
-            bool canCraftItem = false;
-          
-            foreach (var needs in target.Requirements)
-            {
-                try
-                {
-                    //Count the inventory, for each item, that has the needs object in it as a key. 
-                    //That gives us the total amount of X item in Inventory of the recepie, and they all have to match up
-                    int count = inventory.Count(x => x.Equals(needs.Key));
-                    if (count >= needs.Value) // check if the player has enough of said item
-                        canCraftItem = true;
-                }
-                catch (Exception)
-                {
-                    //can't make the item if it fails.
-                    return inventory;
-                }
-            }
+            //TODO: Write the crafting system.
 
-
-            //if it can craft it after checking all the stuff, it's time we remove that from the player, and give the result
-            if (canCraftItem)
+            bool CanCraft = true;
+            foreach (var targetItemReq in target.Requirements) //for every requirement, we check if they have enough of the required item.
             {
-                foreach (var substractableitem in target.Requirements)
+                if (player.Items.ContainsKey(targetItemReq.Key.ItemName)) //check if they got the item
                 {
-                    for (int i = 0; i < substractableitem.Value; i++) //we have X amount of those that needs to be removed
+                    if (targetItemReq.Value > player.Items[targetItemReq.Key.ItemName].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
                     {
-                        inventory.Remove(substractableitem.Key); //remove one of the item
+                        CanCraft = false;
+                        break; //stop looping, and go on
                     }
                 }
-                //add the result
-                inventory.Add(target.Result);
             }
-            return inventory;
+
+            //we only go inn here if we can craft the item, and they passed the above requirements
+            if (CanCraft)
+            {
+                //remove the stuff the player has
+                foreach (var targetItemReq in target.Requirements)
+                {
+                    player.RemoveItem(targetItemReq.Key);
+                }
+
+                player.AddXP(target.Skill, target.ResultXP);
+                player.AddItem(target.Result);
+            }
         }
     }
 }

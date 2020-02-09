@@ -90,6 +90,12 @@ namespace TastyBot.HpDungeon
             Description = description;
         }
 
+
+        /// <summary>
+        /// Keeps track of how many of an item the player has/holds
+        /// </summary>
+        public int ItemCount { get; set; }
+
         /// <summary>
         /// The type of item
         /// We use an enum here so we know what slot / effect it should iterate through

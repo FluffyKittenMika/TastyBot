@@ -38,9 +38,8 @@ namespace TastyBot.Services
             try
             {
                 File.AppendAllText(_logFile, logText + "\n");     // Write the log text to a file
-
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //Fuck crashing the bot if it's dual writing
             }
