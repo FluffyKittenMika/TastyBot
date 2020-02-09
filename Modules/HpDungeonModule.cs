@@ -211,7 +211,7 @@ namespace TastyBot.HpDungeon
 
 			var skills = "";
 			foreach (var skill in p.Skills)
-				skills += $"{skill.Key}: Lvl {p.GetSkillLevel(skill.Key)} Exp: {skill.Value} / {p.LevelToXP(p.XPToLevel(skill.Value) + 1)}\n";
+				skills += $"{skill.Key}: Lvl {p.GetSkillLevel(skill.Key)} Exp: {skill.Value} / {p.LevelToXP(p.GetSkillLevel(skill.Key) + 1)}\n";
 
 			builder.AddField(x =>
 			{

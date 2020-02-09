@@ -56,6 +56,12 @@ namespace TastyBot.HpDungeon
                             break; //stop looping, and go on as we can't craft this item.
                         }
                     }
+                    else
+                    {
+                        //they don't have the item. So we break
+                        CanCraft = false;
+                        break;
+                    }
                 }
 
                 //we only go inn here if we can craft the item, and they passed the above requirements
