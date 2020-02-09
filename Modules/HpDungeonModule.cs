@@ -148,7 +148,6 @@ namespace TastyBot.HpDungeon
 
 			builder.AddField(x =>
 			{
-				//TODO: String format to make pretty
 				x.Name = "inv";
 				x.Value = sb.ToString();
 				x.IsInline = false;

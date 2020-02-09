@@ -26,6 +26,8 @@ namespace TastyBot.HpDungeon
         /// </summary>
         public string Skill { get; set; }
 
+        public int RequiredLVL { get; set; }
+
         /// <summary>
         /// The amount of XP rewarded for crafting said item
         /// </summary>
@@ -33,6 +35,9 @@ namespace TastyBot.HpDungeon
     }
 
 
+    /// <summary>
+    /// Crafting class. 
+    /// </summary>
     class HpCrafting
     {
         /// <summary>
@@ -40,11 +45,9 @@ namespace TastyBot.HpDungeon
         /// </summary>  
         /// <param name="target">What we want to make</param>
         /// <param name="player">player we'll query the inventory from</param>
-        /// <returns></returns>
-        public void Craft(Recepie target, HpPlayer player)
+        /// <returns>True if it was a success, otherwise false.</returns>
+        public bool Craft(Recepie target, HpPlayer player)
         {
-            //TODO: Write the crafting system.
-
             bool CanCraft = true;
             foreach (var targetItemReq in target.Requirements) //for every requirement, we check if they have enough of the required item.
             {
@@ -53,23 +56,24 @@ namespace TastyBot.HpDungeon
                     if (targetItemReq.Value > player.Items[targetItemReq.Key.ItemName].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
                     {
                         CanCraft = false;
-                        break; //stop looping, and go on
+                        break; //stop looping, and go on as we can't craft this item.
                     }
                 }
             }
 
             //we only go inn here if we can craft the item, and they passed the above requirements
-            if (CanCraft)
+            if (CanCraft && target.RequiredLVL <= player.GetSkillLevel(target.Skill))
             {
                 //remove the stuff the player has
                 foreach (var targetItemReq in target.Requirements)
-                {
                     player.RemoveItem(targetItemReq.Key);
-                }
 
+                //Rewards
                 player.AddXP(target.Skill, target.ResultXP);
                 player.AddItem(target.Result);
             }
+
+            return CanCraft;
         }
     }
 }

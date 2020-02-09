@@ -5,7 +5,7 @@ using System.Linq;
 namespace TastyBot.HpDungeon
 {
 
-    //TODO Make entire player Class async.
+    //TODO: Make entire player Class async?
     /// <summary>
     /// This class will mostly just be a Json logic bomb
     /// </summary>
@@ -56,6 +56,7 @@ namespace TastyBot.HpDungeon
 
         /// <summary>
         /// Returns the current level, calculated from XP
+        /// This is safe to call, as the minimum it returns is 3, never null.
         /// </summary>
         /// <param name="skill">The skill name</param>
         public int GetSkillLevel(string skill)
