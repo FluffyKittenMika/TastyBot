@@ -65,7 +65,7 @@ namespace TastyBot.HpDungeon
                 }
 
                 //we only go inn here if we can craft the item, and they passed the above requirements
-                if (CanCraft && recepie.Result.ItemLevel <= player.GetSkillLevel(recepie.Skill))
+                if (CanCraft && recepie.Result.ItemLevel <= player.GetSkillLevel(recepie.Skill) )
                 {
                     //remove the stuff the player has
                     foreach (var targetItemReq in recepie.Requirements)
@@ -74,9 +74,10 @@ namespace TastyBot.HpDungeon
                     //Rewards
                     player.AddXP(recepie.Skill, recepie.Result.ItemXp);
                     player.AddItem(recepie.Result);
+                    return CanCraft;
                 }
             }
-            return CanCraft;
+            return false;
         }
     }
 }
