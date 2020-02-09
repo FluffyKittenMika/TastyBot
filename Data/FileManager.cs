@@ -15,7 +15,7 @@ namespace TastyBot.Data
 		/// <summary>
 		/// Path to the hidden "ProgramData" folder next to the "Program Files" and "Program Files (x86)" folders.
 		/// </summary>
-		private readonly DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
+		private readonly DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
 
 		/// <summary>
 		/// Contains all the lock objects for each type of data. This way we have a per file lock system.
@@ -25,9 +25,9 @@ namespace TastyBot.Data
 
 		public void Init()
 		{
-			if (!safeDirectory.Exists)
+			if (!saveDirectory.Exists)
 			{
-				safeDirectory.Create();
+				saveDirectory.Create();
 			}
 		}
 
@@ -42,13 +42,13 @@ namespace TastyBot.Data
 		}
 
 		/// <summary>
-		/// Safes a List of data as json files. 
+		/// Saves a List of data as json files. 
 		/// </summary>
-		/// <typeparam name="T">The type of data to safe. Also the name of the resulting file.</typeparam>
+		/// <typeparam name="T">The type of data to save. Also the name of the resulting file.</typeparam>
 		/// <param name="data">The data to serialize into json.</param>
-		/// <param name="id">a uinque id that identifies the server the data files belong to.</param>
+		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
-		public Task SafeData<T>(List<T> data, string id)
+		public Task SaveData<T>(List<T> data, string id)
 		{
 			string type = typeof(T).Name;
 			object writeLock = GetLock(type);
@@ -57,7 +57,10 @@ namespace TastyBot.Data
 				string json = JsonConvert.SerializeObject(data, new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
 				lock (writeLock)
 				{
-					File.WriteAllText(Path.Combine(safeDirectory.FullName, id, $"{type}.json"), json);
+					DirectoryInfo StoragePath = new DirectoryInfo(Path.Combine(saveDirectory.FullName, id));
+					if (!StoragePath.Exists)
+						StoragePath.Create();
+					File.WriteAllText(Path.Combine(StoragePath.FullName, $"{type}.json"), json);
 				}
 			});
 		}
@@ -65,7 +68,7 @@ namespace TastyBot.Data
 		/// <summary>
 		/// Loads a List of data from a json file
 		/// </summary>
-		/// <typeparam name="T">The type of data to safe. Also the name of the file to load data from</typeparam>
+		/// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
 		public Task<List<T>> LoadData<T>(string id)
@@ -74,7 +77,7 @@ namespace TastyBot.Data
 			object writeLock = GetLock(type);
 			return Task.Run(() =>
 			{
-				FileInfo fi = new FileInfo(Path.Combine(safeDirectory.FullName, id, $"{type}.json"));
+				FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, id, $"{type}.json"));
 				if (!fi.Exists)
 				{
 					return new List<T>();

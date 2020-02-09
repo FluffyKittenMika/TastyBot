@@ -26,16 +26,11 @@ namespace TastyBot.Modules
             _config = config;
         }
 
-
-        [Command("ping")]
-        [Alias("pong", "hello")]
-        public Task PingAsync()
-            => ReplyAsync("pong!");
-
 		[Command("cat", true)]
-		public async Task CatAsync(params string[] objects)
+		public async Task CatAsync(params string[] args)
 		{
-			if (objects.Length == 0 || objects == null)
+			
+			if (args.Length == 0 || args == null)
 			{
 				// Get a stream containing an image of a cat
 				var stream = await PictureService.GetCatPictureAsync();
@@ -45,22 +40,53 @@ namespace TastyBot.Modules
 			}
 			else
 			{
-				// Get a stream containing an image of a cat
-				var stream = await PictureService.GetCatGifAsync();
-				// Streams must be seeked to their beginning before being uploaded!
-				stream.Seek(0, SeekOrigin.Begin);
-				await Context.Channel.SendFileAsync(stream, "cat.gif");
+				if (args.ElementAt(0).ToLower() == "gif" || args.ElementAt(0).ToLower() == "g")
+				{
+					// Get a stream containing an image of a cat
+					var stream = await PictureService.GetCatGifAsync();
+					// Streams must be seeked to their beginning before being uploaded!
+					stream.Seek(0, SeekOrigin.Begin);
+					await Context.Channel.SendFileAsync(stream, "cat.gif");
+				}
+				if (args.ElementAt(0).ToLower() == "txt" || args.ElementAt(0).ToLower() == "t")
+				{
+					if (args.Length == 1)
+					{
+						await ReplyAsync("You need to specify some text to write in an image");
+					}
+					else
+					{
+						int Num1 = 1;
+						string TextVar = args.ElementAt(Num1);
+						if (args.Length == 2)
+						{
+							var stream = await PictureService.GetCatPictureWTxtAsync(TextVar);
+							// Streams must be seeked to their beginning before being uploaded!
+							stream.Seek(0, SeekOrigin.Begin);
+							await Context.Channel.SendFileAsync(stream, "cat.png");
+						}
+						else
+						{
+							int len = args.Length - 1;
+							do
+							{
+								
+								Num1 = ++Num1;
+								TextVar = TextVar + " " + args.ElementAt(Num1);
+
+							} while (Num1 < len);
+							var stream = await PictureService.GetCatPictureWTxtAsync(TextVar);
+							// Streams must be seeked to their beginning before being uploaded!
+							stream.Seek(0, SeekOrigin.Begin);
+							await Context.Channel.SendFileAsync(stream, "cat.png");
+						}
+						// Get a stream containing an image of a cat
+					}
+				}
 			}
 		}
-
-
-		// Get info on a user, or the user who invoked the command if one is not specified
-		[Command("userinfo")]
-		public async Task UserInfoAsync(IUser user = null)
-		{
-			user = user ?? Context.User;
-			await ReplyAsync(user.ToString());
-		}
+		
+		
 
 		// Ban a user
 		[Command("ban")]
@@ -75,11 +101,31 @@ namespace TastyBot.Modules
 			await ReplyAsync("ok!");
 		}
 
+
+		// Throw Back Thursday, Tasty Specified command.
+		[Command("tbt")]
+		public Task ThrowBackThrsday()
+			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
+
+
+		
+		// Get info on a user, or the user who invoked the command if one is not specified
+		[Command("userinfo")]
+		public async Task UserInfoAsync(IUser user = null)
+		{
+			user ??= Context.User;
+			await ReplyAsync(user.ToString());
+		}
+
+		/* Commenting out theese commands as they're really not needed, keeping them around for reference. 
+		 
+		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
 		[Command("echo")]
 		public Task EchoAsync([Remainder] string text)
 			// Insert a ZWSP before the text to prevent triggering other bots!
 			=> ReplyAsync('\u200B' + text);
+		
 
 		// 'params' will parse space-separated elements into a list
 		[Command("list")]
@@ -91,11 +137,8 @@ namespace TastyBot.Modules
 		[RequireContext(ContextType.Guild, ErrorMessage = "Sorry, this command must be ran from within a server, not a DM!")]
 		public Task GuildOnlyCommand()
 			=> ReplyAsync("Nothing to see here!");
+		*/
 
-        // Throw Back Thursday, Tasty Specified command.
-        [Command("tbt")]
-        public Task ThrowBackThrsday()
-            => ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
-    }
+	}
 }
