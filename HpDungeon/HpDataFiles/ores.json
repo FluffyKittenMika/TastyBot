@@ -48,24 +48,24 @@
     "ItemXp": 65,
     "ItemLevel": 40
   },
-  "mithril": {
+  "mithril ore": {
     "Type": 3,
     "Description": "Some mithril ore",
     "ItemName": "Mithril ore",
     "ItemXp": 80,
     "ItemLevel": 55
   },
-  "adamantite ore": {
+  "adamantine ore": {
     "Type": 3,
     "Description": "Some Adamantite ore",
-    "ItemName": "Adamantite ore",
+    "ItemName": "Adamantine ore",
     "ItemXp": 95,
     "ItemLevel": 70
   },
-  "runite ore": {
+  "redite ore": {
     "Type": 3,
-    "Description": "Some Runite ore",
-    "ItemName": "Runite ore",
+    "Description": "Some redite ore",
+    "ItemName": "Redite ore",
     "ItemXp": 125,
     "ItemLevel": 85
   }
