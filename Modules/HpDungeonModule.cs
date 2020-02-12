@@ -97,15 +97,16 @@ namespace TastyBot.HpDungeon
 
 
 		[Command("hpdsave")]
-		private void HpdSavePlayers()
+		public async Task HpdSavePlayers()
 		{
 			if (Context.User.Id == 83183880869253120)
 			{
 				SaveAllPlayers();
 				savecounter = 0;
+				await ReplyAsync("saved.");
 			}
 			else
-				ReplyAsync("ask mik to run it. as this is global save.");
+				await ReplyAsync("ask mik to run it. as this is global save.");
 		}
 
 
