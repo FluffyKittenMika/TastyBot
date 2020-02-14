@@ -107,7 +107,9 @@ namespace TastyBot.Modules
 		public Task ThrowBackThrsday()
 			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
-
+		[Command("nnm")]
+		public Task NomNomMonday()
+			=> ReplyAsync("<:Oposum:669676896270680104> Nom Nom Monday! Post a picture of your food in #Photos!");
 		
 		// Get info on a user, or the user who invoked the command if one is not specified
 		[Command("userinfo")]
