@@ -27,6 +27,7 @@ namespace TastyBot.Modules
         }
 
 		[Command("cat", true)]
+		[Summary(" sends a pic of a cat\nFor a cat pic write !cat\nfor a cat gif write either !cat g or !cat gif\nfor a cat pic with thext write !cat t {some text here}" )]
 		public async Task CatAsync(params string[] args)
 		{
 			
