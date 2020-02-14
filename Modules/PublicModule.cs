@@ -104,10 +104,12 @@ namespace TastyBot.Modules
 
 		// Throw Back Thursday, Tasty Specified command.
 		[Command("tbt")]
+		[Summary("Use this command once every thursday :D")]
 		public Task ThrowBackThrsday()
 			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
 		[Command("nnm")]
+		[Summary("Use this command once very monday :D")]
 		public Task NomNomMonday()
 			=> ReplyAsync("<:Oposum:669676896270680104> Nom Nom Monday! Post a picture of your food in #Photos!");
 		
