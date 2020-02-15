@@ -14,7 +14,7 @@ namespace TastyBot.HpDungeon
         /// The Requirements for the result
         /// 
         /// </summary>
-        public Dictionary<HpItem, int> Requirements { get; set; }
+        public Dictionary<string, int> Requirements { get; set; }
        
         /// <summary>
         /// Output
@@ -25,51 +25,59 @@ namespace TastyBot.HpDungeon
         /// The relevant skill
         /// </summary>
         public string Skill { get; set; }
-
-        /// <summary>
-        /// The amount of XP rewarded for crafting said item
-        /// </summary>
-        public int ResultXP { get; set; }
     }
 
 
-    class HpCrafting
+    /// <summary>
+    /// Crafting class. 
+    /// </summary>
+    public class HpCrafting
     {
         /// <summary>
         /// Makes an item
         /// </summary>  
         /// <param name="target">What we want to make</param>
         /// <param name="player">player we'll query the inventory from</param>
-        /// <returns></returns>
-        public void Craft(Recepie target, HpPlayer player)
+        /// <returns>True if it was a success, otherwise false.</returns>
+        public bool Craft(string target, ref HpPlayer player)
         {
-            //TODO: Write the crafting system.
-
             bool CanCraft = true;
-            foreach (var targetItemReq in target.Requirements) //for every requirement, we check if they have enough of the required item.
+
+            if (Container.Recepies.ContainsKey(target))
             {
-                if (player.Items.ContainsKey(targetItemReq.Key.ItemName)) //check if they got the item
+                Recepie recepie = Container.Recepies[target];
+                foreach (var targetItemReq in recepie.Requirements) //for every requirement, we check if they have enough of the required item.
                 {
-                    if (targetItemReq.Value > player.Items[targetItemReq.Key.ItemName].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
+                    if (player.Items.ContainsKey(targetItemReq.Key)) //check if they got the item
                     {
+                        if (targetItemReq.Value > player.Items[targetItemReq.Key].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
+                        {
+                            CanCraft = false;
+                            break; //stop looping, and go on as we can't craft this item.
+                        }
+                    }
+                    else
+                    {
+                        //they don't have the item. So we break
                         CanCraft = false;
-                        break; //stop looping, and go on
+                        break;
                     }
                 }
-            }
 
-            //we only go inn here if we can craft the item, and they passed the above requirements
-            if (CanCraft)
-            {
-                //remove the stuff the player has
-                foreach (var targetItemReq in target.Requirements)
+                //we only go inn here if we can craft the item, and they passed the above requirements
+                if (CanCraft && recepie.Result.ItemLevel <= player.GetSkillLevel(recepie.Skill) )
                 {
-                    player.RemoveItem(targetItemReq.Key);
-                }
+                    //remove the stuff the player has
+                    foreach (var targetItemReq in recepie.Requirements)
+                        player.RemoveItem(targetItemReq.Key);
 
-                player.AddXP(target.Skill, target.ResultXP);
-                player.AddItem(target.Result);
+                    //Rewards
+                    player.AddXP(recepie.Skill, recepie.Result.ItemXp);
+                    player.AddItem(recepie.Result);
+                    return CanCraft;
+                }
             }
+            return false;
         }
     }
 }

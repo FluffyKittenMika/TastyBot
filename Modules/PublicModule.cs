@@ -27,6 +27,7 @@ namespace TastyBot.Modules
         }
 
 		[Command("cat", true)]
+		[Summary(" sends a pic of a cat\nFor a cat pic write !cat\nfor a cat gif write either !cat g or !cat gif\nfor a cat pic with thext write !cat t {some text here}" )]
 		public async Task CatAsync(params string[] args)
 		{
 			
@@ -104,10 +105,14 @@ namespace TastyBot.Modules
 
 		// Throw Back Thursday, Tasty Specified command.
 		[Command("tbt")]
+		[Summary("Use this command once every thursday :D")]
 		public Task ThrowBackThrsday()
 			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
 
-
+		[Command("nnm")]
+		[Summary("Use this command once very monday :D")]
+		public Task NomNomMonday()
+			=> ReplyAsync("<:Oposum:669676896270680104> Nom Nom Monday! Post a picture of your food in #Photos!");
 		
 		// Get info on a user, or the user who invoked the command if one is not specified
 		[Command("userinfo")]

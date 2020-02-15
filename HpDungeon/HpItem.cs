@@ -14,9 +14,12 @@ namespace TastyBot.HpDungeon
     /// </summary>
     public static class Container
     {
+        //Items
         public static Dictionary<string, HpItem> ItemList = null; //everything list
         public static Dictionary<string, HpItem> OreList = null; //specialised
 
+        //Crafting
+        public static Dictionary<string, Recepie> Recepies = null; //The Crafting lookup
 
 
         /// <summary>
@@ -24,24 +27,35 @@ namespace TastyBot.HpDungeon
         /// </summary>
         public static void LoadItems()
         {
-            ItemList = new Dictionary<string, HpItem>();
-            OreList = new Dictionary<string, HpItem>();
+            //Case insensetive dicts. For my sanity.
+            ItemList = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
+            OreList = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
+            Recepies = new Dictionary<string, Recepie>(StringComparer.OrdinalIgnoreCase);
 
-
-            //i'll just start with ores, and i'll simply add more files to keep it organised
-            //and ofc make a proper file function then
-            string json = File.ReadAllText(@".\HpDungeon\HpDataFiles\ores.json");
-            Dictionary<string, HpItem> temp  = JsonConvert.DeserializeObject<Dictionary<string, HpItem>>(json);
-            foreach (var item in temp)
-            {
-                OreList.Add(item.Key, item.Value);
-                ItemList.Add(item.Key, item.Value);
-
-            }
+            LoadItemList(@".\HpDungeon\HpDataFiles\ores.json", ref OreList);
+            LoadItemRecepies(@".\HpDungeon\HpDataFiles\crafting_smelting.json", ref Recepies);
 
         }
 
+        private static void LoadItemList(string path, ref Dictionary<string, HpItem> dict)
+        {
+            string json = File.ReadAllText(path);
+            dict = JsonConvert.DeserializeObject<Dictionary<string, HpItem>>(json);
+            foreach (var item in dict)
+                ItemList.Add(item.Key, item.Value);
+        }
+
+        private static void LoadItemRecepies(string path, ref Dictionary<string, Recepie> dict)
+        {
+            string json = File.ReadAllText(path);
+            dict = JsonConvert.DeserializeObject<Dictionary<string, Recepie>>(json);
+
+            foreach (var item in dict) //add all possible results to the global item list.
+                ItemList.Add(item.Key, item.Value.Result);
+        }
     }
+
+    
 
 
     /// <summary>
@@ -83,14 +97,20 @@ namespace TastyBot.HpDungeon
         /// <param name="Type">Item Type</param>
         /// <param name="Name">Optional, Name of the item</param>
         /// <param name="Description">Optional, Description of the item</param>
-        public HpItem(ItemDefinition type, string name = "Undefined", string description ="Undefined" )
+        public HpItem(ItemDefinition type, string name = "Undefined", string description = "Undefined", int itemlvl = 3, int itemxp = 5, int itemcount = 1 )
         {
             Type = type;
             ItemName = name;
             Description = description;
+            ItemCount = itemcount;
+            ItemLevel = itemlvl;
+            ItemXp = itemxp;
         }
 
-
+        /// <summary>
+        /// Constructor, empty, DEFINE IT PROPERLY PLEASE
+        /// </summary>
+        public HpItem() { }
         /// <summary>
         /// Keeps track of how many of an item the player has/holds
         /// </summary>
@@ -122,13 +142,6 @@ namespace TastyBot.HpDungeon
         /// This is only used if the item grants any XP on crafting
         /// </summary>
         public int ItemXp { get; set; }
-
-        /// <summary>
-        /// Use the item, atm does nothing
-        /// </summary>
-        public void Use() {
-            return;
-        }
 
     }
 }

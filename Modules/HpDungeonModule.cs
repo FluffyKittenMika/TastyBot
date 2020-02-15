@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -21,6 +22,7 @@ namespace TastyBot.HpDungeon
 		private readonly IConfigurationRoot _config;
 		private readonly FileManager fileManager;
 		private readonly Random _random;
+		private readonly HpCrafting crafter;
 		/// <summary>
 		/// Constructor, this one is called automagically through reflection
 		/// </summary>
@@ -33,6 +35,8 @@ namespace TastyBot.HpDungeon
 			_random = random;
 			fileManager = new FileManager();
 			fileManager.Init();
+			crafter = new HpCrafting();
+			Container.LoadItems();
 		}
 
 		/// <summary>
@@ -41,10 +45,6 @@ namespace TastyBot.HpDungeon
 		/// <returns>A new player, or auto loads a player</returns>
 		private async Task<HpPlayer> GetPlayer(IUser user)
 		{
-			//makes sure there's shit inn there
-			if (Container.ItemList == null)
-				Container.LoadItems();
-
 			HpPlayer p = null;
 
 			try
@@ -140,18 +140,61 @@ namespace TastyBot.HpDungeon
 				Title = "Inventory"
 			};
 
-			foreach (var item in p.Items)
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var item in p.Items) //TODO: Find a better padding method, discord hates whitespaces, and '\u202F' is not pretty..
+				sb.AppendFormat("{0,16} - {1,4} units - ILVL: {2,4}\n", item.Value.ItemName.PadRight(16, '	'), item.Value.ItemCount.ToString().PadRight(4, '	'), item.Value.ItemLevel.ToString().PadRight(4, '	'));
+
+			builder.AddField(x =>
 			{
-				builder.AddField(x =>
-				{
-					x.Name = item.Value.ItemName + ": " + item.Value.ItemCount;
-					x.Value = item.Value.ItemLevel;
-					x.IsInline = false;
-				});
-			}
+				x.Name = "inv";
+				x.Value = sb.ToString();
+				x.IsInline = false;
+			});
 			await ReplyAsync("", false, builder.Build());
 		}
 
+		[Command("Craft")]
+		public async Task Craft([Remainder]string craft)
+		{
+			//check if whatever the fuck they typed, is a key
+			if (Container.Recepies.ContainsKey(craft.ToLower()))
+			{
+				var i = Container.Recepies[craft.ToLower()];
+				HpPlayer p = await GetPlayer(Context.User);
+
+
+				//TODO function this into the addXP
+				bool levelup = false;                                      //Prepare to check if they got a lvl
+				int currlvl = p.GetSkillLevel(i.Skill);						//Remember current lvl
+				var crafted = crafter.Craft(craft.ToLower(), ref p);
+				if (currlvl < p.GetSkillLevel(i.Skill))                    //Check if new current lvl is higher than old
+					levelup = true;                                        //If yes, then they've gained a lvl
+
+
+				//And compile the resposne
+				StringBuilder response = new StringBuilder();
+				if (crafted) //if it did craft the item, and it's all good
+				{
+					response.Append($"You made a {craft} and gained {i.Result.ItemXp} {i.Skill} XP");
+					if (levelup)
+						response.Append($"\nYou gained a **{i.Skill} LEVEL!**");
+					await SavePlayer(p);
+					await ReplyAsync(response.ToString());
+				}
+				else if (!crafted && p.GetSkillLevel(i.Skill) <= i.Result.ItemLevel)
+				{
+					response.Append($"Insufficient {i.Skill} Level, Requires {i.Skill} lvl: {i.Result.ItemLevel}");
+					await ReplyAsync(response.ToString());
+				}
+				else
+				{
+					response.Append($"Insufficient materials");
+					await ReplyAsync(response.ToString());
+				}
+
+			}
+		}
 
 
 		[Command("skills")]
@@ -168,10 +211,11 @@ namespace TastyBot.HpDungeon
 
 			var skills = "";
 			foreach (var skill in p.Skills)
-				skills += $"{skill.Key}: Lvl {p.XPToLevel(skill.Value)} Exp: {skill.Value} / {p.LevelToXP(p.XPToLevel(skill.Value) + 1)}\n";
+				skills += $"{skill.Key}: Lvl {p.GetSkillLevel(skill.Key)} Exp: {skill.Value} / {p.LevelToXP(p.GetSkillLevel(skill.Key) + 1)}\n";
 
 			builder.AddField(x =>
 			{
+				x.Name = "skills";
 				x.Value = skills;
 				x.IsInline = false;
 			});

@@ -5,11 +5,11 @@ using System.Linq;
 namespace TastyBot.HpDungeon
 {
 
-    //TODO Make entire player Class async.
+    //TODO: Make entire player Class async?
     /// <summary>
     /// This class will mostly just be a Json logic bomb
     /// </summary>
-    class HpPlayer : HpCreature
+    public class HpPlayer : HpCreature
     {
 
 
@@ -56,6 +56,7 @@ namespace TastyBot.HpDungeon
 
         /// <summary>
         /// Returns the current level, calculated from XP
+        /// This is safe to call, as the minimum it returns is 3, never null.
         /// </summary>
         /// <param name="skill">The skill name</param>
         public int GetSkillLevel(string skill)
@@ -88,14 +89,15 @@ namespace TastyBot.HpDungeon
         {
             //Make sure there's an inventory
             if (Items == null)
-                Items = new Dictionary<string, HpItem>();
+                Items = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
 
             if (Items.ContainsKey(item.ItemName))
                 Items[item.ItemName].ItemCount++;
             else
             {
                 //We do not want it to say, you got 0 apples. when we do have 1.
-                item.ItemCount = 1;
+                if (item.ItemCount == 0)
+                    item.ItemCount = 1;
                 Items.Add(item.ItemName, item);
             }
         }
@@ -104,17 +106,17 @@ namespace TastyBot.HpDungeon
         /// <summary>
         /// Use this to substract 1 from any item in an inventory
         /// </summary>
-        /// <param name="item">The item you want to remove</param>
-        public void RemoveItem(HpItem item)
+        /// <param name="item">The name of the item you want to remove</param>
+        public void RemoveItem(string item)
         {
             if (Items == null) //HALT ERAN, HE'S ESCAPING
                 return;
 
-            if (Items.ContainsKey(item.ItemName))
+            if (Items.ContainsKey(item))
             {
-                Items[item.ItemName].ItemCount--;
-                if (Items[item.ItemName].ItemCount == 0) //We remove this item
-                    Items.Remove(item.ItemName);
+                Items[item].ItemCount--;
+                if (Items[item].ItemCount <= 0) //We remove this item
+                    Items.Remove(item);
             }
             //Nothing to remove if not.
         }
