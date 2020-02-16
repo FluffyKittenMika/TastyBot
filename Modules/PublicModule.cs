@@ -51,9 +51,7 @@ namespace TastyBot.Modules
 				if (args.ElementAt(0).ToLower() == "txt" || args.ElementAt(0).ToLower() == "t")
 				{
 					if (args.Length == 1)
-					{
 						await ReplyAsync("You need to specify some text to write in an image");
-					}
 					else
 					{
 						int Num1 = 1;
@@ -70,7 +68,6 @@ namespace TastyBot.Modules
 							int len = args.Length - 1;
 							do
 							{
-								
 								Num1 = ++Num1;
 								TextVar = TextVar + " " + args.ElementAt(Num1);
 
