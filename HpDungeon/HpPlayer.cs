@@ -126,9 +126,11 @@ namespace TastyBot.HpDungeon
         /// </summary>
         /// <param name="skill">The skill to add the XP to</param>
         /// <param name="xp">How much XP you want to add</param>
-        public void AddXP(string skill, int xp)
+        /// <returns>True if gained level, false otherwise</returns>
+        public bool AddXP(string skill, int xp)
         {
             skill = skill.ToLower();
+            bool levelup = false;
 
             //make sure there's a skill storage
             if (Skills == null)
@@ -136,10 +138,16 @@ namespace TastyBot.HpDungeon
 
             //add xp to it, else add it with that amount of xp
             if (Skills.ContainsKey(skill))
+            {
+                int currlvl = GetSkillLevel(skill);     
                 Skills[skill] += xp;
+                if (currlvl < GetSkillLevel(skill))
+                    levelup = true;
+            }
             else
                 Skills.Add(skill, xp);
 
+            return levelup;
         }
 
         public int Equate(int xp)

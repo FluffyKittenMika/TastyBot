@@ -15,10 +15,11 @@ namespace TastyBot.HpDungeon
 {
 
 
-	[Name("HpDungeon")]
+    [Name("HpDungeon")]
 	public class HpDungeonModule : ModuleBase<SocketCommandContext>
 	{
-		private readonly CommandService _service;
+        #region Definitions
+        private readonly CommandService _service;
 		private readonly IConfigurationRoot _config;
 		private readonly FileManager fileManager;
 		private readonly Random _random;
@@ -28,13 +29,15 @@ namespace TastyBot.HpDungeon
 		private static Dictionary<string,HpPlayer> PlayerRamMemory = new Dictionary<string, HpPlayer>();
 		private static int savecounter = 0;
 
+        #endregion
 
-		/// <summary>
-		/// Constructor, this one is called automagically through reflection
-		/// </summary>
-		/// <param name="service">Relevant service</param>
-		/// <param name="config">Relevant config</param>
-		public HpDungeonModule(CommandService service, Random random, IConfigurationRoot config)
+        #region Functions
+        /// <summary>
+        /// Constructor, this one is called automagically through reflection
+        /// </summary>
+        /// <param name="service">Relevant service</param>
+        /// <param name="config">Relevant config</param>
+        public HpDungeonModule(CommandService service, Random random, IConfigurationRoot config)
 		{
 			_service = service;
 			_config = config;
@@ -95,21 +98,6 @@ namespace TastyBot.HpDungeon
 		}
 
 
-
-		[Command("hpdsave")]
-		public async Task HpdSavePlayers()
-		{
-			if (Context.User.Id == 83183880869253120)
-			{
-				SaveAllPlayers();
-				savecounter = 0;
-				await ReplyAsync("saved.");
-			}
-			else
-				await ReplyAsync("ask mik to run it. as this is global save.");
-		}
-
-
 		//TODO Move this to a different class
 		/// <summary>
 		/// Stores the player in the ram module
@@ -153,6 +141,44 @@ namespace TastyBot.HpDungeon
 		}
 
 
+		#endregion
+
+		#region Commands
+		[Command("hpdsave")]
+		public async Task HpdSavePlayers()
+		{
+			if (Context.User.Id == 83183880869253120)
+			{
+				SaveAllPlayers();
+				savecounter = 0;
+				await ReplyAsync("saved.");
+			}
+			else
+				await ReplyAsync("ask mik to run it. as this is global save.");
+		}
+
+		[Command("agility")]
+		[Summary("train agility, the skill does nothing atm")]
+		public async Task Agility([Remainder] string trashargs = null)
+		{
+			HpPlayer p = await GetPlayer(Context.User);
+
+			int xpgained = _random.Next(10, 200);
+			bool levelup = p.AddXP("agility",xpgained );                             //Add the gained xp
+
+			SavePlayer(p);
+
+			StringBuilder response = new StringBuilder();
+			response.Append($"You did some running and gained {xpgained}xp");
+			if (levelup)
+				response.Append($"\r\nYou gained a **Agility level!** \r\n Your level is now **{p.GetSkillLevel("agility")}**");
+
+			await ReplyAsync(response.ToString());
+
+
+		}
+
+
 		[Command("mine")]
 		[Summary("Go gather ores")]
 		public async Task Mine([Remainder] string orename = null)
@@ -185,20 +211,16 @@ namespace TastyBot.HpDungeon
 			}
 
 			p.AddItem(item);
-			bool levelup = false;                                       //Prepare to check if they got a lvl
-			int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
-			p.AddXP("mining", item.ItemXp);                             //Add the gained xp
-			if (currlvl < p.GetSkillLevel("mining"))					//Check if new current lvl is higher than old
-				levelup = true;                                         //If yes, then they've gained a lvl
+			bool levelup = p.AddXP("mining", item.ItemXp);              //Add the gained xp
 
-			SavePlayer(p);												//Now we save the player to ram
+			SavePlayer(p);                                              //Now we save the player to ram
 																		//And compile the resposne
-			string response = $"You've gone mining, and got an **{item.ItemName}** \r\n" +
-							  $"and gained {item.ItemXp}xp";
+			StringBuilder response = new StringBuilder();
+			response.Append($"You've gone mining, and got an **{item.ItemName}** \r\nand gained {item.ItemXp}xp");
 			if (levelup)
-				response += $"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**";
+				response.Append($"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**");
 
-			await ReplyAsync(response);
+			await ReplyAsync(response.ToString());
 		}
 
 		[Command("inventory")]
@@ -296,5 +318,7 @@ namespace TastyBot.HpDungeon
 			});
 			await ReplyAsync("", false, builder.Build());
 		}
-	}
+
+        #endregion
+    }
 }
