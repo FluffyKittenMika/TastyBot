@@ -260,8 +260,6 @@ namespace TastyBot.HpDungeon
 				var i = Container.Recepies[craft.ToLower()];
 				HpPlayer p = await GetPlayer(Context.User);
 
-
-				//TODO function this into the addXP
 				bool levelup = false;                                      //Prepare to check if they got a lvl
 				int currlvl = p.GetSkillLevel(i.Skill);						//Remember current lvl
 				var crafted = crafter.Craft(craft.ToLower(), ref p);
