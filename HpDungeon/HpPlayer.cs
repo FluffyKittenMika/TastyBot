@@ -109,7 +109,7 @@ namespace TastyBot.HpDungeon
         /// <param name="item">The name of the item you want to remove</param>
         public void RemoveItem(string item)
         {
-            if (Items == null) //HALT ERAN, HE'S ESCAPING
+            if (Items == null) //HALT EARAN, HE'S ESCAPING
                 return;
 
             if (Items.ContainsKey(item))
