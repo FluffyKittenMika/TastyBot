@@ -50,7 +50,7 @@ namespace TastyBot.Utility
 		/// <param name="data">The data to serialize into json.</param>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
-		public Task SaveData<T>(T data, string id)
+		public Task SaveData<T>(List<T> data, string id)
 		{
 			string type = typeof(T).Name;
 			object writeLock = GetLock(type);
@@ -73,31 +73,36 @@ namespace TastyBot.Utility
 		/// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
-		public T LoadData<T>(string id)
+		public Task<List<T>> LoadData<T>(string id)
 		{
 			string type = typeof(T).Name;
-			FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, id, $"{type}.json"));
-			if (!fi.Exists)
+			object writeLock = GetLock(type);
+			return Task.Run(() =>
 			{
-				return default;
-			}
-			string json = string.Empty;
-			json = File.ReadAllText(fi.FullName);
+				FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, id, $"{type}.json"));
+				if (!fi.Exists)
+				{
+					return new List<T>();
+				}
 
-			List<T> lstData = new List<T>();
-			if (string.IsNullOrWhiteSpace(json))
-			{
-				return default;
-			}
-			try
-			{
-				T obj = JsonConvert.DeserializeObject<T>(json);
-				return obj;
-			}
-			catch (Exception)
-			{
-				return default;
-			}
+				string json = string.Empty;
+				lock (writeLock)
+				{
+					json = File.ReadAllText(fi.FullName);
+				}
+				List<T> lstData = new List<T>();
+				if (string.IsNullOrWhiteSpace(json))
+				{
+					return new List<T>();
+				}
+				try
+				{
+					lstData = JsonConvert.DeserializeObject<List<T>>(json);
+				}
+				catch (Exception)
+				{ }
+				return lstData;
+			});
 		}
 
 
