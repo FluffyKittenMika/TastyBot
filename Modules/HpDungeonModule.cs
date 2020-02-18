@@ -9,7 +9,7 @@ using Discord.Commands;
 
 using Microsoft.Extensions.Configuration;
 
-using TastyBot.Data;
+using TastyBot.Utility;
 
 namespace TastyBot.HpDungeon
 {
@@ -191,20 +191,20 @@ namespace TastyBot.HpDungeon
 				orename = orename.ToLower();                            //Make it all lowercase for key
 				try
 				{
-					Container.OreList.TryGetValue(orename, out item);	//Try to get what the player wants
+					Container.OreList.TryGetValue(orename, out item);   //Try to get what the player wants
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e.Message);                       //truncate mistakes
 				}
-				if (item != null && item.ItemLevel > p.GetSkillLevel("mining"))	//if it fails, well then we can't go on anyways
-						item = null;
-																		//we should inform them but we're not for now
+				if (item != null && item.ItemLevel > p.GetSkillLevel("mining")) //if it fails, well then we can't go on anyways
+					item = null;
+				//we should inform them but we're not for now
 			}
 
 			if (item == null)                                           //if it fails, get a random item
 			{
-																		//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
+				//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
 				item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
 				while (item.ItemLevel > p.GetSkillLevel("mining"))
 					item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;

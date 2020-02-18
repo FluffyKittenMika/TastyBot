@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TastyBot.Data
+using Newtonsoft.Json;
+
+using TastyBot.FutureHeadPats;
+
+namespace TastyBot.Utility
 {
 	/// <summary>
 	/// Manages saving random data into .json files. The files will have the name of the class of the objects being saved.
@@ -15,7 +17,7 @@ namespace TastyBot.Data
 		/// <summary>
 		/// Path to the hidden "ProgramData" folder next to the "Program Files" and "Program Files (x86)" folders.
 		/// </summary>
-		private readonly DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
+		private static readonly DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
 
 		/// <summary>
 		/// Contains all the lock objects for each type of data. This way we have a per file lock system.
@@ -48,7 +50,7 @@ namespace TastyBot.Data
 		/// <param name="data">The data to serialize into json.</param>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
-		public Task SaveData<T>(List<T> data, string id)
+		public Task SaveData<T>(T data, string id)
 		{
 			string type = typeof(T).Name;
 			object writeLock = GetLock(type);
@@ -71,36 +73,69 @@ namespace TastyBot.Data
 		/// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
 		/// <param name="id">A uinque id that identifies the server the data files belong to.</param>
 		/// <returns></returns>
-		public Task<List<T>> LoadData<T>(string id)
+		public T LoadData<T>(string id)
 		{
 			string type = typeof(T).Name;
-			object writeLock = GetLock(type);
-			return Task.Run(() =>
+			FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, id, $"{type}.json"));
+			if (!fi.Exists)
 			{
-				FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, id, $"{type}.json"));
-				if (!fi.Exists)
-				{
-					return new List<T>();
-				}
+				return default;
+			}
+			string json = string.Empty;
+			json = File.ReadAllText(fi.FullName);
 
-				string json = string.Empty;
-				lock (writeLock)
-				{
-					json = File.ReadAllText(fi.FullName);
-				}
-				List<T> lstData = new List<T>();
-				if (string.IsNullOrWhiteSpace(json))
-				{
-					return new List<T>();
-				}
-				try
-				{
-					lstData = JsonConvert.DeserializeObject<List<T>>(json);
-				}
-				catch (Exception)
-				{ }
-				return lstData;
-			});
+			List<T> lstData = new List<T>();
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return default;
+			}
+			try
+			{
+				T obj = JsonConvert.DeserializeObject<T>(json);
+				return obj;
+			}
+			catch (Exception)
+			{
+				return default;
+			}
 		}
+
+
+		public static List<FhpUser> LoadFhpUserData()
+		{
+			FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, $"FhpUsers.json"));
+			if (!fi.Exists)
+			{
+				return new List<FhpUser>();
+			}
+			string json = string.Empty;
+			json = File.ReadAllText(fi.FullName);
+
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return new List<FhpUser>();
+			}
+			try
+			{
+				List<FhpUser> obj = JsonConvert.DeserializeObject<List<FhpUser>>(json);
+				return obj;
+			}
+			catch (Exception)
+			{
+				return new List<FhpUser>();
+			}
+		}
+
+		public static void SaveFhpUserData(List<FhpUser> users)
+		{
+			string json = JsonConvert.SerializeObject(users, new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+
+			DirectoryInfo StoragePath = new DirectoryInfo(saveDirectory.FullName);
+			if (!StoragePath.Exists)
+				StoragePath.Create();
+			File.WriteAllText(Path.Combine(StoragePath.FullName, $"FhpUsers.json"), json);
+		}
+
+
 	}
 }
