@@ -33,7 +33,6 @@ namespace TastyBot.Modules
 		public async Task CatAsync(params string[] args)
 		{
 			
-
 			if (args.Length == 0 || args == null)
 			{
 				// Get a stream containing an image of a cat

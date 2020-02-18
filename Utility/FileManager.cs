@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TastyBot.Data
+using Newtonsoft.Json;
+
+using TastyBot.FutureHeadPats;
+
+namespace TastyBot.Utility
 {
 	/// <summary>
 	/// Manages saving random data into .json files. The files will have the name of the class of the objects being saved.
@@ -15,7 +17,7 @@ namespace TastyBot.Data
 		/// <summary>
 		/// Path to the hidden "ProgramData" folder next to the "Program Files" and "Program Files (x86)" folders.
 		/// </summary>
-		private readonly DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
+		private static readonly DirectoryInfo saveDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TastyBot"));
 
 		/// <summary>
 		/// Contains all the lock objects for each type of data. This way we have a per file lock system.
@@ -102,5 +104,43 @@ namespace TastyBot.Data
 				return lstData;
 			});
 		}
+
+
+		public static List<FhpUser> LoadFhpUserData()
+		{
+			FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, $"FhpUsers.json"));
+			if (!fi.Exists)
+			{
+				return new List<FhpUser>();
+			}
+			string json = string.Empty;
+			json = File.ReadAllText(fi.FullName);
+
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return new List<FhpUser>();
+			}
+			try
+			{
+				List<FhpUser> obj = JsonConvert.DeserializeObject<List<FhpUser>>(json);
+				return obj;
+			}
+			catch (Exception)
+			{
+				return new List<FhpUser>();
+			}
+		}
+
+		public static void SaveFhpUserData(List<FhpUser> users)
+		{
+			string json = JsonConvert.SerializeObject(users, new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+
+			DirectoryInfo StoragePath = new DirectoryInfo(saveDirectory.FullName);
+			if (!StoragePath.Exists)
+				StoragePath.Create();
+			File.WriteAllText(Path.Combine(StoragePath.FullName, $"FhpUsers.json"), json);
+		}
+
+
 	}
 }

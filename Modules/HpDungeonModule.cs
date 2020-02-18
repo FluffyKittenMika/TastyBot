@@ -9,26 +9,35 @@ using Discord.Commands;
 
 using Microsoft.Extensions.Configuration;
 
-using TastyBot.Data;
+using TastyBot.Utility;
 
 namespace TastyBot.HpDungeon
 {
 
 
-	[Name("HpDungeon")]
+    [Name("HpDungeon")]
 	public class HpDungeonModule : ModuleBase<SocketCommandContext>
 	{
-		private readonly CommandService _service;
+        #region Definitions
+        private readonly CommandService _service;
 		private readonly IConfigurationRoot _config;
 		private readonly FileManager fileManager;
 		private readonly Random _random;
 		private readonly HpCrafting crafter;
-		/// <summary>
-		/// Constructor, this one is called automagically through reflection
-		/// </summary>
-		/// <param name="service">Relevant service</param>
-		/// <param name="config">Relevant config</param>
-		public HpDungeonModule(CommandService service, Random random, IConfigurationRoot config)
+
+		//Static retains memory. 
+		private static Dictionary<string,HpPlayer> PlayerRamMemory = new Dictionary<string, HpPlayer>();
+		private static int savecounter = 0;
+
+        #endregion
+
+        #region Functions
+        /// <summary>
+        /// Constructor, this one is called automagically through reflection
+        /// </summary>
+        /// <param name="service">Relevant service</param>
+        /// <param name="config">Relevant config</param>
+        public HpDungeonModule(CommandService service, Random random, IConfigurationRoot config)
 		{
 			_service = service;
 			_config = config;
@@ -37,6 +46,7 @@ namespace TastyBot.HpDungeon
 			fileManager.Init();
 			crafter = new HpCrafting();
 			Container.LoadItems();
+
 		}
 
 		/// <summary>
@@ -45,40 +55,129 @@ namespace TastyBot.HpDungeon
 		/// <returns>A new player, or auto loads a player</returns>
 		private async Task<HpPlayer> GetPlayer(IUser user)
 		{
+			//TODO: Find a better way that uses time or something. Every 5'th message is kinda not that good
+			savecounter++;
+			if (savecounter > Convert.ToInt32(_config["savecounter"]))
+			{
+				SaveAllPlayers();
+				savecounter = 0;
+			}
 			HpPlayer p = null;
 
-			try
+			if (PlayerRamMemory.ContainsKey(user.Id.ToString())) //if it already is loaded
 			{
-				p = (await fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
+				p = PlayerRamMemory[user.Id.ToString()] ;
 			}
-			catch (Exception e)
+			else //fetch from slow storage
 			{
-				Console.WriteLine(e.Message + " Earan fucked up somewhere :)"); //this means Earan fucked up
-			}
-
-			//if it's null, we make a new one, and init it
-			if (p == null)
-			{
-				Console.WriteLine("New player: " + user.Id.ToString());
-				p = new HpPlayer(user.Id.ToString())
+				try
 				{
-					ID = user.Id.ToString(),
-					Skills = new Dictionary<string, int>()
-				};
-				await SavePlayer(p); //make base save aswell.
+					p = (await fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message + " Earan fucked up somewhere :)"); //this means Earan fucked up
+				}
+
+				//if it's null, we make a new one, and init it
+				if (p == null)
+				{
+					Console.WriteLine("New player: " + user.Id.ToString());
+					p = new HpPlayer(user.Id.ToString())
+					{
+						ID = user.Id.ToString(),
+						Skills = new Dictionary<string, int>()
+					};
+					SavePlayerDisk(p); //make base save aswell.
+				}
+				//add to ram
+				PlayerRamMemory.Add(user.Id.ToString(), p);
 			}
+		
 			return p;
 		}
 
-		private async Task SavePlayer(HpPlayer player)
+
+		//TODO Move this to a different class
+		/// <summary>
+		/// Stores the player in the ram module
+		/// </summary>
+		/// <param name="player">Target player to store</param>
+		/// <returns>Fuck all</returns>
+		private void SavePlayer(HpPlayer player)
+		{
+			if (PlayerRamMemory.ContainsKey(player.ID))
+				PlayerRamMemory[player.ID] = player;
+			else
+				PlayerRamMemory.Add(player.ID, player);
+		}
+
+		/// <summary>
+		/// Saves all players from ram to Disk
+		/// </summary>
+		/// <returns>Fuck all</returns>
+		private void SaveAllPlayers()
+		{
+			foreach (var p in PlayerRamMemory)
+			{
+				SavePlayerDisk(p.Value);
+			}
+			Console.WriteLine("All players saved");
+		}
+
+		/// <summary>
+		/// Stores a single player to disk from ram
+		/// </summary>
+		/// <param name="player">Target player</param>
+		/// <returns>Nothing at all</returns>
+		private void SavePlayerDisk(HpPlayer player)
 		{
 			//yes i'm this lazy
 			List<HpPlayer> p = new List<HpPlayer>
 			{
 				player
 			};
-			await fileManager.SaveData(p, player.ID);
+			fileManager.SaveData(p, player.ID);
 		}
+
+
+		#endregion
+
+		#region Commands
+		[Command("hpdsave")]
+		public async Task HpdSavePlayers()
+		{
+			if (Context.User.Id == 83183880869253120)
+			{
+				SaveAllPlayers();
+				savecounter = 0;
+				await ReplyAsync("saved.");
+			}
+			else
+				await ReplyAsync("ask mik to run it. as this is global save.");
+		}
+
+		[Command("agility")]
+		[Summary("train agility, the skill does nothing atm")]
+		public async Task Agility([Remainder] string trashargs = null)
+		{
+			HpPlayer p = await GetPlayer(Context.User);
+
+			int xpgained = _random.Next(10, 200);
+			bool levelup = p.AddXP("agility",xpgained );                             //Add the gained xp
+
+			SavePlayer(p);
+
+			StringBuilder response = new StringBuilder();
+			response.Append($"You did some running and gained {xpgained}xp");
+			if (levelup)
+				response.Append($"\r\nYou gained a **Agility level!** \r\n Your level is now **{p.GetSkillLevel("agility")}**");
+
+			await ReplyAsync(response.ToString());
+
+
+		}
+
 
 		[Command("mine")]
 		[Summary("Go gather ores")]
@@ -92,44 +191,41 @@ namespace TastyBot.HpDungeon
 				orename = orename.ToLower();                            //Make it all lowercase for key
 				try
 				{
-					Container.OreList.TryGetValue(orename, out item);	//Try to get what the player wants
+					Container.OreList.TryGetValue(orename, out item);   //Try to get what the player wants
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e.Message);                       //truncate mistakes
 				}
-				if (item != null && item.ItemLevel > p.GetSkillLevel("mining"))	//if it fails, well then we can't go on anyways
-						item = null;
-																		//we should inform them but we're not for now
+				if (item != null && item.ItemLevel > p.GetSkillLevel("mining")) //if it fails, well then we can't go on anyways
+					item = null;
+				//we should inform them but we're not for now
 			}
 
 			if (item == null)                                           //if it fails, get a random item
 			{
-																		//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
+				//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
 				item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
 				while (item.ItemLevel > p.GetSkillLevel("mining"))
 					item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
 			}
 
 			p.AddItem(item);
-			bool levelup = false;                                       //Prepare to check if they got a lvl
-			int currlvl = p.GetSkillLevel("mining");                    //Remember current lvl
-			p.AddXP("mining", item.ItemXp);                             //Add the gained xp
-			if (currlvl < p.GetSkillLevel("mining"))					//Check if new current lvl is higher than old
-				levelup = true;                                         //If yes, then they've gained a lvl
+			bool levelup = p.AddXP("mining", item.ItemXp);              //Add the gained xp
 
-			await SavePlayer(p);                                        //Now we save the player
+			SavePlayer(p);                                              //Now we save the player to ram
 																		//And compile the resposne
-			string response = $"You've gone mining, and got an **{item.ItemName}** \r\n" +
-							  $"and gained {item.ItemXp}xp";
+			StringBuilder response = new StringBuilder();
+			response.Append($"You've gone mining, and got an **{item.ItemName}** \r\nand gained {item.ItemXp}xp");
 			if (levelup)
-				response += $"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**";
+				response.Append($"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**");
 
-			await ReplyAsync(response);
+			await ReplyAsync(response.ToString());
 		}
 
 		[Command("inventory")]
 		[Alias("inv")]
+		[Summary("Get your inventory")]
 		public async Task Inventory()
 		{
 			HpPlayer p = await GetPlayer(Context.User);
@@ -155,6 +251,7 @@ namespace TastyBot.HpDungeon
 		}
 
 		[Command("Craft")]
+		[Summary("Craft an object")]
 		public async Task Craft([Remainder]string craft)
 		{
 			//check if whatever the fuck they typed, is a key
@@ -163,8 +260,6 @@ namespace TastyBot.HpDungeon
 				var i = Container.Recepies[craft.ToLower()];
 				HpPlayer p = await GetPlayer(Context.User);
 
-
-				//TODO function this into the addXP
 				bool levelup = false;                                      //Prepare to check if they got a lvl
 				int currlvl = p.GetSkillLevel(i.Skill);						//Remember current lvl
 				var crafted = crafter.Craft(craft.ToLower(), ref p);
@@ -179,7 +274,7 @@ namespace TastyBot.HpDungeon
 					response.Append($"You made a {craft} and gained {i.Result.ItemXp} {i.Skill} XP");
 					if (levelup)
 						response.Append($"\nYou gained a **{i.Skill} LEVEL!**");
-					await SavePlayer(p);
+					SavePlayer(p);
 					await ReplyAsync(response.ToString());
 				}
 				else if (!crafted && p.GetSkillLevel(i.Skill) <= i.Result.ItemLevel)
@@ -221,5 +316,7 @@ namespace TastyBot.HpDungeon
 			});
 			await ReplyAsync("", false, builder.Build());
 		}
-	}
+
+        #endregion
+    }
 }
