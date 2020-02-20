@@ -9,6 +9,9 @@ using TastyBot.Utility;
 
 namespace TastyBot.Services
 {
+	/// <summary>
+	/// A Service that handles the FHP basics
+	/// </summary>
 	public class HeadpatService
 	{
 		private Dictionary<ulong, FhpUser> _Users;
@@ -36,6 +39,11 @@ namespace TastyBot.Services
 			FileManager.SaveFhpUserData(_Users.Values.ToList());
 		}
 
+		/// <summary>
+		/// Returns the <see cref="FhpUser"/> for the given discord <paramref name="user"/>. If the corresponding <see cref="FhpUser"/> doesn't exist, it is created.
+		/// </summary>
+		/// <param name="user">The discord user to look up</param>
+		/// <returns></returns>
 		public FhpUser GetUser(IUser user)
 		{
 			if (!_Users.ContainsKey(user.Id))
@@ -52,11 +60,18 @@ namespace TastyBot.Services
 			return _Users[user.Id];
 		}
 
+		/// <summary>
+		/// Saves the current <see cref="FhpUser"/>s
+		/// </summary>
 		public void Save()
 		{
 			FileManager.SaveFhpUserData(_Users.Values.ToList());
 		}
 
+		/// <summary>
+		/// Returns a list ordered by descending wallet amount.
+		/// </summary>
+		/// <returns></returns>
 		public List<FhpUser> GetLeaderboard()
 		{
 			List<FhpUser> users = _Users.Values.ToList();
