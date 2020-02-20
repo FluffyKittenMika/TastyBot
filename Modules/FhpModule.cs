@@ -53,12 +53,10 @@ namespace TastyBot.Modules
 
 		[Command("pat")]
 		[Summary("headpat another person")]
-		public async Task Pat(IUser receiveUser)
+		public async Task Pat(IUser receiveUser, uint amount = 1)
 		{
 			FhpUser sender = _HeadpatService.GetUser(Context.User);
 			FhpUser receiver = _HeadpatService.GetUser(receiveUser);
-
-			bool generated = false;
 
 			if (sender.Wallet <= 0)
 			{
@@ -66,24 +64,21 @@ namespace TastyBot.Modules
 				return;
 			}
 
-			sender.Wallet -= 1;
-			receiver.Wallet += 1;
+			sender.Wallet -= amount;
+			receiver.Wallet += amount;
 
-			if (generated)
-			{
-				await ReplyAsync($"{sender.Name} got lucky and generated one FHP for {receiver.Name}");
-			}
-			else
-			{
-				await ReplyAsync($"{sender.Name} patted {receiver.Name} and sent over 1FHP");
-			}
+			await ReplyAsync($"{sender.Name} patted {receiver.Name} and sent over {amount}FHP");
 		}
 
 		[Command("wallet")]
 		[Summary("show your current wallet balance")]
-		public async Task Wallet()
+		public async Task Wallet(IUser otheruser = null)
 		{
 			FhpUser user = _HeadpatService.GetUser(Context.User);
+			if (otheruser != null)
+			{
+				user = _HeadpatService.GetUser(otheruser);
+			}
 			Random rColor = new Random((int)user.Wallet);
 			var builder = new EmbedBuilder()
 			{
@@ -93,6 +88,8 @@ namespace TastyBot.Modules
 			builder.AddField("FHP", user.Wallet);
 			await ReplyAsync(embed: builder.Build());
 		}
+
+
 
 		[Command("leaderboard")]
 		[Summary("shows the current FHP leaderboard")]
@@ -107,10 +104,14 @@ namespace TastyBot.Modules
 				Title = "Leaderboard"
 			};
 
-			foreach (var item in users)
+			string leaderboard = string.Empty;
+			for (int i = 0; i < users.Count; i++)
 			{
-				builder.AddField(item.Name, item.Wallet);
+				leaderboard += $"{i + 1}. {users[i].Name} {users[i].Wallet} FHP\r\n";
 			}
+			leaderboard = leaderboard.TrimEnd('\n', '\r');
+
+			builder.AddField("test", leaderboard);
 			await ReplyAsync(embed: builder.Build());
 		}
 	}
