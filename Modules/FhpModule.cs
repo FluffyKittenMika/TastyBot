@@ -11,6 +11,9 @@ using TastyBot.Services;
 
 namespace TastyBot.Modules
 {
+	/// <summary>
+	/// The Module that handles all FHP related interactions
+	/// </summary>
 	[Name("FutureHeadpat")]
 	public class FhpModule : ModuleBase<SocketCommandContext>
 	{
@@ -21,6 +24,12 @@ namespace TastyBot.Modules
 			_HeadpatService = headpatService;
 		}
 
+		/// <summary>
+		/// Enables Earan to hand out freshly printed headpats
+		/// </summary>
+		/// <param name="receiveUser">The user that will receive the FHP</param>
+		/// <param name="amount">The amount of FHP the user will receive.</param>
+		/// <returns></returns>
 		[Command("give")]
 		[Summary("Hands out headpats to the user")]
 		public async Task Give(IUser receiveUser, long amount)
@@ -39,18 +48,29 @@ namespace TastyBot.Modules
 			await ReplyAsync($"{sender.Name} gave {receiver.Name} {amount}FHP");
 		}
 
+		/// <summary>
+		/// Saves the dictionary to the json file.
+		/// </summary>
+		/// <returns></returns>
 		[Command("save")]
 		[Summary("Hands out headpats to the user")]
 		public async Task Save()
 		{
-			if (Context.User.Id != 277038010862796801)
+			if (Context.User.Id != 277038010862796801 || Context.User.Id != 83183880869253120)
 			{
 				await ReplyAsync("NO!");
 				return;
 			}
 			_HeadpatService.Save();
+			await ReplyAsync("Saved");
 		}
 
+		/// <summary>
+		/// Gives FHP from one user to another user
+		/// </summary>
+		/// <param name="receiveUser">The user that receives the headpats</param>
+		/// <param name="amount">The amount of headpats to transfer</param>
+		/// <returns></returns>
 		[Command("pat")]
 		[Summary("headpat another person")]
 		public async Task Pat(IUser receiveUser, uint amount = 1)
@@ -58,9 +78,9 @@ namespace TastyBot.Modules
 			FhpUser sender = _HeadpatService.GetUser(Context.User);
 			FhpUser receiver = _HeadpatService.GetUser(receiveUser);
 
-			if (sender.Wallet <= 0)
+			if (sender.Wallet < amount)
 			{
-				await ReplyAsync("Sadly you have no headpats to give :sob:");
+				await ReplyAsync("Sadly you don't have enough headpats :sob:");
 				return;
 			}
 
@@ -70,6 +90,11 @@ namespace TastyBot.Modules
 			await ReplyAsync($"{sender.Name} patted {receiver.Name} and sent over {amount}FHP");
 		}
 
+		/// <summary>
+		/// Prints out the current wallet either for the invoking, or the mentioned user
+		/// </summary>
+		/// <param name="otheruser">The user the wallet should be printed out for. If null the wallet of the invoking user is printed</param>
+		/// <returns></returns>
 		[Command("wallet")]
 		[Summary("show your current wallet balance")]
 		public async Task Wallet(IUser otheruser = null)
@@ -90,7 +115,10 @@ namespace TastyBot.Modules
 		}
 
 
-
+		/// <summary>
+		/// Prints out a leaderboard with all people that currently are tracked by the FHP Module
+		/// </summary>
+		/// <returns></returns>
 		[Command("leaderboard")]
 		[Summary("shows the current FHP leaderboard")]
 		public async Task Leaderboard()
