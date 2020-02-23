@@ -1,32 +1,38 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.IO;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TastyBot.Utility;
+using Newtonsoft.Json;
 
 namespace TastyBot.Services
 {
 	class Startup
 	{
-		public IConfigurationRoot Configuration { get; }
-
-		public Startup(string[] args)
+		public Config Botconfig { get; }
+		public Startup()
 		{
-			var builder = new ConfigurationBuilder()        // Create a new instance of the config builder
-				.SetBasePath(AppContext.BaseDirectory)      // Specify the default location for the config file
-				.AddYamlFile("_config.yml");                // Add this (yaml encoded) file to the configuration
-			Configuration = builder.Build();                // Build the configuration
-			Console.WriteLine("PREFIX IS: " + Configuration["prefix"]);
+			//load config
+			try
+			{
+				Botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("No configuration file found, please create one, or the bot simply will not work.");
+			}
+			Console.WriteLine("PREFIX IS: " + Botconfig.Prefix);
 		}
 
 		public static async Task RunAsync(string[] args)
 		{
-			var startup = new Startup(args);
+			var startup = new Startup();
 			await startup.RunAsync();
 		}
 
@@ -63,7 +69,7 @@ namespace TastyBot.Services
 			.AddSingleton<PictureService>()         // Add the picture service, it depends on HTTP
 			.AddSingleton<HeadpatService>()
 			.AddSingleton<RainbowService>()         // Add Rainbow Service, not sure if it needs to be one
-			.AddSingleton(Configuration);           // Add the configuration to the collection
+			.AddSingleton(Botconfig);				// Add the configuration to the collection
 		}
 	}
 }

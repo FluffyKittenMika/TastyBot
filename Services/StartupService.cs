@@ -1,7 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
+
+using TastyBot.Utility;
+
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace TastyBot.Services
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
-        private readonly IConfigurationRoot _config;
+        private readonly Config _config;
 
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
-        public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigurationRoot config)
+        public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, Config config)
         {
             _provider = provider;
             _config = config;
@@ -26,9 +28,9 @@ namespace TastyBot.Services
 
         public async Task StartAsync()
         {
-            string discordToken = _config["tokens:discord"];                                // Get the discord token from the config file
+            string discordToken = _config.DiscordToken;                                     // Get the discord token from the config file
             if (string.IsNullOrWhiteSpace(discordToken))
-                throw new Exception("Please enter your bot's token into the `_config.yml` file found in the applications root directory.");
+                throw new Exception("Please enter your bot's token into the `config.json` file found in the applications root directory.");
 
             await _discord.LoginAsync(TokenType.Bot, discordToken);                         // Login to discord
             await _discord.StartAsync();                                                    // Connect to the websocket

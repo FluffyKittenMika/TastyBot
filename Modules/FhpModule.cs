@@ -8,6 +8,7 @@ using Discord.Commands;
 
 using TastyBot.FutureHeadPats;
 using TastyBot.Services;
+using TastyBot.Utility;
 
 namespace TastyBot.Modules
 {
@@ -160,7 +161,6 @@ namespace TastyBot.Modules
 		public async Task Leaderboard()
 		{
 			List<FhpUser> users = _HeadpatService.GetLeaderboard();
-			StringBuilder leaderboardBuilder = new StringBuilder();
 
 			var builder = new EmbedBuilder()
 			{

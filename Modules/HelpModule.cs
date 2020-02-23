@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.Configuration;
+using TastyBot.Utility;
 
 namespace TastyBot.Modules
 {
@@ -13,18 +13,19 @@ namespace TastyBot.Modules
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
-        private readonly IConfigurationRoot _config;
+        private readonly Config _config;
 
-        public HelpModule(CommandService service, IConfigurationRoot config)
+        public HelpModule(CommandService service, Config config)
         {
             _service = service;
             _config = config;
         }
 
         [Command("help")]
+        [Summary("Gets help for specified command, or lists all commands")]
         public async Task HelpAsync()
         {
-            string prefix = _config["prefix"];
+            string prefix = _config.Prefix;
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
@@ -56,6 +57,7 @@ namespace TastyBot.Modules
         }
 
         [Command("help")]
+        [Summary("Gets help for specified command, or lists all commands")]
         public async Task HelpAsync(string command)
         {
             var result = _service.Search(Context, command);
@@ -66,7 +68,7 @@ namespace TastyBot.Modules
                 return;
             }
 
-            string prefix = _config["prefix"];
+            string prefix = _config.Prefix;
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),

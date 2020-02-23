@@ -113,8 +113,7 @@ namespace TastyBot.Utility
 			{
 				return new List<FhpUser>();
 			}
-			string json = string.Empty;
-			json = File.ReadAllText(fi.FullName);
+			string json = File.ReadAllText(fi.FullName);
 
 			if (string.IsNullOrWhiteSpace(json))
 			{

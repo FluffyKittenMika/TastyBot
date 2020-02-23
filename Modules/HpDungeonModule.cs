@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
-using Microsoft.Extensions.Configuration;
-
 using TastyBot.Utility;
 
 namespace TastyBot.HpDungeon
@@ -20,7 +18,7 @@ namespace TastyBot.HpDungeon
 	{
         #region Definitions
         private readonly CommandService _service;
-		private readonly IConfigurationRoot _config;
+		private readonly Config _config;
 		private readonly FileManager fileManager;
 		private readonly Random _random;
 		private readonly HpCrafting crafter;
@@ -37,7 +35,7 @@ namespace TastyBot.HpDungeon
         /// </summary>
         /// <param name="service">Relevant service</param>
         /// <param name="config">Relevant config</param>
-        public HpDungeonModule(CommandService service, Random random, IConfigurationRoot config)
+        public HpDungeonModule(CommandService service, Random random, Config config)
 		{
 			_service = service;
 			_config = config;
@@ -57,7 +55,7 @@ namespace TastyBot.HpDungeon
 		{
 			//TODO: Find a better way that uses time or something. Every 5'th message is kinda not that good
 			savecounter++;
-			if (savecounter > Convert.ToInt32(_config["savecounter"]))
+			if (savecounter > Convert.ToInt32(_config.Savecounter))
 			{
 				SaveAllPlayers();
 				savecounter = 0;
@@ -163,8 +161,8 @@ namespace TastyBot.HpDungeon
 		{
 			HpPlayer p = await GetPlayer(Context.User);
 
-			int xpgained = _random.Next(10, 200);
-			bool levelup = p.AddXP("agility",xpgained );                             //Add the gained xp
+			int xpgained = _random.Next(10, 200);									//random xp amount
+			bool levelup = p.AddXP("agility",xpgained );                            //Add the gained xp
 
 			SavePlayer(p);
 

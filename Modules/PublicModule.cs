@@ -1,7 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.Configuration;
+
 using TastyBot.Services;
+using TastyBot.Utility;
+
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,17 +21,15 @@ namespace TastyBot.Modules
 
         
         private readonly CommandService _service;
-        private readonly IConfigurationRoot _config;
 
-        public PublicModule(CommandService service, IConfigurationRoot config)
+        public PublicModule(CommandService service)
         {
             _service = service;
-            _config = config;
         }
 
+		//TODO: MOVE THIS TO ITS OWN CLASS
 		[Command("cat", true)]
 		[Summary(" sends a pic of a cat\n\nFor a cat pic write:\n!cat\n\nfor a cat gif write either:\n!cat g or !cat gif\n\nfor a cat pic with text write:\n!cat t {some text here}\n\nfor a cat pic with colored text write:\n!cat t {some text here} c {color name}\n\nfor a cat pic with size adjustments and color write:\n!cat t {some text here} c {color name} s {size number}")]
-
 		public async Task CatAsync(params string[] args)
 		{
 			

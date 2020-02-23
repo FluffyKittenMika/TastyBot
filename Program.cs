@@ -8,7 +8,6 @@ using Discord.Commands;
 using TastyBot.Services;
 using System.IO;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 
 namespace TastyBot
 {
