@@ -81,7 +81,7 @@ namespace TastyBot.Modules
 		/// </summary>
 		/// <returns></returns>
 		[Command("save")]
-		[Summary("Isntantly saves the current users")]
+		[Summary("Instantly saves the current users")]
 		public async Task Save()
 		{
 			if (Context.User.Id == 277038010862796801 || Context.User.Id == 83183880869253120)
