@@ -48,21 +48,51 @@ namespace TastyBot.Modules
 			await ReplyAsync($"{sender.Name} gave {receiver.Name} {amount}FHP");
 		}
 
+
+		/// <summary>
+		/// Deletes the wallet of <paramref name="deleteUser"/> if the wallet exists
+		/// </summary>
+		/// <param name="deleteUser">The user which's wallet shall be deleted</param>
+		/// <returns></returns>
+		[Command("delete")]
+		[Summary("Deletes the wallet of the tagged user, if the user has a wallet")]
+		public async Task Delete(IUser deleteUser)
+		{
+			if (Context.User.Id == 277038010862796801 || Context.User.Id == 83183880869253120)
+			{
+				if (_HeadpatService.DeleteUser(deleteUser))
+				{
+					await ReplyAsync("Wallet deleted");
+				}
+				else
+				{
+					await ReplyAsync("User has no wallet ");
+				}
+			}
+			else
+			{
+				await ReplyAsync("NO!");
+			}
+		}
+
+
 		/// <summary>
 		/// Saves the dictionary to the json file.
 		/// </summary>
 		/// <returns></returns>
 		[Command("save")]
-		[Summary("Hands out headpats to the user")]
+		[Summary("Isntantly saves the current users")]
 		public async Task Save()
 		{
-			if (Context.User.Id != 277038010862796801 || Context.User.Id != 83183880869253120)
+			if (Context.User.Id == 277038010862796801 || Context.User.Id == 83183880869253120)
+			{
+				_HeadpatService.Save();
+				await ReplyAsync("Saved");
+			}
+			else
 			{
 				await ReplyAsync("NO!");
-				return;
 			}
-			_HeadpatService.Save();
-			await ReplyAsync("Saved");
 		}
 
 		/// <summary>
@@ -75,6 +105,12 @@ namespace TastyBot.Modules
 		[Summary("headpat another person")]
 		public async Task Pat(IUser receiveUser, uint amount = 1)
 		{
+			if (receiveUser.Id == 669323971933503490)
+			{
+				await ReplyAsync("Can't pat the bot! Baka!");
+				return;
+			}
+
 			FhpUser sender = _HeadpatService.GetUser(Context.User);
 			FhpUser receiver = _HeadpatService.GetUser(receiveUser);
 
