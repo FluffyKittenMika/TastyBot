@@ -105,9 +105,9 @@ namespace TastyBot.Modules
 		[Summary("headpat another person")]
 		public async Task Pat(IUser receiveUser, uint amount = 1)
 		{
-			if (receiveUser.Id == 669323971933503490)
+			if (receiveUser.IsBot)
 			{
-				await ReplyAsync("Can't pat the bot! Baka!");
+				await ReplyAsync("Can't pat a bot! Baka!");
 				return;
 			}
 
