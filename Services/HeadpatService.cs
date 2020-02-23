@@ -90,7 +90,7 @@ namespace TastyBot.Services
 		public List<FhpUser> GetLeaderboard()
 		{
 			List<FhpUser> users = _Users.Values.ToList();
-			return users.Where(x => x.Wallet > 0).OrderByDescending(x => x.Wallet).ToList();
+			return users.Where(x => x.Wallet != 0).OrderByDescending(x => x.Wallet).ToList();
 		}
 	}
 }
