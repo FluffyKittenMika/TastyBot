@@ -61,6 +61,21 @@ namespace TastyBot.Services
 		}
 
 		/// <summary>
+		/// Deletes the wallet of the <paramref name="user"/> if the user has one.
+		/// </summary>
+		/// <param name="user">The user which's wallet is going to be deleted</param>
+		/// <returns></returns>
+		public bool DeleteUser(IUser user)
+		{
+			if (!_Users.ContainsKey(user.Id))
+			{
+				_Users.Remove(user.Id);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Saves the current <see cref="FhpUser"/>s
 		/// </summary>
 		public void Save()
@@ -75,7 +90,7 @@ namespace TastyBot.Services
 		public List<FhpUser> GetLeaderboard()
 		{
 			List<FhpUser> users = _Users.Values.ToList();
-			return users.OrderByDescending(x => x.Wallet).ToList();
+			return users.Where(x => x.Wallet > 0).OrderByDescending(x => x.Wallet).ToList();
 		}
 	}
 }
