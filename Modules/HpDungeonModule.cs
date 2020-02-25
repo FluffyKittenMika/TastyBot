@@ -292,9 +292,11 @@ namespace TastyBot.HpDungeon
 
 		[Command("skills")]
 		[Alias("skill")]
-		public async Task Skill()
+		public async Task Skill(IUser otheruser = null)
 		{
 			HpPlayer p = await GetPlayer(Context.User);
+			if (otheruser != null)
+				p = await GetPlayer(otheruser);
 
 			var builder = new EmbedBuilder()
 			{
