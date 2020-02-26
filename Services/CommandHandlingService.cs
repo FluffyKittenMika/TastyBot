@@ -50,6 +50,45 @@ namespace TastyBot.Services
 
             var context = new SocketCommandContext(_discord, msg);      // Create the command context
 
+            if (msg.Content.Contains("debug") || msg.Content.Contains("Debug"));
+            {
+                if (msg.Author.Id == 83183880869253120 || msg.Author.Id == 277038010862796801 || msg.Author.Id == 457461440429817877)
+                {
+                    string SMsg = Convert.ToString(msg);
+                    int SMsgL = SMsg.Length;
+                    string STimeS = Convert.ToString(SMsg);
+                    if (SMsgL == 8)
+                    {
+                        
+                        int STimeSI = Convert.ToInt32(STimeS[7]);
+                        await Task.Delay(STimeSI * 1000);
+                    }
+                    else
+                    {
+                        if (SMsgL == 9)
+                        {
+                            string STimeSI = $"{STimeS[7]}{STimeS[8]}";
+                            int STimeSII = Convert.ToInt32(STimeSI);
+                            await Task.Delay(STimeSII * 1000);
+                        }
+                        else
+                        {
+                            if (SMsgL == 10)
+                            {
+                                string STimeSI = $"{STimeS[7]}{STimeS[8]}{STimeS[9]}";
+                                int STimeSII = Convert.ToInt32(STimeSI);
+                                if (!((STimeSII / 60) >= 2))
+                                {
+                                    await Task.Delay(STimeSII * 1000);
+                                }
+                                
+                                
+                            }
+                        }
+                    }
+                }
+            }
+            
             int argPos = 0;                                             // Check if the message has a valid command prefix
             if (msg.HasStringPrefix(_config["prefix"], ref argPos) || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
             {
