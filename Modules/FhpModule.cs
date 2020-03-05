@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Discord;
@@ -8,7 +8,6 @@ using Discord.Commands;
 
 using TastyBot.FutureHeadPats;
 using TastyBot.Services;
-using TastyBot.Utility;
 
 namespace TastyBot.Modules
 {
@@ -112,6 +111,12 @@ namespace TastyBot.Modules
 				return;
 			}
 
+			if (receiveUser.Id == 277038010862796801)
+			{
+				await ReplyAsync("You cannot give headpats to the one giving out the headpats");
+				return;
+			}
+
 			FhpUser sender = _HeadpatService.GetUser(Context.User);
 			FhpUser receiver = _HeadpatService.GetUser(receiveUser);
 
@@ -175,7 +180,7 @@ namespace TastyBot.Modules
 			}
 			leaderboard = leaderboard.TrimEnd('\n', '\r');
 
-			builder.AddField("test", leaderboard);
+			builder.AddField($"Total FHP: {users.Sum(x => x.Wallet)}", leaderboard);
 			await ReplyAsync(embed: builder.Build());
 		}
 	}
