@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -166,21 +167,28 @@ namespace TastyBot.Modules
 		public async Task Leaderboard()
 		{
 			List<FhpUser> users = _HeadpatService.GetLeaderboard();
+			List<Embed> embeds = new List<Embed>();
 
 			var builder = new EmbedBuilder()
 			{
 				Color = new Color(0, 255, 0),
-				Title = "Leaderboard"
+				Title = "Leaderboard",
+				Description = $"Total FHP: {users.Sum(x => x.Wallet)}"
 			};
 
-			string leaderboard = string.Empty;
+			StringBuilder leaderboard = new StringBuilder();
+			string current = string.Empty;
 			for (int i = 0; i < users.Count; i++)
 			{
-				leaderboard += $"{i + 1}. {users[i].Name} {users[i].Wallet} FHP\r\n";
+				current = $"{i + 1}. {users[i].Name} {users[i].Wallet} FHP";
+				if (leaderboard.Length + current.Length >= 1024)
+				{
+					builder.AddField((builder.Fields.Count + 1).ToString(), leaderboard.ToString().TrimEnd('\n', '\r'));
+					leaderboard.Clear();
+				}
+				leaderboard.AppendLine(current);
 			}
-			leaderboard = leaderboard.TrimEnd('\n', '\r');
-
-			builder.AddField($"Total FHP: {users.Sum(x => x.Wallet)}", leaderboard);
+			builder.AddField((builder.Fields.Count + 1).ToString(), leaderboard.ToString().TrimEnd('\n', '\r'));
 			await ReplyAsync(embed: builder.Build());
 		}
 	}
