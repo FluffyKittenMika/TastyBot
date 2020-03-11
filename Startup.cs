@@ -1,15 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.IO;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
-using TastyBot.Utility;
+
 using Newtonsoft.Json;
+
+using TastyBot.Utility;
 
 namespace TastyBot.Services
 {
@@ -67,9 +69,8 @@ namespace TastyBot.Services
 			.AddSingleton<Random>()                 // Add random to the collection
 			.AddSingleton<HttpClient>()             // Add a Http client so we can just keep one ready
 			.AddSingleton<PictureService>()         // Add the picture service, it depends on HTTP
-			.AddSingleton<HeadpatService>()
 			.AddSingleton<RainbowService>()         // Add Rainbow Service, not sure if it needs to be one
-			.AddSingleton(Botconfig);				// Add the configuration to the collection
+			.AddSingleton(Botconfig);               // Add the configuration to the collection
 		}
 	}
 }
