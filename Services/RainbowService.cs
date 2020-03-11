@@ -16,6 +16,7 @@ namespace TastyBot.Services
 		private readonly RestGuild _tastyGuild;
 		private readonly HashSet<ulong> _tastyUsers = new HashSet<ulong>();
 		private readonly RestRole _rainbowRole;
+		private readonly RestRole TeamBlue;
 
 		public RainbowService(DiscordSocketClient discord, Random random)
 		{
@@ -27,6 +28,7 @@ namespace TastyBot.Services
 
 			_tastyGuild = _discord.Rest.GetGuildAsync(656909209547309062).Result;
 			_rainbowRole = _tastyGuild.GetRole(671063987999342654);
+			TeamBlue = _tastyGuild.GetRole(656953375862161418);
 
 			InitHashset().Wait();
 
@@ -137,8 +139,16 @@ namespace TastyBot.Services
 			{
 				x.Color = Rainbow();
 			});
+			await TeamBlue.ModifyAsync(x =>
+			{
+				x.Color = BlueShades();
+			});
 		}
-
+		private Color BlueShades()
+		{
+			int b = _random.Next(1, 255); //starting from 1 cuz if its 0 the discord decides to use another role color for the name, dunno y;
+			return new Color(0, 0, b);
+		}
 		private Color Rainbow()
 		{
 			int r = _random.Next(0, 255);
