@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using TastyBot.FutureHeadPats;
+
 namespace TastyBot.Utility
 {
 	/// <summary>
@@ -102,5 +104,42 @@ namespace TastyBot.Utility
 				return lstData;
 			});
 		}
+
+
+		public static List<FhpUser> LoadFhpUserData()
+		{
+			FileInfo fi = new FileInfo(Path.Combine(saveDirectory.FullName, $"FhpUsers.json"));
+			if (!fi.Exists)
+			{
+				return new List<FhpUser>();
+			}
+			string json = File.ReadAllText(fi.FullName);
+
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return new List<FhpUser>();
+			}
+			try
+			{
+				List<FhpUser> obj = JsonConvert.DeserializeObject<List<FhpUser>>(json);
+				return obj;
+			}
+			catch (Exception)
+			{
+				return new List<FhpUser>();
+			}
+		}
+
+		public static void SaveFhpUserData(List<FhpUser> users)
+		{
+			string json = JsonConvert.SerializeObject(users, new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+
+			DirectoryInfo StoragePath = new DirectoryInfo(saveDirectory.FullName);
+			if (!StoragePath.Exists)
+				StoragePath.Create();
+			File.WriteAllText(Path.Combine(StoragePath.FullName, $"FhpUsers.json"), json);
+		}
+
+
 	}
 }
