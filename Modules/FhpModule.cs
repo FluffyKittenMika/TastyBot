@@ -37,7 +37,7 @@ namespace TastyBot.Modules
 		{
 			if (Context.User.Id != 277038010862796801)
 			{
-				await ReplyAsync("NO!");
+				await ReplyAsync("Only the Headpat overlord can use this ancient spell");
 				return;
 			}
 
@@ -121,6 +121,12 @@ namespace TastyBot.Modules
 			FhpUser sender = _HeadpatService.GetUser(Context.User);
 			FhpUser receiver = _HeadpatService.GetUser(receiveUser);
 
+			if (amount == 0)
+			{
+				await ReplyAsync($"<@{sender.Id}> tried to pat <@{receiver.Id}> but lacked the resolve to do so.");
+				return;
+			}
+
 			if (sender.Wallet < amount)
 			{
 				await ReplyAsync("Sadly you don't have enough headpats :sob:");
@@ -130,7 +136,7 @@ namespace TastyBot.Modules
 			sender.Wallet -= amount;
 			receiver.Wallet += amount;
 
-			await ReplyAsync($"{sender.Name} patted {receiver.Name} and sent over {amount}FHP");
+			await ReplyAsync($"<@{sender.Id}> patted <@{receiver.Id}> and sent over {amount}FHP");
 		}
 
 		/// <summary>
@@ -190,6 +196,26 @@ namespace TastyBot.Modules
 			}
 			builder.AddField((builder.Fields.Count + 1).ToString(), leaderboard.ToString().TrimEnd('\n', '\r'));
 			await ReplyAsync(embed: builder.Build());
+		}
+
+
+		[Command("explain")]
+		[Summary("Explains what FHP means")]
+		public async Task Explain()
+		{
+			await ReplyAsync("FHP stands for \"Future HeadPats\" and is the currency of this Server. " +
+				"\r\n\r\n" +
+				"At this moment you can do the following things:\r\n" +
+				"!wallet\t\t\t\t\t\t\t\t - check your own wallet\r\n" +
+				"!wallet @user\t\t\t\t\t- check somebody elses wallet\r\n" +
+				"!leaderboard\t\t\t\t\t  - see the current FHP leaderboard\r\n" +
+				"!pat @user <amount>\t - headpat other people and send them <amount> of headpats" +
+				"\r\n\r\n" +
+				"At some point in the future FHP holders will be able to turn them in for Headpats in VRC. There is no command for that yet.\r\n" +
+				"The current exchange rate is 1FHP = 1 minute of uninterrupted headpatting.\r\n" +
+				"The headpats are given out by <@277038010862796801>, up to 30 Minutes at a time." +
+				"\r\n\r\n" +
+				"Since <@277038010862796801> is a derp and gives out headpats for free to anyone showing up in VR, don't take this too seriously. It's just for funsies <:Tastyderp:669202378095984640>");
 		}
 	}
 }
