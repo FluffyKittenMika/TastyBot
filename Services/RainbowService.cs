@@ -40,7 +40,7 @@ namespace TastyBot.Services
             //The try is here to ignore anything that we don't give a shit about :)
             try
             {
-                foreach (SocketRole role in ((SocketGuildUser)message.Author).Roles)
+                foreach (IRole role in ((IGuildChannel)arg.Channel).Guild.Roles)
                 {
                     if (role.Name.ToLower() == "team rainbow")
                     {
