@@ -157,7 +157,7 @@ namespace TastyBot.HpDungeon
 
 		[Command("agility")]
 		[Summary("train agility, the skill does nothing atm")]
-		public async Task Agility([Remainder] string trashargs = null)
+		public async Task Agility()
 		{
 			HpPlayer p = await GetPlayer(Context.User);
 
@@ -235,10 +235,12 @@ namespace TastyBot.HpDungeon
 			};
 
 			StringBuilder sb = new StringBuilder();
+			sb.Append("```");
 
 			foreach (var item in p.Items) //TODO: Find a better padding method, discord hates whitespaces, and '\u202F' is not pretty..
 				sb.AppendFormat("{0,16} - {1,4} units - ILVL: {2,4}\n", item.Value.ItemName.PadRight(16, '	'), item.Value.ItemCount.ToString().PadRight(4, '	'), item.Value.ItemLevel.ToString().PadRight(4, '	'));
 
+			sb.Append("```");
 			builder.AddField(x =>
 			{
 				x.Name = "inv";

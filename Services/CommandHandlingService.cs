@@ -3,7 +3,10 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.IO;
 
 using TastyBot.Utility;
 
@@ -47,6 +50,27 @@ namespace TastyBot.Services
             if (msg.Author.Id == _discord.CurrentUser.Id) return;       // Ignore self when checking commands
 
             var context = new SocketCommandContext(_discord, msg);      // Create the command context
+
+
+
+            if (msg.Attachments.Any())                                  // Save all images for neural network usage if there's any attatched
+            {
+                foreach (var att in msg.Attachments)
+                {
+                    var ex = System.IO.Path.GetExtension(att.Url);
+                    if (ex == "png" || ex == "jpg")
+                    {
+                        using (WebClient client = new WebClient())
+                        {
+                            if (!Directory.Exists("./NeuralStorage/"))
+                                Directory.CreateDirectory("./NeuralStorage/");
+                                
+                            client.DownloadFileAsync(new Uri(att.Url), @"./NeuralStorage/" + att.Filename +"."+  ex);
+                        }
+                    }
+                }
+            }
+
 
             int argPos = 0;                                             // Check if the message has a valid command prefix
             if (msg.HasStringPrefix(_config.Prefix, ref argPos) || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
