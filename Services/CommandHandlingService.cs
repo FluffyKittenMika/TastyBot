@@ -55,17 +55,21 @@ namespace TastyBot.Services
 
             if (msg.Attachments.Any())                                  // Save all images for neural network usage if there's any attatched
             {
+                Console.WriteLine("Msg with attatchments found, processing");
                 foreach (var att in msg.Attachments)
                 {
-                    var ex = System.IO.Path.GetExtension(att.Url);
-                    if (ex == "png" || ex == "jpg")
+                    var ex = Path.GetExtension(att.Url);                                                     //Belive this works even with fancy args behind image
+                    Console.WriteLine("Checking " + att.Url + "  Extension: " + ex);
+
+                    if (ex == ".png" || ex == ".jpg")                                                        //Checks it
                     {
                         using (WebClient client = new WebClient())
                         {
                             if (!Directory.Exists("./NeuralStorage/"))
                                 Directory.CreateDirectory("./NeuralStorage/");
                                 
-                            client.DownloadFileAsync(new Uri(att.Url), @"./NeuralStorage/" + att.Filename +"."+  ex);
+                            client.DownloadFileAsync(new Uri(att.Url), @"./NeuralStorage/" + att.Filename);  //Downloads it
+                            Console.WriteLine(att.Filename + " Downloaded");
                         }
                     }
                 }
