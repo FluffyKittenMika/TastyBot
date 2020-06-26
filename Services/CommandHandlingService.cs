@@ -68,7 +68,7 @@ namespace TastyBot.Services
                             if (!Directory.Exists("./NeuralStorage/"))
                                 Directory.CreateDirectory("./NeuralStorage/");
                                 
-                            client.DownloadFileAsync(new Uri(att.Url), @"./NeuralStorage/" + att.Filename);  //Downloads it
+                            client.DownloadFileAsync(new Uri(att.Url), @"./NeuralStorage/" + DateTime.Now + att.Filename);  //Downloads it
                             Console.WriteLine(att.Filename + " Downloaded");
                         }
                     }

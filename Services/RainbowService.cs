@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace TastyBot.Services
@@ -10,11 +11,14 @@ namespace TastyBot.Services
     {
         private readonly DiscordSocketClient _discord;
         private readonly Random _random;
+        private readonly PictureService _p;
 
-        public RainbowService(DiscordSocketClient discord, Random random)
+        public RainbowService(DiscordSocketClient discord, Random random, PictureService P)
         {
             _discord = discord;
             _random = random;
+            _p = P;
+
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
             _discord.MessageReceived += MessageReceivedAsync;
 
@@ -54,6 +58,23 @@ namespace TastyBot.Services
             catch (Exception)
             { }
 
+
+            if (arg.Channel.Id == 726122591684657154)
+            {
+                PictureService p;
+                await arg.DeleteAsync();
+                await _p.GetCatPictureWTxtAsync(arg.Content);
+
+
+                if (arg.Content.Length > 0 && arg.Content != null)
+                {
+                    // Get a stream containing an image of a cat
+                    var stream = await _p.GetCatPictureWTxtAsync(arg.Content);
+                    // Streams must be seeked to their beginning before being uploaded!
+                    stream.Seek(0, SeekOrigin.Begin);
+                    await arg.Channel.SendFileAsync(stream, "cat.png");
+                }
+            }
             return;
         }
 
