@@ -32,7 +32,7 @@ namespace TastyBot.Modules
 		[Summary(" sends a pic of a cat\n\nFor a cat pic write:\n!cat\n\nfor a cat gif write either:\n!cat g or !cat gif\n\nfor a cat pic with text write:\n!cat t {some text here}\n\nfor a cat pic with colored text write:\n!cat t {some text here} c {color name}\n\nfor a cat pic with size adjustments and color write:\n!cat t {some text here} c {color name} s {size number}")]
 		public async Task CatAsync(params string[] args)
 		{
-			
+			await Context.Message.DeleteAsync();
 			if (args.Length == 0 || args == null)
 			{
 				// Get a stream containing an image of a cat
@@ -149,6 +149,7 @@ namespace TastyBot.Modules
 												var stream = await PictureService.GetCatPictureWTxtAsyncAndColor(TextVar, args.ElementAt(ColorPos), 50);
 												// Streams must be seeked to their beginning before being uploaded!
 												stream.Seek(0, SeekOrigin.Begin);
+												
 												await Context.Channel.SendFileAsync(stream, "cat.png");
 											}
 											
