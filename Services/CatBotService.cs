@@ -16,10 +16,8 @@ namespace TastyBot.Services
         {
             _discord = discord;
             _p = P;
-
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
             _discord.MessageReceived += MessageReceivedAsync;
-
         }
 
         private async Task MessageReceivedAsync(SocketMessage arg)
@@ -31,9 +29,9 @@ namespace TastyBot.Services
             //Catbot channel
             if (arg.Channel.Name.ToLower() == "catbot") //More generic
             {
-                PictureService p;
+                Console.WriteLine($"catbot:{message.Author} - {message.Content.Substring(15).ToLower()} - cattified :3"); //just to keep a basic console log
                 await arg.DeleteAsync();
-                await _p.GetCatPictureWTxtAsync(arg.Content);
+                await _p.GetCatPictureWTxtAsync(arg.Content); 
 
 
                 if (arg.Content.Length > 0 && arg.Content != null)
