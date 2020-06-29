@@ -58,7 +58,7 @@ namespace TastyBot.Services
 			}))
 			.AddSingleton(new CommandService(new CommandServiceConfig
 			{                                       // Add the command service to the collection
-				LogLevel = LogSeverity.Debug,     // Tell the logger to give Verbose amount of info
+				LogLevel = LogSeverity.Debug,		// Tell the logger to give Verbose amount of info
 				DefaultRunMode = RunMode.Async,     // Force all commands to run async by default
 			}))
 			.AddSingleton<CommandHandlingService>() // Add the Command handler to the collection
