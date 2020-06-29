@@ -58,24 +58,6 @@ namespace TastyBot.Services
             catch (Exception)
             { }
 
-
-            //Catbot channel
-            if (arg.Channel.Name.ToLower() == "catbot") //More generic
-            {
-                PictureService p;
-                await arg.DeleteAsync();
-                await _p.GetCatPictureWTxtAsync(arg.Content);
-
-
-                if (arg.Content.Length > 0 && arg.Content != null)
-                {
-                    // Get a stream containing an image of a cat
-                    var stream = await _p.GetCatPictureWTxtAsync(arg.Content);
-                    // Streams must be seeked to their beginning before being uploaded!
-                    stream.Seek(0, SeekOrigin.Begin);
-                    await arg.Channel.SendFileAsync(stream, "cat.png");
-                }
-            }
             return;
         }
 

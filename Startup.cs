@@ -69,6 +69,7 @@ namespace TastyBot.Services
 			.AddSingleton<PictureService>()         // Add the picture service, it depends on HTTP
 			.AddSingleton<HeadpatService>()
 			.AddSingleton<RainbowService>()         // Add Rainbow Service, not sure if it needs to be one
+			.AddSingleton<CatBotService>()			// Add Catbot chat channel service
 			.AddSingleton(Botconfig);				// Add the configuration to the collection
 		}
 	}
