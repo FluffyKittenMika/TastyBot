@@ -59,7 +59,8 @@ namespace TastyBot.Services
             { }
 
 
-            if (arg.Channel.Id == 726122591684657154)
+            //Catbot channel
+            if (arg.Channel.Name.ToLower() == "catbot") //More generic
             {
                 PictureService p;
                 await arg.DeleteAsync();
