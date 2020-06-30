@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using TastyBot.Contracts;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using System;
 
 namespace TastyBot.Services
 {
-    public class PictureService
+    public class PictureService : IPictureService
     {
         private readonly HttpClient _http;
         public static NekoClient NekoClient = new NekoClient("TastyBot");
@@ -16,6 +16,11 @@ namespace TastyBot.Services
         public PictureService(HttpClient http)
             => _http = http;
 
+        public async Task<Stream> GetCatPictureAsync()
+        {
+            var resp = await _http.GetAsync("https://cataas.com/cat");
+            return await resp.Content.ReadAsStreamAsync();
+        }
         public async Task<Stream> GetCatGifAsync()
         {
             var resp = await _http.GetAsync("https://cataas.com/cat/gif");

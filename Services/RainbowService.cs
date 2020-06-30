@@ -1,24 +1,22 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
+
+using TastyBot.Contracts;
+
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace TastyBot.Services
 {
-    public class RainbowService
+    public class RainbowService : IRainbowService
     {
         private readonly DiscordSocketClient _discord;
-        private readonly Random _random;
-        private readonly PictureService _p;
+        private readonly Random _random = new Random();
 
-        public RainbowService(DiscordSocketClient discord, Random random, PictureService P)
+        public RainbowService(DiscordSocketClient discord)
         {
             _discord = discord;
-            _random = random;
-            _p = P;
-
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
             _discord.MessageReceived += MessageReceivedAsync;
 
@@ -50,7 +48,7 @@ namespace TastyBot.Services
                     {
                         await role.ModifyAsync(x =>
                         {
-                            x.Color = Rainbow();
+                            x.Color = CreateRainbowColor();
                         });
                     }
                 }
@@ -61,13 +59,21 @@ namespace TastyBot.Services
             return;
         }
 
-        private Color Rainbow()
+        public Color CreateRainbowColor()
         {
-            int r = _random.Next(0, 255);
-            int g = _random.Next(0, 255);
-            int b = _random.Next(0, 255);
-            return new Color(r, g, b);
+            return new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
         }
 
+        public IEnumerable<Color> CreateRainbowColors(string textToRainbow)
+        {
+            List<Color> colors = new List<Color>();
+
+            foreach (char c in textToRainbow.ToCharArray())
+            {
+                colors.Add(new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255)));
+            }
+
+            return colors;
+        }
     }
 }

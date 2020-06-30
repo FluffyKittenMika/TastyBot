@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Nekos-Sharp" Version="3.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -13,18 +14,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="HpDungeon\HpDataFiles\crafting_smelting.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="HpDungeon\HpDataFiles\ores.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="config_example.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Authorization\Authorization.csproj" />
+    <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
+    <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
+    <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />
   </ItemGroup>
 
 </Project>

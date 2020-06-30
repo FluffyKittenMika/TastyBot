@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FileManager.Contracts;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,8 @@ using Discord;
 using Discord.Commands;
 
 using TastyBot.Utility;
+using Authorization.Contracts;
+using HeadpatDungeon.Modules;
 
 namespace TastyBot.HpDungeon
 {
@@ -16,11 +20,12 @@ namespace TastyBot.HpDungeon
     [Name("HpDungeon")]
 	public class HpDungeonModule : ModuleBase<SocketCommandContext>
 	{
-        #region Definitions
-        private readonly CommandService _service;
+		#region Definitions
+		private readonly HpDModule _module;
+		private readonly IFileManager _fileManager;
+		private readonly IPermissionHandler _permissionHandler;
 		private readonly Config _config;
-		private readonly FileManager fileManager;
-		private readonly Random _random;
+		private readonly Random _random = new Random();
 		private readonly HpCrafting crafter;
 
 		//Static retains memory. 
@@ -35,13 +40,14 @@ namespace TastyBot.HpDungeon
         /// </summary>
         /// <param name="service">Relevant service</param>
         /// <param name="config">Relevant config</param>
-        public HpDungeonModule(CommandService service, Random random, Config config)
+        public HpDungeonModule(IFileManager fileManager, IPermissionHandler permissionHandler, Config config)
 		{
-			_service = service;
+			_fileManager = fileManager;
+			_fileManager.Init();
+			_permissionHandler = permissionHandler;
+
 			_config = config;
-			_random = random;
-			fileManager = new FileManager();
-			fileManager.Init();
+			
 			crafter = new HpCrafting();
 			Container.LoadItems();
 
@@ -70,7 +76,7 @@ namespace TastyBot.HpDungeon
 			{
 				try
 				{
-					p = (await fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
+					p = (await _fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
 				}
 				catch (Exception e)
 				{
@@ -101,7 +107,7 @@ namespace TastyBot.HpDungeon
 		/// Stores the player in the ram module
 		/// </summary>
 		/// <param name="player">Target player to store</param>
-		/// <returns>Fuck all</returns>
+		/// <returns></returns>
 		private void SavePlayer(HpPlayer player)
 		{
 			if (PlayerRamMemory.ContainsKey(player.ID))
@@ -135,7 +141,7 @@ namespace TastyBot.HpDungeon
 			{
 				player
 			};
-			fileManager.SaveData(p, player.ID);
+			_fileManager.SaveData(p, player.ID);
 		}
 
 
@@ -145,6 +151,10 @@ namespace TastyBot.HpDungeon
 		[Command("hpdsave")]
 		public async Task HpdSavePlayers()
 		{
+			if (_permissionHandler.IsAdministrator(Context.User.Id))
+            {
+				
+            }
 			if (Context.User.Id == 83183880869253120)
 			{
 				SaveAllPlayers();
@@ -159,21 +169,7 @@ namespace TastyBot.HpDungeon
 		[Summary("train agility, the skill does nothing atm")]
 		public async Task Agility()
 		{
-			HpPlayer p = await GetPlayer(Context.User);
-
-			int xpgained = _random.Next(10, 200);									//random xp amount
-			bool levelup = p.AddXP("agility",xpgained );                            //Add the gained xp
-
-			SavePlayer(p);
-
-			StringBuilder response = new StringBuilder();
-			response.Append($"You did some running and gained {xpgained}xp");
-			if (levelup)
-				response.Append($"\r\nYou gained a **Agility level!** \r\n Your level is now **{p.GetSkillLevel("agility")}**");
-
-			await ReplyAsync(response.ToString());
-
-
+			
 		}
 
 
@@ -181,44 +177,7 @@ namespace TastyBot.HpDungeon
 		[Summary("Go gather ores")]
 		public async Task Mine([Remainder] string orename = null)
 		{
-			HpPlayer p = await GetPlayer(Context.User);                       //Get the relevant user context
-
-			HpItem item = null;
-			if (!string.IsNullOrEmpty(orename))                         //get specified item
-			{
-				orename = orename.ToLower();                            //Make it all lowercase for key
-				try
-				{
-					Container.OreList.TryGetValue(orename, out item);   //Try to get what the player wants
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);                       //truncate mistakes
-				}
-				if (item != null && item.ItemLevel > p.GetSkillLevel("mining")) //if it fails, well then we can't go on anyways
-					item = null;
-				//we should inform them but we're not for now
-			}
-
-			if (item == null)                                           //if it fails, get a random item
-			{
-				//Keep getting items untill you get one you can Make/Gather, this is not efficient :)
-				item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
-				while (item.ItemLevel > p.GetSkillLevel("mining"))
-					item = Container.OreList.ElementAt(_random.Next(Container.OreList.Count)).Value;
-			}
-
-			p.AddItem(item);
-			bool levelup = p.AddXP("mining", item.ItemXp);              //Add the gained xp
-
-			SavePlayer(p);                                              //Now we save the player to ram
-																		//And compile the resposne
-			StringBuilder response = new StringBuilder();
-			response.Append($"You've gone mining, and got an **{item.ItemName}** \r\nand gained {item.ItemXp}xp");
-			if (levelup)
-				response.Append($"\r\nYou gained a **Mining level!** \r\n Your level is now **{p.GetSkillLevel("mining")}**");
-
-			await ReplyAsync(response.ToString());
+			
 		}
 
 		[Command("inventory")]

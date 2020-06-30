@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
+using TastyBot.Contracts;
 using TastyBot.Utility;
 
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
  
 namespace TastyBot.Services
 {
-    class StartupService
+    public class StartupService : IStartupService
     {
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _discord;
