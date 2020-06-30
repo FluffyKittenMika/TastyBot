@@ -1,17 +1,10 @@
-﻿using Discord;
-using Discord.Commands;
-
+﻿using Discord.Commands;
 using TastyBot.Services;
-using TastyBot.Utility;
-
-using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
-using System;
 
 namespace TastyBot.Modules
 {
-    // TODO: HOLY FUCK REFACTOR THIS SHIT
     [Name("Cat Commands")]
     public class CatModule : ModuleBase<SocketCommandContext>
     {
@@ -26,6 +19,50 @@ namespace TastyBot.Modules
             _service = service;
         }
 
+		[Command("cat")]
+		public async Task CatAsync(int textsize = 32, string Colour = "white", [Remainder]string text = " ")
+		{
+			var s	= await PictureService.GetCatPictureAsync(text, Colour, textsize);
+				s.Seek(0, SeekOrigin.Begin);
+				await Context.Channel.SendFileAsync( s, "cat.png");
+		}
+
+
+		//Mwahahaha tenary hell
+		[Command("cat")]
+		public async Task CatAsync(string Colour = "white", [Remainder]string text = " ")
+		{
+			/* earan hated it :c
+				var s	= (Colour.ToLower() != "gif")	? await PictureService.GetCatPictureAsync(text, Colour, 32)		: await PictureService.GetCatGifAsync();
+				s.Seek(0, SeekOrigin.Begin);
+				_	= (Colour.ToLower() != "gif")		? await Context.Channel.SendFileAsync(s, "cat.png")				: await Context.Channel.SendFileAsync(s, "cat.gif");
+			*/
+
+			if (Colour.ToLower() != "gif")
+			{
+				var s = await PictureService.GetCatPictureAsync(text, Colour, 32);
+				s.Seek(0, SeekOrigin.Begin);
+				await Context.Channel.SendFileAsync(s, "cat.png");
+			}
+			else
+			{
+				var s = await PictureService.GetCatGifAsync();
+				s.Seek(0, SeekOrigin.Begin);
+				await Context.Channel.SendFileAsync(s, "cat.gif");
+			}
+		}
+
+		[Command("cat")]
+		public async Task CatAsync([Remainder]string text = " ")
+		{
+			var s	= await PictureService.GetCatPictureAsync(text, "white", 32);
+				s.Seek(0, SeekOrigin.Begin);
+				await Context.Channel.SendFileAsync(s, "cat.png");
+		}
+
+
+
+		/* This here be a reminder of how nico used to code :)
 		[Command("cat", true)]
 		[Summary(" sends a pic of a cat\n\nFor a cat pic write:\n!cat\n\nfor a cat gif write either:\n!cat g or !cat gif\n\nfor a cat pic with text write:\n!cat t {some text here}\n\nfor a cat pic with colored text write:\n!cat t {some text here} c {color name}\n\nfor a cat pic with size adjustments and color write:\n!cat t {some text here} c {color name} s {size number}")]
 		public async Task CatAsync(params string[] args)
@@ -165,6 +202,6 @@ namespace TastyBot.Modules
 				}
 				
 			}
-		}
+		}*/
 	}
 }

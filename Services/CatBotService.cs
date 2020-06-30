@@ -20,6 +20,7 @@ namespace TastyBot.Services
             _discord.MessageReceived += MessageReceivedAsync;
         }
 
+        
         private async Task MessageReceivedAsync(SocketMessage arg)
         {
             // Ignore system messages, or messages from other bots
@@ -31,13 +32,13 @@ namespace TastyBot.Services
             {
                 Console.WriteLine($"catbot:{message.Author} - {message.Content.Substring(15).ToLower()} - cattified :3"); //just to keep a basic console log
                 await arg.DeleteAsync();
-                await _p.GetCatPictureWTxtAsync(arg.Content); 
+                await _p.GetCatPictureAsync(arg.Content); 
 
 
                 if (arg.Content.Length > 0 && arg.Content != null)
                 {
                     // Get a stream containing an image of a cat
-                    var stream = await _p.GetCatPictureWTxtAsync(arg.Content);
+                    var stream = await _p.GetCatPictureAsync(arg.Content);
                     // Streams must be seeked to their beginning before being uploaded!
                     stream.Seek(0, SeekOrigin.Begin);
                     await arg.Channel.SendFileAsync(stream, "cat.png");
@@ -45,5 +46,6 @@ namespace TastyBot.Services
             }
             return;
         }
+        
     }
 }
