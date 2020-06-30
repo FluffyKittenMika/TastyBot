@@ -15,11 +15,12 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-        // Dependency Injection will fill this value in for us
-        public RainbowService RainbowService { get; set; }
+		// Dependency Injection will fill this value in for us
+		public RainbowService RainbowService { get; set; }
+		public CatBotService CatBotService { get; set; }
 
-        
-        private readonly CommandService _service;
+
+		private readonly CommandService _service;
 
         public PublicModule(CommandService service)
         {
