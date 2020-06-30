@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace TastyBot.Services
@@ -40,8 +41,15 @@ namespace TastyBot.Services
 
                 if (arg.Content.Length > 0 && arg.Content != null)
                 {
+                    string content = arg.Content;
+                    // Replace invalid characters with empty strings.
+                    try
+                    {
+                        Regex.Replace(content, @"[^\w\.@-]", "", RegexOptions.None, TimeSpan.FromSeconds(5));
+                    }
+                    catch (TimeoutException) { }
                     // Get a stream containing an image of a cat
-                    var stream = await _p.GetCatPictureAsync(arg.Content);
+                    var stream = await _p.GetCatPictureAsync(content);
                     // Streams must be seeked to their beginning before being uploaded!
                     stream.Seek(0, SeekOrigin.Begin);
                     await arg.Channel.SendFileAsync(stream, "cat.png");
