@@ -45,10 +45,13 @@ namespace TastyBot.Services
                     // Replace invalid characters with empty strings.
                     try
                     {
-                        Regex.Replace(content, @"[^\w\.@-]", "", RegexOptions.None, TimeSpan.FromSeconds(5));
+                        content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
+                        Console.WriteLine("Regexed into: " + content);
                     }
                     catch (TimeoutException) { }
                     // Get a stream containing an image of a cat
+                    if (content == "" || content.Length == 0)
+                        content = "error :)";
                     var stream = await _p.GetCatPictureAsync(content);
                     // Streams must be seeked to their beginning before being uploaded!
                     stream.Seek(0, SeekOrigin.Begin);
