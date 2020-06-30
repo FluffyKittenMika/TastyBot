@@ -16,7 +16,7 @@ namespace TastyBot.Services
             var resp = await _http.GetAsync("https://cataas.com/cat/gif");
             return await resp.Content.ReadAsStreamAsync();
         }
-        public async Task<Stream> GetCatPictureAsync(string Text = "", string Color = "white", int Size = 24)
+        public async Task<Stream> GetCatPictureAsync(string Text = " ", string Color = "white", int Size = 32)
         {
             var resp = await _http.GetAsync($"https://cataas.com/cat/says/" + Text + "?size=" + Size + "&color=" + Color);
             return await resp.Content.ReadAsStreamAsync();
