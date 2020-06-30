@@ -1,0 +1,16 @@
+{
+  "player": {
+    "name": "Hero",
+    "level": 1,
+    "maxHP": 100,
+    "minATK": 1,
+    "maxATK": 10
+  },
+  "zombie": {
+    "name": "Zombie",
+    "level": 1,
+    "maxHP": 40,
+    "minATK": 1,
+    "maxATK": 5
+  }
+}
