@@ -69,7 +69,7 @@ namespace TastyBot.Extensions
         }
         public static void ConfigureRainbowService(this IServiceCollection services)
         {
-            services.AddScoped<IRainbowService, RainbowService>();         // Add Rainbow Service, not sure if it needs to be one
+            services.AddSingleton<RainbowService>();         // Add Rainbow Service, not sure if it needs to be one
         }
         public static void ConfigureBotConfig(this IServiceCollection services, Config botConfig)
         {
@@ -122,7 +122,7 @@ namespace TastyBot.Extensions
 
         #region HeadpatDungeon
 
-        public static void ConfigureEntityContainer(this IServiceCollection services)
+        /*public static void ConfigureEntityContainer(this IServiceCollection services)
         {
             services.AddScoped<IEntityContainer, EntityContainer>();
         }
@@ -140,7 +140,7 @@ namespace TastyBot.Extensions
         public static void ConfigureCrafting(this IServiceCollection services)
         {
             services.AddScoped<ICrafting, Crafting>();
-        }
+        }*/
 
         #endregion
     }

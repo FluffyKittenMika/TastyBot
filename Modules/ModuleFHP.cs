@@ -33,6 +33,11 @@ namespace TastyBot.Modules
         [Summary("Hands out headpats to the user")]
         public async Task Give(IUser userReceive, long amount)
         {
+            if (!_permissionHandler.IsAdministrator(Context.User.Id))
+            {
+                await ReplyAsync("NO!");
+                return;
+            }
             _module.Give(userReceive, amount);
             string given = (amount < 0) ? "taken from" : "given to";
             await ReplyAsync($"{Math.Abs(amount)} has been {given} {userReceive.Username}");

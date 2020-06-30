@@ -9,16 +9,14 @@ using System.Threading.Tasks;
 
 namespace TastyBot.Services
 {
-    public class RainbowService : IRainbowService
+    public class RainbowService
     {
-        private readonly DiscordSocketClient _discord;
         private readonly Random _random = new Random();
 
         public RainbowService(DiscordSocketClient discord)
         {
-            _discord = discord;
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
-            _discord.MessageReceived += MessageReceivedAsync;
+            discord.MessageReceived += MessageReceivedAsync;
 
             //This is just to be fancy
             string rainbow = "started rainbow service";
@@ -62,18 +60,6 @@ namespace TastyBot.Services
         public Color CreateRainbowColor()
         {
             return new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
-        }
-
-        public IEnumerable<Color> CreateRainbowColors(string textToRainbow)
-        {
-            List<Color> colors = new List<Color>();
-
-            foreach (char c in textToRainbow.ToCharArray())
-            {
-                colors.Add(new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255)));
-            }
-
-            return colors;
         }
     }
 }

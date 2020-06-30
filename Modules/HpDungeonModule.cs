@@ -11,22 +11,21 @@ using Discord.Commands;
 
 using TastyBot.Utility;
 using Authorization.Contracts;
-using HeadpatDungeon.Modules;
+using HeadpatDungeon.Contracts;
+using HeadpatDungeon.Models.Entities;
 
 namespace TastyBot.HpDungeon
 {
-
-
+    /*
     [Name("HpDungeon")]
 	public class HpDungeonModule : ModuleBase<SocketCommandContext>
 	{
 		#region Definitions
-		private readonly HpDModule _module;
+		private readonly IHpDModule _module;
 		private readonly IFileManager _fileManager;
 		private readonly IPermissionHandler _permissionHandler;
 		private readonly Config _config;
 		private readonly Random _random = new Random();
-		private readonly HpCrafting crafter;
 
 		//Static retains memory. 
 		private static Dictionary<string,HpPlayer> PlayerRamMemory = new Dictionary<string, HpPlayer>();
@@ -40,136 +39,126 @@ namespace TastyBot.HpDungeon
         /// </summary>
         /// <param name="service">Relevant service</param>
         /// <param name="config">Relevant config</param>
-        public HpDungeonModule(IFileManager fileManager, IPermissionHandler permissionHandler, Config config)
+        public HpDungeonModule(IHpDModule module, IFileManager fileManager, IPermissionHandler permissionHandler, Config config)
 		{
+			_module = module;
 			_fileManager = fileManager;
 			_fileManager.Init();
 			_permissionHandler = permissionHandler;
 
 			_config = config;
-			
-			crafter = new HpCrafting();
-			Container.LoadItems();
-
 		}
 
-		/// <summary>
-		/// This is run every time we get a command, it's how we fetch the player file, and actually do anything, it also checks if the item pool exists
-		/// </summary>
-		/// <returns>A new player, or auto loads a player</returns>
-		private async Task<HpPlayer> GetPlayer(IUser user)
-		{
-			//TODO: Find a better way that uses time or something. Every 5'th message is kinda not that good
-			savecounter++;
-			if (savecounter > Convert.ToInt32(_config.Savecounter))
-			{
-				SaveAllPlayers();
-				savecounter = 0;
-			}
-			HpPlayer p = null;
+		///// <summary>
+		///// This is run every time we get a command, it's how we fetch the player file, and actually do anything, it also checks if the item pool exists
+		///// </summary>
+		///// <returns>A new player, or auto loads a player</returns>
+		//private async Task<HpPlayer> GetPlayer(IUser user)
+		//{
+		//	//TODO: Find a better way that uses time or something. Every 5'th message is kinda not that good
+		//	savecounter++;
+		//	if (savecounter > Convert.ToInt32(_config.Savecounter))
+		//	{
+		//		SaveAllPlayers();
+		//		savecounter = 0;
+		//	}
+		//	HpPlayer p = null;
 
-			if (PlayerRamMemory.ContainsKey(user.Id.ToString())) //if it already is loaded
-			{
-				p = PlayerRamMemory[user.Id.ToString()] ;
-			}
-			else //fetch from slow storage
-			{
-				try
-				{
-					p = (await _fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message + " Earan fucked up somewhere :)"); //this means Earan fucked up
-				}
+		//	if (PlayerRamMemory.ContainsKey(user.Id.ToString())) //if it already is loaded
+		//	{
+		//		p = PlayerRamMemory[user.Id.ToString()] ;
+		//	}
+		//	else //fetch from slow storage
+		//	{
+		//		try
+		//		{
+		//			p = (await _fileManager.LoadData<HpPlayer>(user.Id.ToString())).FirstOrDefault();
+		//		}
+		//		catch (Exception e)
+		//		{
+		//			Console.WriteLine(e.Message + " Earan fucked up somewhere :)"); //this means Earan fucked up
+		//		}
 
-				//if it's null, we make a new one, and init it
-				if (p == null)
-				{
-					Console.WriteLine("New player: " + user.Id.ToString());
-					p = new HpPlayer(user.Id.ToString())
-					{
-						ID = user.Id.ToString(),
-						Skills = new Dictionary<string, int>()
-					};
-					SavePlayerDisk(p); //make base save aswell.
-				}
-				//add to ram
-				PlayerRamMemory.Add(user.Id.ToString(), p);
-			}
+		//		//if it's null, we make a new one, and init it
+		//		if (p == null)
+		//		{
+		//			Console.WriteLine("New player: " + user.Id.ToString());
+		//			p = new HpPlayer(user.Id.ToString())
+		//			{
+		//				ID = user.Id.ToString(),
+		//				Skills = new Dictionary<string, int>()
+		//			};
+		//			SavePlayerDisk(p); //make base save aswell.
+		//		}
+		//		//add to ram
+		//		PlayerRamMemory.Add(user.Id.ToString(), p);
+		//	}
 		
-			return p;
-		}
+		//	return p;
+		//}
 
 
-		//TODO Move this to a different class
-		/// <summary>
-		/// Stores the player in the ram module
-		/// </summary>
-		/// <param name="player">Target player to store</param>
-		/// <returns></returns>
-		private void SavePlayer(HpPlayer player)
-		{
-			if (PlayerRamMemory.ContainsKey(player.ID))
-				PlayerRamMemory[player.ID] = player;
-			else
-				PlayerRamMemory.Add(player.ID, player);
-		}
+		////TODO Move this to a different class
+		///// <summary>
+		///// Stores the player in the ram module
+		///// </summary>
+		///// <param name="player">Target player to store</param>
+		///// <returns></returns>
+		//private void SavePlayer(HpPlayer player)
+		//{
+		//	if (PlayerRamMemory.ContainsKey(player.ID))
+		//		PlayerRamMemory[player.ID] = player;
+		//	else
+		//		PlayerRamMemory.Add(player.ID, player);
+		//}
 
-		/// <summary>
-		/// Saves all players from ram to Disk
-		/// </summary>
-		/// <returns>Fuck all</returns>
-		private void SaveAllPlayers()
-		{
-			foreach (var p in PlayerRamMemory)
-			{
-				SavePlayerDisk(p.Value);
-			}
-			Console.WriteLine("All players saved");
-		}
+		///// <summary>
+		///// Saves all players from ram to Disk
+		///// </summary>
+		///// <returns>Fuck all</returns>
+		//private void SaveAllPlayers()
+		//{
+		//	foreach (var p in PlayerRamMemory)
+		//	{
+		//		SavePlayerDisk(p.Value);
+		//	}
+		//	Console.WriteLine("All players saved");
+		//}
 
-		/// <summary>
-		/// Stores a single player to disk from ram
-		/// </summary>
-		/// <param name="player">Target player</param>
-		/// <returns>Nothing at all</returns>
-		private void SavePlayerDisk(HpPlayer player)
-		{
-			//yes i'm this lazy
-			List<HpPlayer> p = new List<HpPlayer>
-			{
-				player
-			};
-			_fileManager.SaveData(p, player.ID);
-		}
+		///// <summary>
+		///// Stores a single player to disk from ram
+		///// </summary>
+		///// <param name="player">Target player</param>
+		///// <returns>Nothing at all</returns>
+		//private void SavePlayerDisk(HpPlayer player)
+		//{
+		//	//yes i'm this lazy
+		//	List<HpPlayer> p = new List<HpPlayer>
+		//	{
+		//		player
+		//	};
+		//	_fileManager.SaveData(p, player.ID);
+		//}
 
 
 		#endregion
 
-		#region Commands
 		[Command("hpdsave")]
 		public async Task HpdSavePlayers()
 		{
 			if (_permissionHandler.IsAdministrator(Context.User.Id))
             {
-				
-            }
-			if (Context.User.Id == 83183880869253120)
-			{
-				SaveAllPlayers();
-				savecounter = 0;
-				await ReplyAsync("saved.");
+				await ReplyAsync(_module.HPDSavePlayers());
+				return;
 			}
-			else
-				await ReplyAsync("ask mik to run it. as this is global save.");
+			await ReplyAsync("ask mik to run it. as this is global save.");
 		}
 
 		[Command("agility")]
-		[Summary("train agility, the skill does nothing atm")]
+		[Summary("Train agility, the skill does nothing atm")]
 		public async Task Agility()
 		{
-			
+			await ReplyAsync(_module.Action("agility", Context.User.Id));
 		}
 
 
@@ -177,7 +166,7 @@ namespace TastyBot.HpDungeon
 		[Summary("Go gather ores")]
 		public async Task Mine([Remainder] string orename = null)
 		{
-			
+			await ReplyAsync(_module.Action("mine", Context.User.Id));
 		}
 
 		[Command("inventory")]
@@ -276,8 +265,5 @@ namespace TastyBot.HpDungeon
 				x.IsInline = false;
 			});
 			await ReplyAsync("", false, builder.Build());
-		}
-
-        #endregion
-    }
+		}*/
 }

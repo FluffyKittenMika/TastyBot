@@ -77,9 +77,9 @@ namespace TastyBot.Services
 			#endregion
 
 			#region HeadpatDungeon
-			services.ConfigureEntityContainer();
+			/*services.ConfigureEntityContainer();
 			services.ConfigureItemContainer();
-			services.ConfigureRecipeContainer();
+			services.ConfigureRecipeContainer();*/
             #endregion
 
             services.ConfigureBotConfig(Botconfig);
