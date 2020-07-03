@@ -8,7 +8,7 @@ using System.Text;
 namespace TastyBot.Modules
 {
     /// <summary>
-    /// The Module that handles all FHP related interactions
+    /// The Module that handles all MasterMind Things
     /// </summary>
     [Name("MasterMind")]
     public class MasterMindModule : ModuleBase<SocketCommandContext>

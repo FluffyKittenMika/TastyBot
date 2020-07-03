@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMananger", "..\FileMana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeadpatDungeon", "..\HeadpatDungeon\HeadpatDungeon.csproj", "{3144D937-5CED-4F55-B6E6-CA6713EEB99C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enums", "..\Enums\Enums.csproj", "{4EB242F2-7F86-4F37-877C-89D827B69E58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "..\Enums\Enums.csproj", "{4EB242F2-7F86-4F37-877C-89D827B69E58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterMind", "..\MasterMind\MasterMind.csproj", "{1485329D-08A4-4495-88FF-112A007D376B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MasterMind", "..\MasterMind\MasterMind.csproj", "{1485329D-08A4-4495-88FF-112A007D376B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +47,10 @@ Global
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1485329D-08A4-4495-88FF-112A007D376B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1485329D-08A4-4495-88FF-112A007D376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
