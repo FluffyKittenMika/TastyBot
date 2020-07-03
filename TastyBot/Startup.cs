@@ -57,6 +57,7 @@ namespace TastyBot.Services
 			services.ConfigureLoggingService();
 
 			services.ConfigureStartupService();
+			services.ConfigureBotcatService();
 			services.ConfigurePictureService();
 			services.ConfigureRainbowService();
             #endregion

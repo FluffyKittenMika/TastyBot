@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NekosSharp;
 using System.Drawing;
 using System;
+using System.Drawing.Imaging;
 
 namespace TastyBot.Services
 {
@@ -16,11 +17,6 @@ namespace TastyBot.Services
         public PictureService(HttpClient http)
             => _http = http;
 
-        public async Task<Stream> GetCatPictureAsync()
-        {
-            var resp = await _http.GetAsync("https://cataas.com/cat");
-            return await resp.Content.ReadAsStreamAsync();
-        }
         public async Task<Stream> GetCatGifAsync()
         {
             var resp = await _http.GetAsync("https://cataas.com/cat/gif");
@@ -32,23 +28,28 @@ namespace TastyBot.Services
             return await resp.Content.ReadAsStreamAsync();
         }
 
-        public async Task<Bitmap> GetNekoPictureAsync(string Text = " ", int Size = 32)
+        public async Task<Stream> GetNekoPictureAsync(string Text = " ", int Size = 32)
         {
             //Request the neko url
             Request Req = await NekoClient.Image_v3.Neko();
 
             //process it into a bitmap
             var resp = await _http.GetAsync(Req.ImageUrl);
-            var bitmap = new Bitmap(await resp.Content.ReadAsStreamAsync());
 
-            bitmap = WriteOnBitmap(bitmap, Text, Size);
+            Stream s = await resp.Content.ReadAsStreamAsync();
 
-            return bitmap;
+            s = WriteOnStream(s, Text, Size);
+
+            //bitmap = WriteOnBitmap(bitmap, Text, Size);
+            Console.WriteLine(Req.ImageUrl);
+            return s;
         }
 
-        //TODO: make async, i haven't the clue go'vna on how
-        public Bitmap WriteOnBitmap(Bitmap bitmap, string text = " ", int Size = 32)
+        //TODO: make async, i haven't the clue go'vna on how, not that it works yet :)
+        public Stream WriteOnStream(Stream stream, string text = " ", int Size = 32)
         {
+            Bitmap bitmap = new Bitmap(stream);
+
             //Make bounds
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             //Holy hell i hate appending text to a bitmap
@@ -71,9 +72,31 @@ namespace TastyBot.Services
                 }
                 g.Flush();
             }
+            MemoryStream resultstream = new MemoryStream();
+            bitmap.Save(resultstream, ImageFormat.Png);
 
-            return bitmap;
+            return resultstream;
         }
+
+
+        /// <summary>
+        /// Check if stream is png by use of magic numbers :)
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns>True if it's an PNG</returns>
+        public bool IsPng(byte[] array)
+        {
+            return array != null
+                && array.Length > 8
+                && array[0] == 0x89
+                && array[1] == 0x50
+                && array[2] == 0x4e
+                && array[3] == 0x47
+                && array[4] == 0x0d
+                && array[5] == 0x0a
+                && array[6] == 0x1a
+                && array[7] == 0x0a;
+}
 
 
     }

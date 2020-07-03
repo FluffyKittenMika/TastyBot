@@ -17,8 +17,8 @@ namespace TastyBot.Modules
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
 		// Dependency Injection will fill this value in for us
-		public RainbowService RainbowService { get; set; }
-		public CatBotService CatBotService { get; set; }
+		public RainbowService RainbowService { get; set; } //This service will not run unless it's referenced here, unsure why.
+		public BotCatService CatBotService { get; set; }
 
 
 		private readonly CommandService _service;

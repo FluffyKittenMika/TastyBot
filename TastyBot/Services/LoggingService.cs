@@ -41,9 +41,35 @@ namespace TastyBot.Services
             {
                 File.AppendAllText(_logFile, logText + "\n");     // Write the log text to a file
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 //Fuck crashing the bot if it's dual writing
+                Console.WriteLine("Bot tried to write to open file when logging, " + e.Message);
+            }
+
+            switch (msg.Severity)
+            {
+                case LogSeverity.Critical:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogSeverity.Info:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case LogSeverity.Verbose:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case LogSeverity.Debug:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
             }
 
             return Console.Out.WriteLineAsync(logText);       // Write the log text to the console

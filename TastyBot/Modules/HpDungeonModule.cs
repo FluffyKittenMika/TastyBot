@@ -55,7 +55,7 @@ namespace TastyBot.HpDungeon
 		///// <returns>A new player, or auto loads a player</returns>
 		//private async Task<HpPlayer> GetPlayer(IUser user)
 		//{
-		//	//TODO: Find a better way that uses time or something. Every 5'th message is kinda not that good
+		//	/////: Find a better way that uses time or something. Every 5'th message is kinda not that good
 		//	savecounter++;
 		//	if (savecounter > Convert.ToInt32(_config.Savecounter))
 		//	{
@@ -98,7 +98,7 @@ namespace TastyBot.HpDungeon
 		//}
 
 
-		////TODO Move this to a different class
+		////
 		///// <summary>
 		///// Stores the player in the ram module
 		///// </summary>
