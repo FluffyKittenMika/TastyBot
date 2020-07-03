@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using Enums.PictureServices;
 
 namespace TastyBot.Contracts
 {
@@ -8,7 +9,7 @@ namespace TastyBot.Contracts
     {
         Task<Stream> GetCatGifAsync();
         Task<Stream> GetCatPictureAsync(string Text, string Color, int Size);
-        Task<Stream> GetNekoPictureAsync(string Text, int Size);
+        Task<Stream> GetNekoPictureAsync(RegularNekos Type, string Text, string Color);
     }
 
 }
