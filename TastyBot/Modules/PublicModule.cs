@@ -1,14 +1,16 @@
-﻿using Discord;
+﻿using Authorization.Contracts;
+using Authorization.Entities;
+using Enums.UserPermissions;
+
+using Discord;
 using Discord.Commands;
 
 using TastyBot.Services;
-using TastyBot.Utility;
-
-using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
 using System;
-using TastyBot.Contracts;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace TastyBot.Modules
 {
@@ -16,17 +18,13 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-		// Dependency Injection will fill this value in for us
-		public RainbowService RainbowService { get; set; } //This service will not run unless it's referenced here, unsure why.
+		public readonly IPermissionHandler _permissionHandler;
 		public BotCatService CatBotService { get; set; }
 
-
-		private readonly CommandService _service;
-
-        public PublicModule(CommandService service)
+        public PublicModule(IPermissionHandler permissionHandler)
         {
-            _service = service;
-        }
+			_permissionHandler = permissionHandler;
+		}
 		
 
 		// Ban a user

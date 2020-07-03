@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Enums.UserPermissions;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Authorization.Entities
 {
     public class User
     {
+        public string Name { get; set; }
         public ulong DiscordId { get; set; }
         public bool Administrator { get; set; }
+        public List<Permissions> Permissions { get; set; }
     }
 }

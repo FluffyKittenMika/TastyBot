@@ -11,11 +11,8 @@ namespace TastyBot.Services
 {
     public class PictureService : IPictureService
     {
-        private readonly HttpClient _http;
+        private readonly HttpClient _http = new HttpClient();
         public static NekoClient NekoClient = new NekoClient("TastyBot");
-
-        public PictureService(HttpClient http)
-            => _http = http;
 
         public async Task<Stream> GetCatGifAsync()
         {
@@ -96,8 +93,6 @@ namespace TastyBot.Services
                 && array[5] == 0x0a
                 && array[6] == 0x1a
                 && array[7] == 0x0a;
-}
-
-
+        }
     }
 }

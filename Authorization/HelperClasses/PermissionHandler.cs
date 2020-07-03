@@ -1,5 +1,6 @@
 ﻿using Authorization.Entities;
 using Authorization.Contracts;
+using Enums.UserPermissions;
 
 namespace Authorization.HelperClasses
 {
@@ -20,6 +21,12 @@ namespace Authorization.HelperClasses
                 return false;
             }
             return user.Administrator;
+        }
+
+        public bool HasPermissions(ulong id, Permissions permission)
+        {
+            User user = _usersContainer.ById(id);
+            return user.Permissions.Contains(permission);
         }
     }
 }

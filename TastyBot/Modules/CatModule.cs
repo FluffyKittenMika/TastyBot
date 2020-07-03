@@ -20,7 +20,7 @@ namespace TastyBot.Modules
         public CatModule(CommandService service)
         {
             _service = service;
-			PictureService = new PictureService(new HttpClient());
+			PictureService = new PictureService();
 		}
 
 		[Command("cat")]

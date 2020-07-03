@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TastyBot.Services
 {
-    public class LoggingService : ILoggingService
+    public class LoggingService
     {
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;

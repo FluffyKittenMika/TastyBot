@@ -55,7 +55,7 @@ namespace TastyBot.Extensions
 
         public static void ConfigureLoggingService(this IServiceCollection services)
         {
-            services.AddScoped<ILoggingService, LoggingService>();         // Add loggingservice to the collection
+            services.AddSingleton<LoggingService>();         // Add loggingservice to the collection
         }
 
         public static void ConfigureStartupService(this IServiceCollection services)
