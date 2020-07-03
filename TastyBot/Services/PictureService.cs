@@ -6,6 +6,8 @@ using NekosSharp;
 using System.Drawing;
 using System;
 using System.Drawing.Imaging;
+using Enums.PictureServices;
+using System.ComponentModel;
 
 namespace TastyBot.Services
 {
@@ -28,17 +30,32 @@ namespace TastyBot.Services
             return await resp.Content.ReadAsStreamAsync();
         }
 
-        public async Task<Stream> GetNekoPictureAsync(string Text = " ", string Color = "black")
+
+        public async Task<Stream> GetNekoPictureAsync(RegularNekos Types, string Text = "", string Color = "black")
         {
             //Request the neko url
-            Request Req = await NekoClient.Image_v3.Neko();
+            //Fuck you Earan, this is the new switch statement.
+            var Req = Types switch
+            {
+                RegularNekos.Avatar => await NekoClient.Image_v3.Avatar(),
+                RegularNekos.Fox => await NekoClient.Image_v3.Fox(),
+                RegularNekos.Holo => await NekoClient.Image_v3.Holo(),
+                RegularNekos.Neko => await NekoClient.Image_v3.Neko(),
+                RegularNekos.NekoAvatar => await NekoClient.Image_v3.NekoAvatar(),
+                RegularNekos.Waifu => await NekoClient.Image_v3.Waifu(),
+                RegularNekos.Wallpaper => await NekoClient.Image_v3.Wallpaper(),
+                _ => await NekoClient.Image_v3.Neko(),
+            };
 
             //process it into a bitmap
             var resp = await _http.GetAsync(Req.ImageUrl);
 
+            //Fetch the goodies
             Stream s = await resp.Content.ReadAsStreamAsync();
 
-            s = WriteOnStream(s, Text, Color);
+            //only write if they want us to
+            if (Text != "")
+                s = WriteOnStream(s, Text, Color);
 
             //bitmap = WriteOnBitmap(bitmap, Text, Size);
             Console.WriteLine(Req.ImageUrl);
@@ -46,9 +63,9 @@ namespace TastyBot.Services
         }
        
 
-        //TODO: make async, i haven't the clue go'vna on how, not that it works yet :)
         //TODO: Text wrapping to fit more text into the fucking thing
-        public Stream WriteOnStream(Stream stream, string text = " ", string col = "black")
+        //TODO: Enable rainbow text
+        private Stream WriteOnStream(Stream stream, string text = " ", string col = "black")
         {
             Bitmap bitmap = new Bitmap(stream);
             Color color = Color.FromName(col);

@@ -59,7 +59,6 @@ namespace TastyBot.Services
                     await arg.Channel.SendFileAsync(stream, "cat.png");
                 }
             }
-            return;
         }
     }
 }
