@@ -71,10 +71,16 @@ namespace TastyBot.Extensions
         {
             services.AddSingleton<RainbowService>();         // Add Rainbow Service, not sure if it needs to be one
         }
+        public static void ConfigureBotcatService(this IServiceCollection services)
+        {
+            services.AddSingleton<BotCatService>();
+        }
+
         public static void ConfigureBotConfig(this IServiceCollection services, Config botConfig)
         {
             services.AddSingleton(botConfig);				// Add the configuration to the collection
         }
+
 
         #endregion
 
