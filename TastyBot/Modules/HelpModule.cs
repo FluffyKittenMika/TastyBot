@@ -35,7 +35,7 @@ namespace TastyBot.Modules
             foreach (var module in _service.Modules)
             {
                 string description = null;
-                foreach (var cmd in module.Commands)
+                foreach (var cmd in module.Commands.GroupBy(x => x.Name).Select(x => x.FirstOrDefault()).ToList())
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
