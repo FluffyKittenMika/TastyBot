@@ -1,6 +1,22 @@
 [
   {
+    "name": "Earan",
     "discordId": 277038010862796801,
-    "administrator": true
+    "administrator": true,
+    "permissions": [
+      "FutureHeadPatsGive",
+      "FutureHeadPatsAlmightyPatter",
+      "FutureheadPatsDelete",
+      "FutureHeadPatsSave",
+      "HeadpatDungeonHDPSave"
+    ]
+  },
+  {
+    "name": "Yuqera",
+    "discordId": 595382132038303751,
+    "administrator": false,
+    "permissions": [
+      "HeadpatDungeonHDPSave"
+    ]
   }
 ]

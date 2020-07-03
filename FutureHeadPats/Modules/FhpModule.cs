@@ -7,16 +7,21 @@ using System.Linq;
 using System.Text;
 using System;
 
+using Authorization.Contracts;
+
+using Enums.UserPermissions;
+
 namespace FutureHeadPats.Modules
 {
     public class FhpModule : IFhpModule
     {
         private readonly IHeadpatService _serv;
+        private readonly IPermissionHandler _permission;
 
-        public FhpModule(IHeadpatService serv)
+        public FhpModule(IHeadpatService serv, IPermissionHandler permission)
         {
             _serv = serv;
-
+            _permission = permission;
         }
 
         public void Give(IUser receiver, long amount)
@@ -42,7 +47,7 @@ namespace FutureHeadPats.Modules
 
             if (receiver.IsBot) 
                 return "Can't pat a bot! Baka!";
-            else if (receiver.Id == 277038010862796801)
+            else if (_permission.HasPermissions(receiver.Id, Permissions.FutureHeadPatsAlmightyPatter))
                 return "You cannot give headpats to the one giving out the headpats";
 
             if (amount < 0)

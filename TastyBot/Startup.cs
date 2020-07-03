@@ -40,7 +40,7 @@ namespace TastyBot.Services
 			ConfigureServices(services);
 
 			var provider = services.BuildServiceProvider();                         // Build the service provider
-			provider.GetRequiredService<ILoggingService>();                          // Start the logging service
+			provider.GetRequiredService<LoggingService>();                          // Start the logging service
 			provider.GetRequiredService<ICommandHandlingService>();                  // Start the command handler service
 
 			await provider.GetRequiredService<IStartupService>().StartAsync();       // Start the startup service
@@ -51,9 +51,10 @@ namespace TastyBot.Services
 		{
 			services.ConfigureDiscordSocketClient();
 			services.ConfigureCommandService();
+			services.ConfigureBotConfig(Botconfig);
 
-            #region TastyBot
-            services.ConfigureCommandHandlingService();
+			#region TastyBot
+			services.ConfigureCommandHandlingService();
 			services.ConfigureLoggingService();
 
 			services.ConfigureStartupService();
@@ -82,8 +83,6 @@ namespace TastyBot.Services
 			services.ConfigureItemContainer();
 			services.ConfigureRecipeContainer();*/
             #endregion
-
-            services.ConfigureBotConfig(Botconfig);
 		}
 	}
 }

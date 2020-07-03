@@ -1,10 +1,12 @@
 ﻿using FutureHeadPats.Contracts;
+using Enums.UserPermissions;
 
 using Discord;
 using Discord.Commands;
 
 using System;
 using System.Threading.Tasks;
+
 using Authorization.Contracts;
 
 namespace TastyBot.Modules
@@ -33,31 +35,34 @@ namespace TastyBot.Modules
         [Summary("Hands out headpats to the user")]
         public async Task Give(IUser userReceive, long amount)
         {
-            if (!_permissionHandler.IsAdministrator(Context.User.Id))
+            ulong discordUId = Context.User.Id;
+            if (_permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsGive))
             {
-                await ReplyAsync("NO!");
+                _module.Give(userReceive, amount);
+                string given = (amount < 0) ? "taken from" : "given to";
+                await ReplyAsync($"{Math.Abs(amount)} has been {given} {userReceive.Username}");
                 return;
             }
-            _module.Give(userReceive, amount);
-            string given = (amount < 0) ? "taken from" : "given to";
-            await ReplyAsync($"{Math.Abs(amount)} has been {given} {userReceive.Username}");
+            await ReplyAsync("NO!");
         }
 
         /// <summary>
-        /// Deletes the wallet of <paramref name="deleteUser"/> if the wallet exists
+        /// Deletes the wallet of <paramref name="userDelete"/> if the wallet exists
         /// </summary>
-        /// <param name="deleteUser">The user which's wallet shall be deleted</param>
+        /// <param name="userDelete">The user which's wallet shall be deleted</param>
         /// <returns></returns>
         [Command("delete")]
         [Summary("Deletes the wallet of the tagged user, if the user has a wallet")]
         public async Task Delete(IUser userDelete)
         {
-            if(!_permissionHandler.IsAdministrator(Context.User.Id))
+            ulong discordUId = Context.User.Id;
+            if (_permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsDelete))
             {
-                await ReplyAsync("NO!");
+                await ReplyAsync(_module.Delete(userDelete));
                 return;
             }
-            await ReplyAsync(_module.Delete(userDelete));
+            await ReplyAsync("NO!");
+
         }
 
         /// <summary>
@@ -68,18 +73,19 @@ namespace TastyBot.Modules
         [Summary("Instantly saves the current users")]
         public async Task Save()
         {
-            if (!_permissionHandler.IsAdministrator(Context.User.Id))
+            ulong discordUId = Context.User.Id;
+            if (_permissionHandler.IsAdministrator(discordUId) || _permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsSave))
             {
-                await ReplyAsync("NO!");
+                await ReplyAsync(_module.Save());
                 return;
             }
-            await ReplyAsync(_module.Save());
+            await ReplyAsync("NO!");
         }
 
         /// <summary>
         /// Gives FHP from one user to another user
         /// </summary>
-        /// <param name="receiveUser">The user that receives the headpats</param>
+        /// <param name="userReceive">The user that receives the headpats</param>
         /// <param name="amount">The amount of headpats to transfer</param>
         /// <returns></returns>
         [Command("pat")]
