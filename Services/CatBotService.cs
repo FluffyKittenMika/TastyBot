@@ -32,12 +32,11 @@ namespace TastyBot.Services
             //Catbot channel
             if (arg.Channel.Name.ToLower() == "botcat") //More generic
             {
-                if (message.Content.Length >= 15)
-                    Console.WriteLine($"catbot:{message.Author} - {message.Content.Substring(15).ToLower()} - cattified :3"); //just to keep a basic console log
-                else
-                    Console.WriteLine($"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3"); //just to keep a basic console log
-
-                await arg.DeleteAsync();
+                //just to keep a basic console log
+                Console.WriteLine($"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3"); 
+               
+                //remove the evicence
+                await arg.DeleteAsync(); 
 
                 if (arg.Content.Length > 0 && arg.Content != null)
                 {
@@ -48,7 +47,10 @@ namespace TastyBot.Services
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
                         Console.WriteLine("Regexed into: " + content);
                     }
-                    catch (TimeoutException) { }
+                    catch (TimeoutException) {
+                        //let the masses know that home hosting is not always so great, but it beats spending money on an dedicated machine, but i'm seriously considering making a community hosted server lol.
+                        await arg.Channel.SendMessageAsync("Can't get a cat atm, we're experiencing connection issues and we're timing out. Tastybot crew is sorry for this atrocity. And we will punish the ISP gods promptly. Also @Mikaelssen if nothing happens.");
+                    }
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";

@@ -2,6 +2,7 @@
 using TastyBot.Services;
 using System.IO;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace TastyBot.Modules
 {
@@ -23,8 +24,8 @@ namespace TastyBot.Modules
 		public async Task CatAsync(int textsize = 32, string Colour = "white", [Remainder]string text = " ")
 		{
 			var s	= await PictureService.GetCatPictureAsync(text, Colour, textsize);
-				s.Seek(0, SeekOrigin.Begin);
-				await Context.Channel.SendFileAsync( s, "cat.png");
+			s.Seek(0, SeekOrigin.Begin);
+			await Context.Channel.SendFileAsync( s, "cat.png");
 		}
 
 
@@ -60,7 +61,15 @@ namespace TastyBot.Modules
 				await Context.Channel.SendFileAsync(s, "cat.png");
 		}
 
-
+		[Command("neko")]
+		public async Task NekoAsync([Remainder]string text = " ")
+		{
+			Bitmap s = await PictureService.GetNekoPictureAsync(text);
+			MemoryStream stream = new MemoryStream();
+			s.sa
+			s.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
+			await Context.Channel.SendFileAsync(stream, "cat.Bmp");
+		}
 
 		/* This here be a reminder of how nico used to code :)
 		[Command("cat", true)]
