@@ -8,7 +8,10 @@ namespace TastyBot.Contracts
     {
         Task<Stream> GetCatGifAsync();
         Task<Stream> GetCatPictureAsync(string Text, string Color, int Size);
-        Task<Stream> GetNekoPictureAsync(string Text, int Size);
+        Task<Stream> GetNekoPictureAsync(string Text, string Color);
+        Stream WriteOnStream(Stream stream, string Text, string col);
+
+
     }
 
 }

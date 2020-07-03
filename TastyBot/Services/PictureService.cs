@@ -28,7 +28,7 @@ namespace TastyBot.Services
             return await resp.Content.ReadAsStreamAsync();
         }
 
-        public async Task<Stream> GetNekoPictureAsync(string Text = " ", int Size = 32)
+        public async Task<Stream> GetNekoPictureAsync(string Text = " ", string Color = "black")
         {
             //Request the neko url
             Request Req = await NekoClient.Image_v3.Neko();
@@ -38,27 +38,33 @@ namespace TastyBot.Services
 
             Stream s = await resp.Content.ReadAsStreamAsync();
 
-            s = WriteOnStream(s, Text, Size);
+            s = WriteOnStream(s, Text, Color);
 
             //bitmap = WriteOnBitmap(bitmap, Text, Size);
             Console.WriteLine(Req.ImageUrl);
             return s;
         }
+       
 
         //TODO: make async, i haven't the clue go'vna on how, not that it works yet :)
-        public Stream WriteOnStream(Stream stream, string text = " ", int Size = 32)
+        //TODO: Text wrapping to fit more text into the fucking thing
+        public Stream WriteOnStream(Stream stream, string text = " ", string col = "black")
         {
             Bitmap bitmap = new Bitmap(stream);
+            Color color = Color.FromName(col);
+            if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
+                color = Color.FromName("white");
 
             //Make bounds
-            Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+            Rectangle rect = new Rectangle(0, 0, bitmap.Width, (int)(bitmap.Height * 1.50)); //puts it to half bottom 
             //Holy hell i hate appending text to a bitmap
             //Define font, 'n alignment
-            Font ffont = new Font("Tahoma", Size);
+            Font ffont = new Font("Tahoma", 32);
             StringFormat stringFormat = new StringFormat()
             {
                 Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
+                LineAlignment = StringAlignment.Center,
+                Trimming = StringTrimming.EllipsisWord
             };
 
             //Define the god damn graphics
@@ -68,7 +74,7 @@ namespace TastyBot.Services
                 float fontScale = Math.Max(s.Width / rect.Width, s.Height / rect.Height);
                 using (Font font = new Font(ffont.FontFamily, ffont.SizeInPoints / fontScale, GraphicsUnit.Point)) //probably don't need to redefine font here
                 {
-                    g.DrawString(text, font, Brushes.Black, rect, stringFormat);
+                    g.DrawString(text, font, new SolidBrush(color), rect, stringFormat);
                 }
                 g.Flush();
             }
@@ -77,27 +83,5 @@ namespace TastyBot.Services
 
             return resultstream;
         }
-
-
-        /// <summary>
-        /// Check if stream is png by use of magic numbers :)
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns>True if it's an PNG</returns>
-        public bool IsPng(byte[] array)
-        {
-            return array != null
-                && array.Length > 8
-                && array[0] == 0x89
-                && array[1] == 0x50
-                && array[2] == 0x4e
-                && array[3] == 0x47
-                && array[4] == 0x0d
-                && array[5] == 0x0a
-                && array[6] == 0x1a
-                && array[7] == 0x0a;
-}
-
-
     }
 }

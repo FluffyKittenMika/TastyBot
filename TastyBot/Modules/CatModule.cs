@@ -64,13 +64,23 @@ namespace TastyBot.Modules
 				await Context.Channel.SendFileAsync(s, "cat.png");
 		}
 
+
+
 		[Command("neko")]
-		public async Task NekoAsync([Remainder]string text = " ")
+		public async Task NekoAsync(string col = "black", [Remainder]string text = " ")
 		{
-			var s = await PictureService.GetNekoPictureAsync(text);
-			s.Seek(0, SeekOrigin.Begin);
-			await Context.Channel.SendFileAsync(s, "neko.png");
+			Color color = Color.FromName(col);
+			if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
+			{
+				text = col + text;
+				col = "black";
+			}
+				var s = await PictureService.GetNekoPictureAsync(text, col);
+				s.Seek(0, SeekOrigin.Begin);
+				await Context.Channel.SendFileAsync(s, "neko.png");
 		}
+
+	
 
 	}
 }
