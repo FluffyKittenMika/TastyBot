@@ -27,6 +27,7 @@
     <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
     <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
     <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />
+    <ProjectReference Include="..\MasterMind\MasterMind.csproj" />
   </ItemGroup>
 
 </Project>
