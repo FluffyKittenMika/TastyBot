@@ -1,10 +1,11 @@
 ﻿using Discord.Commands;
 using System.IO;
 using System.Threading.Tasks;
-using System.Drawing;
 using Enums.PictureServices;
 using TastyBot.Contracts;
-using TastyBot.Services;
+using System;
+using System.Linq;
+using System.Globalization;
 
 namespace TastyBot.Modules
 {
@@ -12,7 +13,7 @@ namespace TastyBot.Modules
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
         private readonly IPictureService _serv;
-
+        static Random _R = new Random();
         public PictureModule(IPictureService serv)
         {
             _serv = serv;
@@ -62,7 +63,6 @@ namespace TastyBot.Modules
 		public async Task NekoAsync([Remainder]string text = "")
 		{
 			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
-			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
 		}
 
@@ -70,7 +70,6 @@ namespace TastyBot.Modules
 		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
 			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
-			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
 
@@ -78,7 +77,6 @@ namespace TastyBot.Modules
 		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
 			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
-			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
 
@@ -86,10 +84,44 @@ namespace TastyBot.Modules
 		public async Task FoxAsync([Remainder]string text = "")
 		{
 			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
-			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}
 
         #endregion
+
+        #region NSFW Nekos owo
+
+        //TODO: ADD command descriptors to all commands in this module.
+        [Command("NSFW")]
+        [RequireNsfw]
+        public async Task NSFWAhegaoAsync([Remainder]string text = "")
+        {
+
+            string E = text;
+            NSFWNekos res;
+
+            if (E == "")
+                res = RandomEnumValue<NSFWNekos>();
+            else
+            {
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                E = textInfo.ToTitleCase(text.Split(' ').FirstOrDefault());
+                Console.WriteLine(E);
+                Enum.TryParse(E, out res);
+            }
+            text = string.Join(' ', text.Split(' ').Skip(1));
+
+            var s = await _serv.GetNSFWNekoClientPictureAsync(res, text);
+            await Context.Channel.SendFileAsync(s, "OwO.png");
+        }
+        #endregion
+  
+        static T RandomEnumValue<T>()
+        {
+            var v = Enum.GetValues(typeof(T));
+            return (T)v.GetValue(_R.Next(v.Length));
+        }
+
     }
+
 }
