@@ -88,6 +88,10 @@ namespace TastyBot.Services
 			services.ConfigureItemContainer();
 			services.ConfigureRecipeContainer();*/
             #endregion
+
+            #region Mastermind
+            services.ConfigureMasterMindModule();
+            #endregion
         }
     }
 }

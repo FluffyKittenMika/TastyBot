@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using Enums.PictureServices;
 using TastyBot.Contracts;
+using TastyBot.Services;
 
 namespace TastyBot.Modules
 {
@@ -12,10 +13,7 @@ namespace TastyBot.Modules
     {
         private readonly IPictureService _serv;
 
-        
-        private readonly CommandService _service;
-
-        public PictureModule(CommandService service)
+        public PictureModule(IPictureService serv)
         {
             _serv = serv;
         }
@@ -63,7 +61,7 @@ namespace TastyBot.Modules
         [Command("neko")]
 		public async Task NekoAsync([Remainder]string text = "")
 		{
-			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
+			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
 		}
@@ -71,7 +69,7 @@ namespace TastyBot.Modules
 		[Command("nekoavatar")]
 		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
-			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
+			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
@@ -79,7 +77,7 @@ namespace TastyBot.Modules
 		[Command("nekowallpaper")]
 		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
-			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
+			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
@@ -87,7 +85,7 @@ namespace TastyBot.Modules
 		[Command("fox")]
 		public async Task FoxAsync([Remainder]string text = "")
 		{
-			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
+			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}
