@@ -6,10 +6,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using System;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace TastyBot.Services
 {

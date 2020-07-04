@@ -1,16 +1,10 @@
 ﻿using Authorization.Contracts;
-using Authorization.Entities;
-using Enums.UserPermissions;
 
 using Discord;
 using Discord.Commands;
 
 using TastyBot.Services;
 using System.Threading.Tasks;
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace TastyBot.Modules
 {

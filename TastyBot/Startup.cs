@@ -30,6 +30,11 @@ namespace TastyBot.Services
 
         public static async Task RunAsync(string[] args)
         {
+            if (args is null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var startup = new Startup();
             await startup.RunAsync();
         }

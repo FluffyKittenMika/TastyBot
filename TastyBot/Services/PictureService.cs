@@ -7,14 +7,19 @@ using System.Drawing;
 using System;
 using System.Drawing.Imaging;
 using Enums.PictureServices;
-using System.ComponentModel;
 
 namespace TastyBot.Services
 {
     public class PictureService : IPictureService
     {
-        private readonly HttpClient _http = new HttpClient();
-        public static NekoClient NekoClient = new NekoClient("TastyBot");
+        private readonly HttpClient _http;
+        public static NekoClient NekoClient;
+
+        public PictureService()
+        {
+            _http = new HttpClient();
+            NekoClient = new NekoClient("TastyBot");
+        }
 
         public async Task<Stream> GetCatGifAsync()
         {
