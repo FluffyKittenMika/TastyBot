@@ -25,7 +25,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
-using HeadpatDungeon.Models;
 
 namespace TastyBot.Extensions
 {

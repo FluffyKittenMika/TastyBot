@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Net.Http;
 using TastyBot.Contracts;
 
 namespace TastyBot.Services
@@ -33,10 +32,10 @@ namespace TastyBot.Services
             if (arg.Channel.Name.ToLower() == "botcat") //More generic
             {
                 //just to keep a basic console log
-                Console.WriteLine($"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3"); 
-               
+                Console.WriteLine($"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3");
+
                 //remove the evicence
-                await arg.DeleteAsync(); 
+                await arg.DeleteAsync();
 
                 if (arg.Content.Length > 0 && arg.Content != null)
                 {
@@ -47,7 +46,8 @@ namespace TastyBot.Services
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
                         Console.WriteLine("Regexed into: " + content);
                     }
-                    catch (TimeoutException) {
+                    catch (TimeoutException)
+                    {
                         //let the masses know that home hosting is not always so great, but it beats spending money on an dedicated machine, but i'm seriously considering making a community hosted server lol.
                         await arg.Channel.SendMessageAsync("Can't get a cat atm, we're experiencing connection issues and we're timing out. Tastybot crew is sorry for this atrocity. And we will punish the ISP gods promptly. Also @Mikaelssen if nothing happens.");
                     }

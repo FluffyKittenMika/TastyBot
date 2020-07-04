@@ -19,7 +19,7 @@ namespace HeadpatDungeon.Models.Entities
             MinATK = defaultCreature.MinATK;
             MaxATK = defaultCreature.MaxATK;
             _rng = new Random();
-            
+
         }
 
         public void Attack(HpCreature Target)

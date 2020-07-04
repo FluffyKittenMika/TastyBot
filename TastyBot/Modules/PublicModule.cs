@@ -1,16 +1,10 @@
 ﻿using Authorization.Contracts;
-using Authorization.Entities;
-using Enums.UserPermissions;
 
 using Discord;
 using Discord.Commands;
 
 using TastyBot.Services;
 using System.Threading.Tasks;
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace TastyBot.Modules
 {
@@ -18,49 +12,49 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-		public readonly IPermissionHandler _permissionHandler;
-		public BotCatService CatBotService { get; set; }
+        public readonly IPermissionHandler _permissionHandler;
+        public BotCatService CatBotService { get; set; }
 
         public PublicModule(IPermissionHandler permissionHandler)
         {
-			_permissionHandler = permissionHandler;
-		}
-		
-
-		// Ban a user
-		[Command("ban")]
-		[RequireContext(ContextType.Guild)]
-		// make sure the user invoking the command can ban
-		[RequireUserPermission(GuildPermission.BanMembers)]
-		// make sure the bot itself can ban
-		[RequireBotPermission(GuildPermission.BanMembers)]
-		public async Task BanUserAsync(IGuildUser user, [Remainder] string reason = null)
-		{
-			await user.Guild.AddBanAsync(user, reason: reason);
-			await ReplyAsync("ok!");
-		}
+            _permissionHandler = permissionHandler;
+        }
 
 
-		// Throw Back Thursday, Tasty Specified command.
-		[Command("tbt")]
-		[Summary("Use this command once every thursday :D")]
-		public Task ThrowBackThrsday()
-			=> ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
+        // Ban a user
+        [Command("ban")]
+        [RequireContext(ContextType.Guild)]
+        // make sure the user invoking the command can ban
+        [RequireUserPermission(GuildPermission.BanMembers)]
+        // make sure the bot itself can ban
+        [RequireBotPermission(GuildPermission.BanMembers)]
+        public async Task BanUserAsync(IGuildUser user, [Remainder] string reason = null)
+        {
+            await user.Guild.AddBanAsync(user, reason: reason);
+            await ReplyAsync("ok!");
+        }
 
-		[Command("nnm")]
-		[Summary("Use this command once very monday :D")]
-		public Task NomNomMonday()
-			=> ReplyAsync("<:Oposum:669676896270680104> Nom Nom Monday! Post a picture of your food in #Photos!");
-		
-		// Get info on a user, or the user who invoked the command if one is not specified
-		[Command("userinfo")]
-		public async Task UserInfoAsync(IUser user = null)
-		{
-			user ??= Context.User;
-			await ReplyAsync(user.ToString());
-		}
 
-		/* Commenting out theese commands as they're really not needed, keeping them around for reference. 
+        // Throw Back Thursday, Tasty Specified command.
+        [Command("tbt")]
+        [Summary("Use this command once every thursday :D")]
+        public Task ThrowBackThrsday()
+            => ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
+
+        [Command("nnm")]
+        [Summary("Use this command once very monday :D")]
+        public Task NomNomMonday()
+            => ReplyAsync("<:Oposum:669676896270680104> Nom Nom Monday! Post a picture of your food in #Photos!");
+
+        // Get info on a user, or the user who invoked the command if one is not specified
+        [Command("userinfo")]
+        public async Task UserInfoAsync(IUser user = null)
+        {
+            user ??= Context.User;
+            await ReplyAsync(user.ToString());
+        }
+
+        /* Commenting out theese commands as they're really not needed, keeping them around for reference. 
 		 
 		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
@@ -83,5 +77,5 @@ namespace TastyBot.Modules
 		*/
 
 
-	}
+    }
 }

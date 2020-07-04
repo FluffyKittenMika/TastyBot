@@ -89,7 +89,7 @@ namespace TastyBot.Modules
         /// <param name="amount">The amount of headpats to transfer</param>
         /// <returns></returns>
         [Command("pat")]
-        [Summary("Headpat another person")] 
+        [Summary("Headpat another person")]
         public async Task Pat(IUser userReceive, int amount = 1)
         {
             await ReplyAsync(_module.Pat(Context.User, userReceive, amount));
@@ -105,7 +105,7 @@ namespace TastyBot.Modules
         public async Task Wallet(IUser differentUser = null)
         {
             IUser user = differentUser;
-            if(user == null)
+            if (user == null)
             {
                 user = Context.User;
             }

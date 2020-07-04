@@ -23,7 +23,7 @@ namespace HeadpatDungeon.Services
 
         public string ExecuteAction(string action, HpPlayer player, string actionObject = null)
         {
-            switch(action)
+            switch (action)
             {
                 case "agility":
                     return TrainAgility(player);
@@ -50,7 +50,7 @@ namespace HeadpatDungeon.Services
             StringBuilder response = new StringBuilder();
             response.Append($"You did some running and gained {gainedEXP}XP");
 
-            if(levelUp)
+            if (levelUp)
             {
                 response.Append(LevelUpText("agility", player));
             }
@@ -81,14 +81,14 @@ namespace HeadpatDungeon.Services
         private string Mine(HpPlayer player, string oreName)
         {
             HpItem item = null;
-            if(!string.IsNullOrEmpty(oreName))
+            if (!string.IsNullOrEmpty(oreName))
             {
                 oreName = oreName.ToLower();
                 try
                 {
                     _itemContainer.GetOreList().TryGetValue(oreName, out item);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }

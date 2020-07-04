@@ -31,7 +31,7 @@ namespace FutureHeadPats.Modules
 
         public string Delete(IUser deleteUser)
         {
-            return _serv.DeleteUser(deleteUser) ? "Wallet deleted" : "User has no wallet";            
+            return _serv.DeleteUser(deleteUser) ? "Wallet deleted" : "User has no wallet";
         }
 
         public string Save()
@@ -45,7 +45,7 @@ namespace FutureHeadPats.Modules
             FhpUser senderFPH = _serv.GetUser(sender);
             FhpUser receiverFPH = _serv.GetUser(receiver);
 
-            if (receiver.IsBot) 
+            if (receiver.IsBot)
                 return "Can't pat a bot! Baka!";
             else if (_permission.HasPermissions(receiver.Id, Permissions.FutureHeadPatsAlmightyPatter))
                 return "You cannot give headpats to the one giving out the headpats";

@@ -8,7 +8,7 @@ using TastyBot.Utility;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
- 
+
 namespace TastyBot.Services
 {
     public class StartupService : IStartupService
