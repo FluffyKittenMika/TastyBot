@@ -17,6 +17,9 @@ using TastyBot.Contracts;
 using TastyBot.Services;
 using TastyBot.Utility;
 
+using MasterMind.Contracts;
+using MasterMind.Modules;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -146,6 +149,15 @@ namespace TastyBot.Extensions
         {
             services.AddScoped<ICrafting, Crafting>();
         }*/
+
+        #endregion
+
+        #region MasterMind
+
+        public static void ConfigureMasterMindModule(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
+        }
 
         #endregion
     }
