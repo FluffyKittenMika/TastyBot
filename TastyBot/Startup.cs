@@ -11,78 +11,78 @@ using TastyBot.Contracts;
 
 namespace TastyBot.Services
 {
-	class Startup
-	{
-		public Config Botconfig { get; }
-		public Startup()
-		{
-			//load config
-			try
-			{
-				Botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
-			}
-			catch (Exception)
-			{
-				Console.WriteLine("No configuration file found, please create one, or the bot simply will not work.");
-			}
-			Console.WriteLine("PREFIX IS: " + Botconfig.Prefix);
-		}
+    class Startup
+    {
+        public Config Botconfig { get; }
+        public Startup()
+        {
+            //load config
+            try
+            {
+                Botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("No configuration file found, please create one, or the bot simply will not work.");
+            }
+            Console.WriteLine("PREFIX IS: " + Botconfig.Prefix);
+        }
 
-		public static async Task RunAsync(string[] args)
-		{
-			var startup = new Startup();
-			await startup.RunAsync();
-		}
+        public static async Task RunAsync(string[] args)
+        {
+            var startup = new Startup();
+            await startup.RunAsync();
+        }
 
-		public async Task RunAsync()
-		{
-			var services = new ServiceCollection();                                 // Create a new instance of a service collection
-			ConfigureServices(services);
+        public async Task RunAsync()
+        {
+            var services = new ServiceCollection();                                 // Create a new instance of a service collection
+            ConfigureServices(services);
 
-			var provider = services.BuildServiceProvider();                         // Build the service provider
-			provider.GetRequiredService<LoggingService>();                          // Start the logging service
-			provider.GetRequiredService<ICommandHandlingService>();                  // Start the command handler service
+            var provider = services.BuildServiceProvider();                         // Build the service provider
+            provider.GetRequiredService<LoggingService>();                          // Start the logging service
+            provider.GetRequiredService<ICommandHandlingService>();                  // Start the command handler service
 
-			await provider.GetRequiredService<IStartupService>().StartAsync();       // Start the startup service
-			await Task.Delay(-1);                                                   // Keep the program alive
-		}
+            await provider.GetRequiredService<IStartupService>().StartAsync();       // Start the startup service
+            await Task.Delay(-1);                                                   // Keep the program alive
+        }
 
-		private void ConfigureServices(IServiceCollection services)
-		{
-			services.ConfigureDiscordSocketClient();
-			services.ConfigureCommandService();
-			services.ConfigureBotConfig(Botconfig);
+        private void ConfigureServices(IServiceCollection services)
+        {
+            services.ConfigureDiscordSocketClient();
+            services.ConfigureCommandService();
+            services.ConfigureBotConfig(Botconfig);
 
-			#region TastyBot
-			services.ConfigureCommandHandlingService();
-			services.ConfigureLoggingService();
+            #region TastyBot
+            services.ConfigureCommandHandlingService();
+            services.ConfigureLoggingService();
 
-			services.ConfigureStartupService();
-			services.ConfigureBotcatService();
-			services.ConfigurePictureService();
-			services.ConfigureRainbowService();
+            services.ConfigureStartupService();
+            services.ConfigureBotcatService();
+            services.ConfigurePictureService();
+            services.ConfigureRainbowService();
             #endregion
 
             #region Authorization
             services.ConfigurePermissionHandler();
-			services.ConfigureUsersContainer();
-			#endregion
+            services.ConfigureUsersContainer();
+            #endregion
 
-			#region FileManager
-			services.ConfigureFileManager();
-			#endregion
+            #region FileManager
+            services.ConfigureFileManager();
+            #endregion
 
-			#region FutureHeadPats
-			services.ConfigureFileManagerFPH();
-			services.ConfigureHeadpatService();
-			services.ConfigureHeadPatModule();
-			#endregion
+            #region FutureHeadPats
+            services.ConfigureFileManagerFPH();
+            services.ConfigureHeadpatService();
+            services.ConfigureHeadPatModule();
+            #endregion
 
-			#region HeadpatDungeon
-			/*services.ConfigureEntityContainer();
+            #region HeadpatDungeon
+            /*services.ConfigureEntityContainer();
 			services.ConfigureItemContainer();
 			services.ConfigureRecipeContainer();*/
             #endregion
-		}
-	}
+        }
+    }
 }

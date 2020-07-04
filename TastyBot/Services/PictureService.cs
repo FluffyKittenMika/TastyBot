@@ -58,7 +58,7 @@ namespace TastyBot.Services
             Console.WriteLine(Req.ImageUrl);
             return s;
         }
-       
+
 
         //TODO: Text wrapping to fit more text into the fucking thing
         //TODO: Enable rainbow text

@@ -16,7 +16,7 @@ namespace Authorization.HelperClasses
         public bool IsAdministrator(ulong id)
         {
             User user = _usersContainer.ById(id);
-            if(user == null)
+            if (user == null)
             {
                 return false;
             }

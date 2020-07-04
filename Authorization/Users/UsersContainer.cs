@@ -21,9 +21,9 @@ namespace Authorization.Users
         {
             IEnumerable<User> users = GetAll();
             User userOut = null;
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                if(user.DiscordId == id)
+                if (user.DiscordId == id)
                 {
                     userOut = user;
                     break;
