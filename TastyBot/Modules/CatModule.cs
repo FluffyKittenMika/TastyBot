@@ -1,9 +1,10 @@
 ﻿using Discord.Commands;
+using Enums.PictureServices;
+using TastyBot.Contracts;
+
 using System.IO;
 using System.Threading.Tasks;
 using System.Drawing;
-using Enums.PictureServices;
-using TastyBot.Contracts;
 
 namespace TastyBot.Modules
 {

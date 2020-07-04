@@ -13,19 +13,21 @@ namespace TastyBot.Services
 {
     class Startup
     {
-        public Config Botconfig { get; }
+        private readonly Config _botconfig;
+
         public Startup()
         {
             //load config
             try
             {
-                Botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
+                Console.WriteLine(AppContext.BaseDirectory);
+                _botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
             }
             catch (Exception)
             {
                 Console.WriteLine("No configuration file found, please create one, or the bot simply will not work.");
             }
-            Console.WriteLine("PREFIX IS: " + Botconfig.Prefix);
+            Console.WriteLine("PREFIX IS: " + _botconfig.Prefix);
         }
 
         public static async Task RunAsync(string[] args)
@@ -46,7 +48,7 @@ namespace TastyBot.Services
 
             var provider = services.BuildServiceProvider();                         // Build the service provider
             provider.GetRequiredService<LoggingService>();                          // Start the logging service
-            provider.GetRequiredService<ICommandHandlingService>();                  // Start the command handler service
+            provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
             await provider.GetRequiredService<IStartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
@@ -56,7 +58,7 @@ namespace TastyBot.Services
         {
             services.ConfigureDiscordSocketClient();
             services.ConfigureCommandService();
-            services.ConfigureBotConfig(Botconfig);
+            services.ConfigureBotConfig(_botconfig);
 
             #region TastyBot
             services.ConfigureCommandHandlingService();
