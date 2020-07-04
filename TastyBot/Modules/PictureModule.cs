@@ -7,8 +7,8 @@ using System.Net.Http;
 using Enums.PictureServices;
 namespace TastyBot.Modules
 {
-    [Name("Cat Commands")]
-    public class CatModule : ModuleBase<SocketCommandContext>
+    [Name("Picture Commands")]
+    public class PictureModule : ModuleBase<SocketCommandContext>
     {
 		// Dependency Injection will fill this value in for us
 		private PictureService PictureService { get; set; }
@@ -16,7 +16,7 @@ namespace TastyBot.Modules
         
         private readonly CommandService _service;
 
-        public CatModule(CommandService service)
+        public PictureModule(CommandService service)
         {
             _service = service;
 			PictureService = new PictureService();
@@ -67,57 +67,33 @@ namespace TastyBot.Modules
         #region Nekos
 
         [Command("neko")]
-		public async Task NekoAsync(string col = "black", [Remainder]string text = "")
+		public async Task NekoAsync([Remainder]string text = "")
 		{
-			Color color = Color.FromName(col);
-			if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
-			{
-				text = col + text;
-				col = "black";
-			}
-			var s = await PictureService.GetNekoPictureAsync(RegularNekos.Neko, text, col);
+			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
 		}
 
 		[Command("nekoavatar")]
-		public async Task NekoAvatarAsync(string col = "black", [Remainder]string text = "")
+		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
-			Color color = Color.FromName(col);
-			if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
-			{
-				text = col + text;
-				col = "black";
-			}
-			var s = await PictureService.GetNekoPictureAsync(RegularNekos.Avatar, text, col);
+			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
 
 		[Command("nekowallpaper")]
-		public async Task NekoWallpaperAsync(string col = "black", [Remainder]string text = " ")
+		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
-			Color color = Color.FromName(col);
-			if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
-			{
-				text = col + text;
-				col = "black";
-			}
-			var s = await PictureService.GetNekoPictureAsync(RegularNekos.Wallpaper, text, col);
+			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
 
 		[Command("fox")]
-		public async Task foxAsync(string col = "black", [Remainder]string text = " ")
+		public async Task FoxAsync([Remainder]string text = "")
 		{
-			Color color = Color.FromName(col);
-			if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
-			{
-				text = col + text;
-				col = "black";
-			}
-			var s = await PictureService.GetNekoPictureAsync(RegularNekos.Fox, text, col);
+			var s = await PictureService.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
 			s.Seek(0, SeekOrigin.Begin);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}

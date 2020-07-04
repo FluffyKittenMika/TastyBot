@@ -8,6 +8,7 @@ using System;
 using System.Drawing.Imaging;
 using Enums.PictureServices;
 using System.ComponentModel;
+using System.Linq;
 
 namespace TastyBot.Services
 {
@@ -27,8 +28,15 @@ namespace TastyBot.Services
             return await resp.Content.ReadAsStreamAsync();
         }
 
-
-        public async Task<Stream> GetNekoPictureAsync(RegularNekos Types, string Text = "", string Color = "black")
+        /// <summary>
+        /// Gets picture from NekoClient based on the given type.
+        /// Appends text to the image if there's any given.
+        /// First words can be treated as a color.
+        /// </summary>
+        /// <param name="Types"></param>
+        /// <param name="Text"></param>
+        /// <returns></returns>
+        public async Task<Stream> GetRegularNekoClientPictureAsync(RegularNekos Types, string Text = "")
         {
             //Request the neko url
             //Fuck you Earan, this is the new switch statement.
@@ -52,22 +60,44 @@ namespace TastyBot.Services
 
             //only write if they want us to
             if (Text != "")
-                s = WriteOnStream(s, Text, Color);
+                s = WriteOnStream(s, Text);
 
             //bitmap = WriteOnBitmap(bitmap, Text, Size);
             Console.WriteLine(Req.ImageUrl);
             return s;
         }
-       
+
+
+        /// <summary>
+        /// Gets the color of a string.
+        /// Only uses the first word.
+        /// </summary>          
+        /// <param name="check">Input string to check, if there's a color it also shortens the string to not include it</param>
+        /// <returns>Correct color, OR black if none is found</returns>
+        private Color GetColor(ref string check)
+        {
+            string Col = check.Split(' ').FirstOrDefault();
+            Color color = Color.FromName(Col);
+            if (!color.IsKnownColor) //checks if known
+                color = Color.FromName("black"); //if not, black it is!
+            else
+                check = check.Substring(check.IndexOf(' ') + 1); // skips first word
+            return color;
+        }
+
 
         //TODO: Text wrapping to fit more text into the fucking thing
         //TODO: Enable rainbow text
-        private Stream WriteOnStream(Stream stream, string text = " ", string col = "black")
+        /// <summary>
+        /// Writes text on a given imagestream.
+        /// </summary>
+        /// <param name="stream">Image Stream</param>
+        /// <param name="text">Text for the image</param>
+        /// <returns>PNG formatted memorystream</returns>
+        private Stream WriteOnStream(Stream stream, string text = "")
         {
             Bitmap bitmap = new Bitmap(stream);
-            Color color = Color.FromName(col);
-            if (!color.IsKnownColor) //prevents it from going transparent if there's a bullshit color given, looking at you realitycat
-                color = Color.FromName("white");
+            Color color = GetColor(ref text);
 
             //Make bounds
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, (int)(bitmap.Height * 1.50)); //puts it to half bottom 
