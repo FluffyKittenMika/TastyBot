@@ -17,12 +17,14 @@ using TastyBot.Contracts;
 using TastyBot.Services;
 using TastyBot.Utility;
 
+using MasterMind.Contracts;
+using MasterMind.Modules;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
-using HeadpatDungeon.Models;
 
 namespace TastyBot.Extensions
 {
@@ -50,7 +52,7 @@ namespace TastyBot.Extensions
 
         public static void ConfigureCommandHandlingService(this IServiceCollection services)
         {
-            services.AddScoped<ICommandHandlingService, CommandHandlingService>(); // Add the Command handler to the collection
+            services.AddSingleton<CommandHandlingService>();   // Add the Command handler to the collection
         }
 
         public static void ConfigureLoggingService(this IServiceCollection services)
@@ -147,6 +149,15 @@ namespace TastyBot.Extensions
         {
             services.AddScoped<ICrafting, Crafting>();
         }*/
+
+        #endregion
+
+        #region MasterMind
+
+        public static void ConfigureMasterMindModule(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
+        }
 
         #endregion
     }

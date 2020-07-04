@@ -6,14 +6,11 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using System;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace TastyBot.Services
 {
-    public class CommandHandlingService : ICommandHandlingService
+    public class CommandHandlingService
     {
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _discord;
@@ -34,7 +31,7 @@ namespace TastyBot.Services
             _commands.CommandExecuted += OnCommandExecuted;
         }
 
-        public async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
+        private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
             if (!command.IsSpecified) //if the command does not exist, truncate response
                 return;
@@ -43,7 +40,7 @@ namespace TastyBot.Services
                 await context.Channel.SendMessageAsync(result.ToString());
         }
 
-        public async Task OnMessageReceivedAsync(SocketMessage socketMessage)
+        private async Task OnMessageReceivedAsync(SocketMessage socketMessage)
         {
             if (!(socketMessage is SocketUserMessage msg)) return;      // Ensure the message is from a user/bot
             if (msg.Author.Id == _discord.CurrentUser.Id) return;       // Ignore self when checking commands

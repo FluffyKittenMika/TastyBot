@@ -1,6 +1,4 @@
-﻿using TastyBot.Contracts;
-
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
@@ -15,7 +13,7 @@ namespace TastyBot.Services
         private readonly CommandService _commands;
 
         private readonly string _logDirectory;
-        private string _logFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
+        private string LogFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
         // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
         public LoggingService(DiscordSocketClient discord, CommandService commands)
@@ -33,13 +31,13 @@ namespace TastyBot.Services
         {
             if (!Directory.Exists(_logDirectory))     // Create the log directory if it doesn't exist
                 Directory.CreateDirectory(_logDirectory);
-            if (!File.Exists(_logFile))               // Create today's log file if it doesn't exist
-                File.Create(_logFile).Dispose();
+            if (!File.Exists(LogFile))               // Create today's log file if it doesn't exist
+                File.Create(LogFile).Dispose();
 
             string logText = $"{DateTime.UtcNow:hh:mm:ss} [{msg.Severity}] {msg.Source}: {msg.Exception?.ToString() ?? msg.Message}";
             try
             {
-                File.AppendAllText(_logFile, logText + "\n");     // Write the log text to a file
+                File.AppendAllText(LogFile, logText + "\n");     // Write the log text to a file
             }
             catch (Exception e)
             {
@@ -47,31 +45,16 @@ namespace TastyBot.Services
                 Console.WriteLine("Bot tried to write to open file when logging, " + e.Message);
             }
 
-            switch (msg.Severity)
+            Console.ForegroundColor = msg.Severity switch
             {
-                case LogSeverity.Critical:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogSeverity.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogSeverity.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogSeverity.Info:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-                case LogSeverity.Verbose:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-                case LogSeverity.Debug:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-            }
-
+                LogSeverity.Critical => ConsoleColor.Red,
+                LogSeverity.Error => ConsoleColor.Red,
+                LogSeverity.Warning => ConsoleColor.Yellow,
+                LogSeverity.Info => ConsoleColor.Green,
+                LogSeverity.Verbose => ConsoleColor.Green,
+                LogSeverity.Debug => ConsoleColor.White,
+                _ => ConsoleColor.Green,
+            };
             return Console.Out.WriteLineAsync(logText);       // Write the log text to the console
         }
     }

@@ -66,7 +66,6 @@ namespace TastyBot.Modules
 		{
 			Bitmap s = await PictureService.GetNekoPictureAsync(text);
 			MemoryStream stream = new MemoryStream();
-			s.sa
 			s.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
 			await Context.Channel.SendFileAsync(stream, "cat.Bmp");
 		}
