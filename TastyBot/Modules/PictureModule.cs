@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using Enums.PictureServices;
 using TastyBot.Contracts;
+using TastyBot.Services;
 
 namespace TastyBot.Modules
 {
