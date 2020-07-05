@@ -2,6 +2,10 @@
 using System.Threading.Tasks;
 using Enums.PictureServices;
 using HeadpatPictures.Contracts;
+using TastyBot.Contracts;
+using System;
+using System.Linq;
+using System.Globalization;
 
 namespace TastyBot.Modules
 {
@@ -80,5 +84,40 @@ namespace TastyBot.Modules
 		}
 
         #endregion
+
+        #region NSFW Nekos owo
+
+        //TODO: ADD command descriptors to all commands in this module.
+        [Command("NSFW")]
+        [RequireNsfw]
+        public async Task NSFWAhegaoAsync([Remainder]string text = "")
+        {
+
+            string E = text;
+            NSFWNekos res;
+
+            if (E == "")
+                res = RandomEnumValue<NSFWNekos>();
+            else
+            {
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                E = textInfo.ToTitleCase(text.Split(' ').FirstOrDefault());
+                Console.WriteLine(E);
+                Enum.TryParse(E, out res);
+            }
+            text = string.Join(' ', text.Split(' ').Skip(1));
+
+            var s = await _serv.GetNSFWNekoClientPictureAsync(res, text);
+            await Context.Channel.SendFileAsync(s, "OwO.png");
+        }
+        #endregion
+  
+        static T RandomEnumValue<T>()
+        {
+            var v = Enum.GetValues(typeof(T));
+            return (T)v.GetValue(_R.Next(v.Length));
+        }
+
     }
+
 }
