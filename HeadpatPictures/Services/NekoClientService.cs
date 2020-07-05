@@ -1,37 +1,25 @@
-﻿using TastyBot.Contracts;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using NekosSharp;
-using System.Drawing;
+﻿using HeadpatPictures.Contracts;
+
 using System;
-using System.Drawing.Imaging;
+using NekosSharp;
+using System.Threading.Tasks;
+using System.IO;
 using Enums.PictureServices;
-using System.ComponentModel;
-using System.Linq;
+using System.Net.Http;
 
-namespace TastyBot.Services
+namespace HeadpatPictures.Services
 {
-    public class PictureService : IPictureService
+    public class NekoClientService : INekoClientService
     {
+        private readonly NekoClient NekoClient;
         private readonly HttpClient _http;
-        public static NekoClient NekoClient;
+        private readonly ITextStreamWriter _writer;
 
-        public PictureService()
+        public NekoClientService(ITextStreamWriter writer)
         {
-            _http = new HttpClient();
             NekoClient = new NekoClient("TastyBot");
-        }
-
-        public async Task<Stream> GetCatGifAsync()
-        {
-            var resp = await _http.GetAsync("https://cataas.com/cat/gif");
-            return await resp.Content.ReadAsStreamAsync();
-        }
-        public async Task<Stream> GetCatPictureAsync(string Text = " ", string Color = "white", int Size = 32)
-        {
-            var resp = await _http.GetAsync($"https://cataas.com/cat/says/" + Text + "?size=" + Size + "&color=" + Color);
-            return await resp.Content.ReadAsStreamAsync();
+            _http = new HttpClient();
+            _writer = writer;
         }
 
         /// <summary>
@@ -42,7 +30,7 @@ namespace TastyBot.Services
         /// <param name="Types"></param>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public async Task<Stream> GetRegularNekoClientPictureAsync(RegularNekos Types, string Text = "")
+        public async Task<Stream> GetSFWNekoClientPictureAsync(RegularNekos Types, string Text = "")
         {
             //Request the neko url
             //Fuck you Earan, this is the new switch statement.
@@ -66,15 +54,12 @@ namespace TastyBot.Services
 
             //only write if they want us to
             if (Text != "")
-                s = WriteOnStream(s, Text);
+                s = _writer.WriteOnStream(s, Text);
 
             //bitmap = WriteOnBitmap(bitmap, Text, Size);
             Console.WriteLine(Req.ImageUrl);
-            s.Seek(0, SeekOrigin.Begin);
             return s;
         }
-
-
 
         /// <summary>
         /// Gets picture from NekoClient based on the given type.
@@ -140,73 +125,11 @@ namespace TastyBot.Services
 
             //only write if they want us to
             if (Text != "")
-                s = WriteOnStream(s, Text);
+                s = _writer.WriteOnStream(s, Text);
 
             //bitmap = WriteOnBitmap(bitmap, Text, Size);
             Console.WriteLine(Req.ImageUrl);
-            s.Seek(0, SeekOrigin.Begin);
             return s;
-        }
-
-
-        /// <summary>
-        /// Gets the color of a string.
-        /// Only uses the first word.
-        /// </summary>          
-        /// <param name="check">Input string to check, if there's a color it also shortens the string to not include it</param>
-        /// <returns>Correct color, OR black if none is found</returns>
-        private Color GetColor(ref string check)
-        {
-            string Col = check.Split(' ').FirstOrDefault();
-            Color color = Color.FromName(Col);
-            if (!color.IsKnownColor) //checks if known
-                color = Color.FromName("black"); //if not, black it is!
-            else
-                check = string.Join(' ', check.Split(' ').Skip(1));
-            return color;
-        }
-
-
-        //TODO: Text wrapping to fit more text into the fucking thing
-        //TODO: Enable rainbow text
-        /// <summary>
-        /// Writes text on a given imagestream.
-        /// </summary>
-        /// <param name="stream">Image Stream</param>
-        /// <param name="text">Text for the image</param>
-        /// <returns>PNG formatted memorystream</returns>
-        private Stream WriteOnStream(Stream stream, string text = "")
-        {
-            Bitmap bitmap = new Bitmap(stream);
-            Color color = GetColor(ref text);
-
-            //Make bounds
-            Rectangle rect = new Rectangle(0, 0, bitmap.Width, (int)(bitmap.Height * 1.50)); //puts it to half bottom 
-            //Holy hell i hate appending text to a bitmap
-            //Define font, 'n alignment
-            Font ffont = new Font("Tahoma", 32);
-            StringFormat stringFormat = new StringFormat()
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center,
-                Trimming = StringTrimming.EllipsisWord
-            };
-
-            //Define the god damn graphics
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                SizeF s = g.MeasureString(text, ffont);
-                float fontScale = Math.Max(s.Width / rect.Width, s.Height / rect.Height);
-                using (Font font = new Font(ffont.FontFamily, ffont.SizeInPoints / fontScale, GraphicsUnit.Point)) //probably don't need to redefine font here
-                {
-                    g.DrawString(text, font, new SolidBrush(color), rect, stringFormat);
-                }
-                g.Flush();
-            }
-            MemoryStream resultstream = new MemoryStream();
-            bitmap.Save(resultstream, ImageFormat.Png);
-
-            return resultstream;
         }
     }
 }

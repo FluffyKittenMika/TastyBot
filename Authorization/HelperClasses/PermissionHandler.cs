@@ -26,6 +26,10 @@ namespace Authorization.HelperClasses
         public bool HasPermissions(ulong id, Permissions permission)
         {
             User user = _usersContainer.ById(id);
+            if (user == null)
+            {
+                return false;
+            }
             return user.Permissions.Contains(permission);
         }
     }

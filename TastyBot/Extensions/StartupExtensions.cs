@@ -4,6 +4,14 @@ using Authorization.Users;
 
 using FileManager.Contracts;
 
+using Cache.Contracts;
+using Cache.Containers;
+
+using HeadpatPictures.Contracts;
+using HeadpatPictures.Modules;
+using HeadpatPictures.Services;
+using HeadpatPictures.Utilities;
+
 using FutureHeadPats.Contracts;
 using FutureHeadPats.Modules;
 using FutureHeadPats.Services;
@@ -30,6 +38,8 @@ namespace TastyBot.Extensions
 {
     public static class StartupExtensions
     {
+        #region Discord
+
         public static void ConfigureDiscordSocketClient(this IServiceCollection services)
         {
             services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
@@ -48,41 +58,38 @@ namespace TastyBot.Extensions
             }));
         }
 
-        #region TastyBot
-
-        public static void ConfigureCommandHandlingService(this IServiceCollection services)
-        {
-            services.AddSingleton<CommandHandlingService>();   // Add the Command handler to the collection
-        }
-
-        public static void ConfigureLoggingService(this IServiceCollection services)
-        {
-            services.AddSingleton<LoggingService>();         // Add loggingservice to the collection
-        }
-
-        public static void ConfigureStartupService(this IServiceCollection services)
-        {
-            services.AddScoped<IStartupService, StartupService>();         // Add startupservice to the collection
-        }
-
-        public static void ConfigurePictureService(this IServiceCollection services)
-        {
-            services.AddScoped<IPictureService, PictureService>();         // Add the picture service, it depends on HTTP
-        }
-        public static void ConfigureRainbowService(this IServiceCollection services)
-        {
-            services.AddSingleton<RainbowService>();         // Add Rainbow Service, not sure if it needs to be one
-        }
-        public static void ConfigureBotcatService(this IServiceCollection services)
-        {
-            services.AddSingleton<BotCatService>();
-        }
-
         public static void ConfigureBotConfig(this IServiceCollection services, Config botConfig)
         {
             services.AddSingleton(botConfig);				// Add the configuration to the collection
         }
 
+        #endregion
+
+        #region TastyBot
+
+        public static void ConfigureCommandHandlingService(this IServiceCollection services)
+        {
+            services.AddSingleton<CommandHandlingService>();
+        }
+
+        public static void ConfigureLoggingService(this IServiceCollection services)
+        {
+            services.AddScoped<ILoggingService, LoggingService>();
+        }
+
+        public static void ConfigureStartupService(this IServiceCollection services)
+        {
+            services.AddScoped<IStartupService, StartupService>();
+        }
+
+        public static void ConfigureRainbowService(this IServiceCollection services)
+        {
+            services.AddScoped<IRainbowService, RainbowService>();
+        }
+        public static void ConfigureBotcatService(this IServiceCollection services)
+        {
+            services.AddSingleton<BotCatService>();
+        }
 
         #endregion
 
@@ -105,6 +112,49 @@ namespace TastyBot.Extensions
         public static void ConfigureFileManager(this IServiceCollection services)
         {
             services.AddScoped<IFileManager, FileManager.FileManager>();
+        }
+
+        #endregion
+
+        #region Cache
+
+        public static void ConfigureCacheContainer(this IServiceCollection services)
+        {
+            services.AddScoped<ICacheContainer, CacheContainer>();
+        }
+
+        #endregion
+
+        #region HeadpatPictures
+
+        public static void ConfigureTextStreamWriter(this IServiceCollection services)
+        {
+            services.AddScoped<ITextStreamWriter, TextStreamWriter>();
+        }
+
+        public static void ConfigureCatService(this IServiceCollection services)
+        {
+            services.AddScoped<ICatService, CatService>();
+        }
+
+        public static void ConfigureNekoClientService(this IServiceCollection services)
+        {
+            services.AddScoped<INekoClientService, NekoClientService>();
+        }
+
+        public static void ConfigureCatModule(this IServiceCollection services)
+        {
+            services.AddScoped<ICatModule, CatModule>();
+        }
+
+        public static void ConfigureNekoClientModule(this IServiceCollection services)
+        {
+            services.AddScoped<INekoClientModule, NekoClientModule>();
+        }
+
+        public static void ConfigurePictureCacheContainer(this IServiceCollection services)
+        {
+            services.AddScoped<IPictureCacheContainer, PictureCacheContainer>();
         }
 
         #endregion

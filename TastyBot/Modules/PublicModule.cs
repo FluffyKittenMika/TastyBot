@@ -55,8 +55,7 @@ namespace TastyBot.Modules
         }
 
         /* Commenting out theese commands as they're really not needed, keeping them around for reference. 
-		 
-		
+		 		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
 		[Command("echo")]
 		public Task EchoAsync([Remainder] string text)
@@ -75,7 +74,5 @@ namespace TastyBot.Modules
 		public Task GuildOnlyCommand()
 			=> ReplyAsync("Nothing to see here!");
 		*/
-
-
     }
 }

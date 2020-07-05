@@ -71,7 +71,7 @@ namespace FileManager
         /// </summary>
         /// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
         /// <param name="id">A uinque id that identifies the server the data files belong to.</param>
-        /// <returns></returns>
+        /// <returns>The file or an empty list</returns>
         public Task<List<T>> LoadData<T>(string id)
         {
             string type = typeof(T).Name;

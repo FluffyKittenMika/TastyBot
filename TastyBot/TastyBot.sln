@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "..\Enums\Enums.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MasterMind", "..\MasterMind\MasterMind.csproj", "{1485329D-08A4-4495-88FF-112A007D376B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeadpatPictures", "..\HeadpatPictures\HeadpatPictures.csproj", "{D083EF25-FF5A-499A-B125-C824DF2DED5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache", "..\Cache\Cache.csproj", "{74C937C7-7ED8-4749-815D-8001FE884C35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{1485329D-08A4-4495-88FF-112A007D376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74C937C7-7ED8-4749-815D-8001FE884C35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74C937C7-7ED8-4749-815D-8001FE884C35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74C937C7-7ED8-4749-815D-8001FE884C35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74C937C7-7ED8-4749-815D-8001FE884C35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

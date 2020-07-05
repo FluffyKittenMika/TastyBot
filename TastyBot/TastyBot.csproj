@@ -27,10 +27,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
+    <ProjectReference Include="..\Cache\Cache.csproj" />
     <ProjectReference Include="..\Enums\Enums.csproj" />
     <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
     <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
     <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />
+    <ProjectReference Include="..\HeadpatPictures\HeadpatPictures.csproj" />
     <ProjectReference Include="..\MasterMind\MasterMind.csproj" />
   </ItemGroup>
 

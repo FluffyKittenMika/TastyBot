@@ -1,7 +1,7 @@
 ﻿using Discord.Commands;
-using System.IO;
 using System.Threading.Tasks;
 using Enums.PictureServices;
+using HeadpatPictures.Contracts;
 using TastyBot.Contracts;
 using System;
 using System.Linq;
@@ -12,19 +12,22 @@ namespace TastyBot.Modules
     [Name("Picture Commands")]
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IPictureService _serv;
-        static Random _R = new Random();
-        public PictureModule(IPictureService serv)
+        private readonly ICatModule _catModule;
+        private readonly INekoClientModule _nekoClientModule;
+        private readonly Random _R;
+
+        public PictureModule(ICatModule catModule, INekoClientModule nekoClientModule)
         {
-            _serv = serv;
+            _catModule = catModule;
+            _nekoClientModule = nekoClientModule;
+            _R = new Random();
         }
 
         #region Cat meow meow region
         [Command("cat")]
         public async Task CatAsync(int textsize = 32, string Colour = "white", [Remainder] string text = " ")
         {
-            var s = await _serv.GetCatPictureAsync(text, Colour, textsize);
-            s.Seek(0, SeekOrigin.Begin);
+            var s = await _catModule.CatPictureAsync(textsize, Colour, text);
             await Context.Channel.SendFileAsync(s, "cat.png");
         }
 
@@ -32,28 +35,23 @@ namespace TastyBot.Modules
         [Command("cat")]
         public async Task CatAsync(string Colour = "white", [Remainder] string text = " ")
         {
-           
-
             if (Colour.ToLower() != "gif")
             {
-                var s = await _serv.GetCatPictureAsync(text, Colour, 32);
-                s.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(s, "cat.png");
+                var stream = await _catModule.CatPictureAsync(32, Colour, text);
+                await Context.Channel.SendFileAsync(stream, "cat.png");
             }
             else
             {
-                var s = await _serv.GetCatGifAsync();
-                s.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(s, "cat.gif");
+                var stream = await _catModule.CatGifAsync();
+                await Context.Channel.SendFileAsync(stream, "cat.gif");
             }
         }
 
         [Command("cat")]
         public async Task CatAsync([Remainder] string text = " ")
         {
-            var s = await _serv.GetCatPictureAsync(text, "white", 32);
-            s.Seek(0, SeekOrigin.Begin);
-            await Context.Channel.SendFileAsync(s, "cat.png");
+            var stream = await _catModule.CatPictureAsync(32, "white", text);
+            await Context.Channel.SendFileAsync(stream, "cat.png");
         }
         #endregion 
 
@@ -62,28 +60,28 @@ namespace TastyBot.Modules
         [Command("neko")]
 		public async Task NekoAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Neko, text);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
 		}
 
 		[Command("nekoavatar")]
 		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Avatar, text);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
 
 		[Command("nekowallpaper")]
 		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Wallpaper, text);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
 
 		[Command("fox")]
 		public async Task FoxAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Fox, text);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}
 
@@ -96,27 +94,30 @@ namespace TastyBot.Modules
         [RequireNsfw]
         public async Task NSFWAhegaoAsync([Remainder]string text = "")
         {
-
-            string E = text;
             NSFWNekos res;
 
-            if (E == "")
+            if (text == "")
                 res = RandomEnumValue<NSFWNekos>();
             else
-            {
-                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                E = textInfo.ToTitleCase(text.Split(' ').FirstOrDefault());
-                Console.WriteLine(E);
-                Enum.TryParse(E, out res);
-            }
-            text = string.Join(' ', text.Split(' ').Skip(1));
+                res = GetNSFWNekoFromString(text);
 
-            var s = await _serv.GetNSFWNekoClientPictureAsync(res, text);
+            text = string.Join(' ', text.Split(' ').Skip(1));
+            var s = await _nekoClientModule.NSFWNekoClientPictureAsync(res, text);
             await Context.Channel.SendFileAsync(s, "OwO.png");
         }
+
+        private NSFWNekos GetNSFWNekoFromString(string nekoString)
+        {
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string NekoStringToParse = textInfo.ToTitleCase(nekoString.Split(' ').FirstOrDefault());
+            Console.WriteLine(NekoStringToParse);
+            Enum.TryParse(NekoStringToParse, out NSFWNekos neko);
+            return neko;
+        }
+
         #endregion
   
-        static T RandomEnumValue<T>()
+        private T RandomEnumValue<T>()
         {
             var v = Enum.GetValues(typeof(T));
             return (T)v.GetValue(_R.Next(v.Length));

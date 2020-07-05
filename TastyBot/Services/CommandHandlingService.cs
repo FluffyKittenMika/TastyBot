@@ -17,18 +17,23 @@ namespace TastyBot.Services
         private readonly Config _config;
         private readonly IServiceProvider _services;
 
+        private readonly ILoggingService _log;
+        private readonly string _logSource;
 
-        //much neater
-        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services)
+        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, ILoggingService log)
         {
             _discord = discord;
             _commands = commands;
             _config = config;
             _services = services;
+            _log = log;
+            _logSource = typeof(CommandHandlingService).Name;
 
             //Hook Messages so we can process them if they're commands.
             _discord.MessageReceived += OnMessageReceivedAsync;
             _commands.CommandExecuted += OnCommandExecuted;
+
+            _log.LogAsync(new LogMessage(LogSeverity.Info, _logSource, "Ready"));
         }
 
         private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
@@ -51,7 +56,10 @@ namespace TastyBot.Services
             if (msg.HasStringPrefix(_config.Prefix, ref argPos) || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
             {
                 var result = await _commands.ExecuteAsync(context, argPos, _services);      // Execute the command
-                if (!result.IsSuccess) Console.WriteLine(result.ErrorReason);
+                if (!result.IsSuccess) 
+                {
+                    await _log.LogAsync(new LogMessage(LogSeverity.Error, _logSource, result.ErrorReason));
+                } 
             }
 
         }
