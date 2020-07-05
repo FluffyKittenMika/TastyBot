@@ -2,8 +2,8 @@
 {
     public enum AnimatedNekos
     {
-        BakaGif,
-        NekoGif,
-        SmugGif
+        Bakagif,
+        Nekogif,
+        Smuggif
     }
 }
