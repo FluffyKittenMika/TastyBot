@@ -1,29 +1,27 @@
 ﻿using Discord.Commands;
-using System.IO;
 using System.Threading.Tasks;
-using System.Drawing;
 using Enums.PictureServices;
-using TastyBot.Contracts;
-using TastyBot.Services;
+using HeadpatPictures.Contracts;
 
 namespace TastyBot.Modules
 {
     [Name("Picture Commands")]
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IPictureService _serv;
+        private readonly ICatModule _catModule;
+        private readonly INekoClientModule _nekoClientModule;
 
-        public PictureModule(IPictureService serv)
+        public PictureModule(ICatModule catModule, INekoClientModule nekoClientModule)
         {
-            _serv = serv;
+            _catModule = catModule;
+            _nekoClientModule = nekoClientModule;
         }
 
         #region Cat meow meow region
         [Command("cat")]
         public async Task CatAsync(int textsize = 32, string Colour = "white", [Remainder] string text = " ")
         {
-            var s = await _serv.GetCatPictureAsync(text, Colour, textsize);
-            s.Seek(0, SeekOrigin.Begin);
+            var s = await _catModule.CatPictureAsync(textsize, Colour, text);
             await Context.Channel.SendFileAsync(s, "cat.png");
         }
 
@@ -31,28 +29,23 @@ namespace TastyBot.Modules
         [Command("cat")]
         public async Task CatAsync(string Colour = "white", [Remainder] string text = " ")
         {
-           
-
             if (Colour.ToLower() != "gif")
             {
-                var s = await _serv.GetCatPictureAsync(text, Colour, 32);
-                s.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(s, "cat.png");
+                var stream = await _catModule.CatPictureAsync(32, Colour, text);
+                await Context.Channel.SendFileAsync(stream, "cat.png");
             }
             else
             {
-                var s = await _serv.GetCatGifAsync();
-                s.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(s, "cat.gif");
+                var stream = await _catModule.CatGifAsync();
+                await Context.Channel.SendFileAsync(stream, "cat.gif");
             }
         }
 
         [Command("cat")]
         public async Task CatAsync([Remainder] string text = " ")
         {
-            var s = await _serv.GetCatPictureAsync(text, "white", 32);
-            s.Seek(0, SeekOrigin.Begin);
-            await Context.Channel.SendFileAsync(s, "cat.png");
+            var stream = await _catModule.CatPictureAsync(32, "white", text);
+            await Context.Channel.SendFileAsync(stream, "cat.png");
         }
         #endregion 
 
@@ -61,32 +54,28 @@ namespace TastyBot.Modules
         [Command("neko")]
 		public async Task NekoAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Neko, text);
-			s.Seek(0, SeekOrigin.Begin);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Neko, text);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
 		}
 
 		[Command("nekoavatar")]
 		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Avatar, text);
-			s.Seek(0, SeekOrigin.Begin);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Avatar, text);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
 
 		[Command("nekowallpaper")]
 		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Wallpaper, text);
-			s.Seek(0, SeekOrigin.Begin);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Wallpaper, text);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
 
 		[Command("fox")]
 		public async Task FoxAsync([Remainder]string text = "")
 		{
-			var s = await _serv.GetRegularNekoClientPictureAsync(RegularNekos.Fox, text);
-			s.Seek(0, SeekOrigin.Begin);
+			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Fox, text);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}
 

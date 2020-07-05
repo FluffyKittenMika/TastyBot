@@ -1,9 +1,9 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HeadpatPictures.Contracts;
 using TastyBot.Contracts;
 
 namespace TastyBot.Services
@@ -11,15 +11,21 @@ namespace TastyBot.Services
     public class BotCatService
     {
         private readonly DiscordSocketClient _discord;
-        private readonly IPictureService _pictureServ;
+        private readonly ICatModule _module;
+        private readonly ILoggingService _log;
+        private readonly string _logSource;
 
-        public BotCatService(IPictureService pictureServ, DiscordSocketClient discord)
+        public BotCatService(ILoggingService log, ICatModule module, DiscordSocketClient discord)
         {
             _discord = discord;
             //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
             _discord.MessageReceived += OnMessageReceivedAsync;
-            _pictureServ = pictureServ;
-            Console.WriteLine("Botcat service ready!");
+            _module = module;
+            _log = log;
+            _logSource = typeof(BotCatService).Name;
+
+            string logMessage = "Ready";
+            _log.LogAsync(new LogMessage(LogSeverity.Info, _logSource, logMessage));
         }
 
         public async Task OnMessageReceivedAsync(SocketMessage arg)
@@ -31,8 +37,8 @@ namespace TastyBot.Services
             //Catbot channel
             if (arg.Channel.Name.ToLower() == "botcat") //More generic
             {
-                //just to keep a basic console log
-                Console.WriteLine($"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3");
+                string logMessage = $"catbot:{message.Author} - {message.Content.ToLower()} - cattified :3";
+                await _log.LogDebugMessage(_logSource, logMessage);
 
                 //remove the evicence
                 await arg.DeleteAsync();
@@ -44,7 +50,8 @@ namespace TastyBot.Services
                     try
                     {
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
-                        Console.WriteLine("Regexed into: " + content);
+                        logMessage = $"Regexed into: {content}";
+                        await _log.LogDebugMessage(_logSource, logMessage);
                     }
                     catch (TimeoutException)
                     {
@@ -54,9 +61,7 @@ namespace TastyBot.Services
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";
-                    var stream = await _pictureServ.GetCatPictureAsync(content, "", 1);
-                    // Streams must be seeked to their beginning before being uploaded!
-                    stream.Seek(0, SeekOrigin.Begin);
+                    var stream = await _module.CatPictureAsync(32, "", content);
                     await arg.Channel.SendFileAsync(stream, "cat.png");
                 }
             }

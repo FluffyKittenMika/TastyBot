@@ -3,29 +3,25 @@ using Discord.WebSocket;
 
 using System;
 using System.Threading.Tasks;
+using TastyBot.Contracts;
 
 namespace TastyBot.Services
 {
-    public class RainbowService
+    public class RainbowService : IRainbowService
     {
         private readonly Random _random = new Random();
 
-        public RainbowService(DiscordSocketClient discord)
+        private readonly ILoggingService _log;
+        private readonly string _logSource;
+
+        public RainbowService(ILoggingService log, DiscordSocketClient discord)
         {
-            //we'll just change the role colors when we get a message on the discord, instead of doing it over time ;)
+            _log = log;
+            _logSource = typeof(RainbowService).Name;
+
             discord.MessageReceived += MessageReceivedAsync;
 
-            //This is just to be fancy
-            string rainbow = "started rainbow service";
-            var count = Enum.GetNames(typeof(ConsoleColor)).Length;
-            foreach (char c in rainbow)
-            {
-                Console.ForegroundColor = (ConsoleColor)typeof(ConsoleColor).GetEnumValues().GetValue(_random.Next(0, count));
-                Console.Write(c);
-            }
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.Green; //ye we'll just keep it green m'kay? Hack the planet!
-
+            _log.LogRainbowMessage(_logSource, "Ready");
         }
 
         private async Task MessageReceivedAsync(SocketMessage arg)
@@ -57,6 +53,12 @@ namespace TastyBot.Services
         public Color CreateRainbowColor()
         {
             return new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
+        }
+
+        public ConsoleColor CreateConsoleRainbowColor()
+        {
+            int count = Enum.GetNames(typeof(ConsoleColor)).Length;
+            return (ConsoleColor)typeof(ConsoleColor).GetEnumValues().GetValue(_random.Next(0, count));
         }
     }
 }
