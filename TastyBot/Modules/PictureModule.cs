@@ -14,11 +14,13 @@ namespace TastyBot.Modules
     {
         private readonly ICatModule _catModule;
         private readonly INekoClientModule _nekoClientModule;
+        private readonly Random _R;
 
         public PictureModule(ICatModule catModule, INekoClientModule nekoClientModule)
         {
             _catModule = catModule;
             _nekoClientModule = nekoClientModule;
+            _R = new Random();
         }
 
         #region Cat meow meow region
@@ -92,27 +94,30 @@ namespace TastyBot.Modules
         [RequireNsfw]
         public async Task NSFWAhegaoAsync([Remainder]string text = "")
         {
-
-            string E = text;
             NSFWNekos res;
 
-            if (E == "")
+            if (text == "")
                 res = RandomEnumValue<NSFWNekos>();
             else
-            {
-                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                E = textInfo.ToTitleCase(text.Split(' ').FirstOrDefault());
-                Console.WriteLine(E);
-                Enum.TryParse(E, out res);
-            }
-            text = string.Join(' ', text.Split(' ').Skip(1));
+                res = GetNSFWNekoFromString(text);
 
-            var s = await _serv.GetNSFWNekoClientPictureAsync(res, text);
+            text = string.Join(' ', text.Split(' ').Skip(1));
+            var s = await _nekoClientModule.NSFWNekoClientPictureAsync(res, text);
             await Context.Channel.SendFileAsync(s, "OwO.png");
         }
+
+        private NSFWNekos GetNSFWNekoFromString(string nekoString)
+        {
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string NekoStringToParse = textInfo.ToTitleCase(nekoString.Split(' ').FirstOrDefault());
+            Console.WriteLine(NekoStringToParse);
+            Enum.TryParse(NekoStringToParse, out NSFWNekos neko);
+            return neko;
+        }
+
         #endregion
   
-        static T RandomEnumValue<T>()
+        private T RandomEnumValue<T>()
         {
             var v = Enum.GetValues(typeof(T));
             return (T)v.GetValue(_R.Next(v.Length));

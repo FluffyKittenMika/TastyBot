@@ -21,5 +21,12 @@ namespace HeadpatPictures.Modules
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
+
+        public async Task<Stream> NSFWNekoClientPictureAsync(NSFWNekos unregularNekos, string text)
+        {
+            var stream = await _serv.GetNSFWNekoClientPictureAsync(unregularNekos, text);
+            stream.Seek(0, SeekOrigin.Begin);
+            return stream;
+        }
     }
 }
