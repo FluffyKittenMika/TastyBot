@@ -52,7 +52,7 @@ namespace TastyBot.Extensions
 
         public static void ConfigureCommandHandlingService(this IServiceCollection services)
         {
-            services.AddScoped<ICommandHandlingService, CommandHandlingService>(); // Add the Command handler to the collection
+            services.AddSingleton<CommandHandlingService>();   // Add the Command handler to the collection
         }
 
         public static void ConfigureLoggingService(this IServiceCollection services)
