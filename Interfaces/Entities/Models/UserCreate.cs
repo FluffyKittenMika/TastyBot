@@ -1,9 +1,9 @@
 ﻿using Enums.UserPermissions;
 using System.Collections.Generic;
 
-namespace Authorization.Entities
+namespace Interfaces.Entities.Models
 {
-    public class User
+    public class UserCreate
     {
         public string Name { get; set; }
         public ulong DiscordId { get; set; }

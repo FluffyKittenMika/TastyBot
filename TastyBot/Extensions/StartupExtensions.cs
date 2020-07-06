@@ -1,8 +1,4 @@
-﻿using Authorization.Contracts;
-using Authorization.HelperClasses;
-using Authorization.Users;
-
-using FileManager.Contracts;
+﻿using FileManager.Contracts;
 
 using Cache.Contracts;
 using Cache.Containers;
@@ -20,6 +16,13 @@ using FutureHeadPats.HelperClasses;
 using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Containers;
 using HeadpatDungeon.Strategies;
+
+using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Contracts.DataAccessLayer;
+using Interfaces.Contracts.Database;
+
+using BusinessLogicLayer.Repositories;
+using DataAccessLayer.Context;
 
 using TastyBot.Contracts;
 using TastyBot.Services;
@@ -93,16 +96,29 @@ namespace TastyBot.Extensions
 
         #endregion
 
-        #region Authorization
+        #region BusinessLogicLayer
 
-        public static void ConfigurePermissionHandler(this IServiceCollection services)
+        public static void ConfigureUserRepository(this IServiceCollection services)
         {
-            services.AddScoped<IPermissionHandler, PermissionHandler>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
-        public static void ConfigureUsersContainer(this IServiceCollection services)
+        #endregion
+
+        #region DataAccessLayer
+
+        public static void ConfigureUserContext(this IServiceCollection services)
         {
-            services.AddScoped<IUsersContainer, UsersContainer>();
+            services.AddScoped<IUserContext, UserContext>();
+        }
+
+        #endregion
+
+        #region Database
+
+        public static void ConfigureLiteDB(this IServiceCollection services)
+        {
+            services.AddScoped<ILiteDB, Database.LiteDB>();
         }
 
         #endregion

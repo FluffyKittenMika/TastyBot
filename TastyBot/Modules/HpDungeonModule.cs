@@ -10,7 +10,6 @@ using Discord;
 using Discord.Commands;
 
 using TastyBot.Utility;
-using Authorization.Contracts;
 using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Models.Entities;
 

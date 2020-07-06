@@ -75,9 +75,16 @@ namespace TastyBot.Services
             services.ConfigureRainbowService();
             #endregion
 
-            #region Authorization
-            services.ConfigurePermissionHandler();
-            services.ConfigureUsersContainer();
+            #region BusinessLogicLayer
+            services.ConfigureUserRepository();
+            #endregion
+
+            #region DataAccessLayer
+            services.ConfigureUserContext();
+            #endregion
+
+            #region Database
+            services.ConfigureLiteDB();
             #endregion
 
             #region Cache
