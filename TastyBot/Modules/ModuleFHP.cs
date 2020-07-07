@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Entities.Models;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -24,7 +25,8 @@ namespace TastyBot.Modules
         public ModuleFHP(IFhpModule module, IUserRepository repo)
         {
             _module = module;
-            _repo = repo;
+            _repo = repo; 
+            Logging.LogReadyMessage(this);
         }
 
         /// <summary>

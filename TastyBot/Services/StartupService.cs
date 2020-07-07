@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using TastyBot.Utility;
-using Interfaces.Contracts.Utilities;
 
 using System;
 using System.Reflection;
@@ -14,6 +13,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using Enums.UserPermissions;
+using Utilities.LoggingService;
 
 namespace TastyBot.Services
 {
@@ -24,18 +24,16 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly Config _config;
-        private readonly ILoggingService _log;
 
-        public StartupService(IServiceProvider provider, IUserRepository repo, ILoggingService log, DiscordSocketClient discord, CommandService commands, Config config)
+        public StartupService(IServiceProvider provider, IUserRepository repo, DiscordSocketClient discord, CommandService commands, Config config)
         {
             _provider = provider;
             _repo = repo;
             _config = config;
             _discord = discord;
             _commands = commands;
-            _log = log;
 
-            _log.LogReadyMessage(this);
+            Logging.LogReadyMessage(this);
         }
 
         public async Task StartAsync()
@@ -44,7 +42,7 @@ namespace TastyBot.Services
             if (string.IsNullOrWhiteSpace(discordToken))
             {
                 string logMessage = "Please enter your bot's token into the `config.json` file found in the applications root directory.";
-                await _log.LogAsync(new LogMessage(LogSeverity.Critical, GetType().Name, logMessage));
+                await Logging.LogAsync(new LogMessage(LogSeverity.Critical, GetType().Name, logMessage));
                 throw new Exception();
             }
 

@@ -5,6 +5,7 @@ using HeadpatPictures.Contracts;
 using System;
 using System.Linq;
 using System.Globalization;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -20,6 +21,8 @@ namespace TastyBot.Modules
             _catModule = catModule;
             _nekoClientModule = nekoClientModule;
             _R = new Random();
+
+            Logging.LogReadyMessage(this);
         }
 
         #region Cat meow meow region

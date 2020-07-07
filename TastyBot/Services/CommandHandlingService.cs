@@ -1,5 +1,5 @@
-﻿using Interfaces.Contracts.Utilities;
-using TastyBot.Utility;
+﻿using TastyBot.Utility;
+using Utilities.RainbowUtilities;
 
 using Discord;
 using Discord.Commands;
@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using HeadpatPictures.Contracts;
+using Utilities.LoggingService;
 
 namespace TastyBot.Services
 {
@@ -18,27 +19,23 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly Config _config;
         private readonly IServiceProvider _services;
-        private readonly ILoggingService _log;
-        private readonly IRainbowUtilities _rainbow;
         private readonly ICatModule _catModule;
 
-        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, ILoggingService log, IRainbowUtilities rainbow, ICatModule catModule)
+        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, ICatModule catModule)
         {
             _discord = discord;
             _commands = commands;
             _config = config;
             _services = services;
-            _log = log;
-            _rainbow = rainbow;
             _catModule = catModule;
 
             //Hook Messages so we can process them if they're commands.
             _discord.MessageReceived += OnMessageReceivedAsync;
             _commands.CommandExecuted += OnCommandExecuted;
-            _discord.Log += _log.LogAsync;
-            _commands.Log += _log.LogAsync;
+            _discord.Log += Logging.LogAsync;
+            _commands.Log += Logging.LogAsync;
 
-            _log.LogReadyMessage(this);
+            Logging.LogReadyMessage(this);
         }
 
         private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
@@ -70,7 +67,7 @@ namespace TastyBot.Services
                 var result = await _commands.ExecuteAsync(context, argPos, _services);      // Execute the command
                 if (!result.IsSuccess)
                 {
-                    await _log.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, result.ErrorReason));
+                    await Logging.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, result.ErrorReason));
                 }
             }
         }
@@ -90,14 +87,14 @@ namespace TastyBot.Services
                     {
                         await role.ModifyAsync(x =>
                         {
-                            x.Color = _rainbow.CreateRainbowColor();
+                            x.Color = RainbowUtilities.CreateRainbowColor();
                         });
                     }
                 }
             }
             catch (Exception e)
             {
-                await _log.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, "Unable to change rainbow channel name; ", e));
+                await Logging.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, "Unable to change rainbow channel name; ", e));
             }
         }
 
@@ -107,7 +104,7 @@ namespace TastyBot.Services
             if (userMessage.Channel.Name.ToLower() == "botcat") //More generic
             {
                 string logMessage = $"catbot:{userMessage.Author} - {userMessage.Content.ToLower()} - cattified :3";
-                await _log.LogDebugMessage(GetType().Name, logMessage);
+                await Logging.LogDebugMessage(GetType().Name, logMessage);
 
                 //remove the evicence
                 await userMessage.DeleteAsync();
@@ -120,7 +117,7 @@ namespace TastyBot.Services
                     {
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
                         logMessage = $"Regexed into: {content}";
-                        await _log.LogDebugMessage(GetType().Name, logMessage);
+                        await Logging.LogDebugMessage(GetType().Name, logMessage);
                     }
                     catch (TimeoutException)
                     {

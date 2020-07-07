@@ -15,12 +15,6 @@ using HeadpatDungeon.Strategies;
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Contracts.DataAccessLayer;
 using Interfaces.Contracts.Database;
-using Interfaces.Contracts.Utilities;
-
-using Utilities.Cache;
-using Utilities.FileManager;
-using Utilities.RainbowUtilities;
-using Utilities.LoggingService;
 
 using BusinessLogicLayer.Repositories;
 using DataAccessLayer.Context;
@@ -79,32 +73,6 @@ namespace TastyBot.Extensions
         {
             services.AddSingleton<StartupService>();
         }
-
-        #endregion
-
-        public static void ConfigureLoggingService(this IServiceCollection services)
-        {
-            services.AddScoped<ILoggingService, LoggingService>();
-        }
-
-        public static void ConfigureRainbowService(this IServiceCollection services)
-        {
-            services.AddScoped<IRainbowUtilities, RainbowUtilities>();
-        }
-
-        public static void ConfigureFileManager(this IServiceCollection services)
-        {
-            services.AddScoped<IFileManager, FileManager>();
-        }
-
-        public static void ConfigureCacheContainer(this IServiceCollection services)
-        {
-            services.AddScoped<ICacheContainer, CacheContainer>();
-        }
-
-        #region Utilities
-
-
 
         #endregion
 
