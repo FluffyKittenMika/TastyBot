@@ -6,6 +6,9 @@
         FutureHeadPatsDelete,
         FutureHeadPatsSave,
         FutureHeadPatsAlmightyPatter,
-        HeadpatDungeonHDPSave
+        HeadpatDungeonHDPSave,
+        DBUsersUneditableByOthers,
+        DBUsersUpdateAdministrator,
+        DBUsersUpdatePermissions
     }
 }
