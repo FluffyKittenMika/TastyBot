@@ -1,4 +1,4 @@
-﻿using FileManager.Contracts;
+﻿using Interfaces.Contracts.Utilities;
 
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-namespace FileManager
+namespace Utilities.FileManager
 {
     /// <summary>
     /// Manages saving random data into .json files. The files will have the name of the class of the objects being saved.

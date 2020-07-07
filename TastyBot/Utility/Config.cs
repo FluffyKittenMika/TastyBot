@@ -13,6 +13,5 @@ namespace TastyBot.Utility
         public string Prefix { get; set; }
         public int Savecounter { get; set; }
         public string DiscordToken { get; set; }
-        public List<UserCreate> Staff { get; set; }
     }
 }

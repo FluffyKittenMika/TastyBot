@@ -1,7 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-
-using TastyBot.Services;
 using System.Threading.Tasks;
 
 namespace TastyBot.Modules
@@ -10,8 +8,6 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-        public BotCatService CatBotService { get; set; }
-
         public PublicModule()
         {
 

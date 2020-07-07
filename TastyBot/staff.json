@@ -1,7 +1,7 @@
 [
   {
     "name": "Earan",
-    "discordId": 1,
+    "discordId": 277038010862796801,
     "administrator": true,
     "permissions": [
       "FutureHeadPatsGive",
@@ -14,9 +14,15 @@
   {
     "name": "Yuqera",
     "discordId": 595382132038303751,
-    "administrator": false,
+    "administrator": true,
     "permissions": [
       "HeadpatDungeonHDPSave"
     ]
+  },
+  {
+    "name": "Mikas",
+    "discordId": 83183880869253120,
+    "administrator": true,
+    "permissions": []
   }
 ]

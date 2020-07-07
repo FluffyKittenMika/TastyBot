@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Caching;
-using Cache.Contracts;
+using Interfaces.Contracts.Utilities;
 
-namespace Cache.Containers
+namespace Utilities.Cache
 {
     public class CacheContainer : ICacheContainer
     {

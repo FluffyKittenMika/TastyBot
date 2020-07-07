@@ -1,9 +1,9 @@
 ﻿using Discord;
 using System;
 
-namespace TastyBot.Contracts
+namespace Interfaces.Contracts.Utilities
 {
-    public interface IRainbowService
+    public interface IRainbowUtilities
     {
         Color CreateRainbowColor();
         ConsoleColor CreateConsoleRainbowColor();

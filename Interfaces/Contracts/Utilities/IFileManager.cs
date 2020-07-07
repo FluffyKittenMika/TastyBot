@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FileManager.Contracts
+namespace Interfaces.Contracts.Utilities
 {
     public interface IFileManager
     {

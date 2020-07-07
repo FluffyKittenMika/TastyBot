@@ -1,37 +1,28 @@
 ﻿using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using TastyBot.Contracts;
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TastyBot.Services
+using Interfaces.Contracts.Utilities;
+
+namespace Utilities.LoggingService
 {
     public class LoggingService : ILoggingService
     {
-        private readonly DiscordSocketClient _discord;
-        private readonly CommandService _commands;
-        private readonly Random _random;
+        private readonly IRainbowUtilities _rainbow;
 
-        private readonly string _logSource = typeof(LoggingService).Name;
         private readonly string _logDirectory;
         private readonly string _logFile;
 
-        public LoggingService(DiscordSocketClient discord, CommandService commands)
+        public LoggingService(IRainbowUtilities rainbow)
         {
             _logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
             _logFile = Path.Combine(_logDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
-            _discord = discord;
-            _commands = commands;
-            _random = new Random();
+            _rainbow = rainbow;
 
-            _discord.Log += LogAsync;
-            _commands.Log += LogAsync;
-
-            LogAsync(new LogMessage(LogSeverity.Info, _logSource, "Ready"));
+            LogReadyMessage(this);
         }
 
         public Task LogAsync(LogMessage msg)
@@ -65,6 +56,13 @@ namespace TastyBot.Services
             return Console.Out.WriteLineAsync(logText);       // Write the log text to the console
         }
 
+        public Task LogReadyMessage<T>(T Class)
+        {
+            string source = Class.GetType().Name;
+            LogMessage logMessage = new LogMessage(LogSeverity.Info, source, "Ready");
+            return LogAsync(logMessage);
+        }
+
         public Task LogDebugMessage(string source, string message)
         {
             LogMessage logMessage = new LogMessage(LogSeverity.Debug, source, message);
@@ -92,16 +90,10 @@ namespace TastyBot.Services
 
             foreach(char c in logText)
             {
-                Console.ForegroundColor = CreateConsoleRainbowColor();
+                Console.ForegroundColor = _rainbow.CreateConsoleRainbowColor();
                 Console.Write(c);
             }
             Console.WriteLine();
-        }
-
-        private ConsoleColor CreateConsoleRainbowColor()
-        {
-            int count = Enum.GetNames(typeof(ConsoleColor)).Length;
-            return (ConsoleColor)typeof(ConsoleColor).GetEnumValues().GetValue(_random.Next(0, count));
         }
     }
 }

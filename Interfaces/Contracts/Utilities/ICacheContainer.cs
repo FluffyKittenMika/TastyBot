@@ -1,4 +1,4 @@
-﻿namespace Cache.Contracts
+﻿namespace Interfaces.Contracts.Utilities
 {
     public interface ICacheContainer
     {

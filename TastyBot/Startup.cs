@@ -1,5 +1,4 @@
 ﻿using TastyBot.Extensions;
-using TastyBot.Contracts;
 using TastyBot.Utility;
 
 using System;
@@ -51,11 +50,9 @@ namespace TastyBot.Services
             ConfigureServices(services);
 
             var provider = services.BuildServiceProvider();                         // Build the service provider
-            provider.GetRequiredService<ILoggingService>();                         // Start the logging service
             provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
-            provider.GetRequiredService<IRainbowService>();
 
-            await provider.GetRequiredService<IStartupService>().StartAsync();      // Start the startup service
+            await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
         }
 
@@ -69,10 +66,14 @@ namespace TastyBot.Services
 
             #region TastyBot
             services.ConfigureCommandHandlingService();
-            services.ConfigureLoggingService();
             services.ConfigureStartupService();
-            services.ConfigureBotcatService();
+            #endregion
+
+            #region Utilities
+            services.ConfigureLoggingService();
             services.ConfigureRainbowService();
+            services.ConfigureCacheContainer();
+            services.ConfigureFileManager();
             #endregion
 
             #region BusinessLogicLayer
@@ -85,14 +86,6 @@ namespace TastyBot.Services
 
             #region Database
             services.ConfigureLiteDB();
-            #endregion
-
-            #region Cache
-            services.ConfigureCacheContainer();
-            #endregion
-
-            #region FileManager
-            services.ConfigureFileManager();
             #endregion
 
             #region HeadpatPictures
