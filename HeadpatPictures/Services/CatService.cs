@@ -42,7 +42,7 @@ namespace HeadpatPictures.Services
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //If amount of images is equal to 0, or the key does not exist, fill it
-            if (_pictureCache.GetCachedPictures(key).Count == 0 || !_pictureCache.Exists(key))
+            if (_pictureCache.GetCacheCount(key) == 0 || !_pictureCache.Exists(key))
                 await FillPictureCache(key); //Fills it to MaxUniqueCounter
 
             //Get the first image from the cache
