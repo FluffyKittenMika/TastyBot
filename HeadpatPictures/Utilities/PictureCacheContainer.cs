@@ -1,37 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Interfaces.Contracts.Utilities;
 using HeadpatPictures.Contracts;
+
+using Utilities.Cache;
 
 namespace HeadpatPictures.Utilities
 {
     public class PictureCacheContainer : IPictureCacheContainer
     {
-        private readonly ICacheContainer _cache;
-
-        public PictureCacheContainer(ICacheContainer cache)
-        {
-            _cache = cache;
-        }
 
         public bool Exists(string key)
         {
-            return _cache.CacheExists(key);
+            return Cache.CacheExists(key);
         }
 
         public List<Stream> GetCachedPictures(string key)
         {
-            return _cache.RetrieveItems<List<Stream>>(key);
+            return Cache.RetrieveItems<List<Stream>>(key);
         }
 
         public void SetCachedPictures(List<Stream> pictures, string key)
         {
-            _cache.StoreItems(pictures, key);
+            Cache.StoreItems(pictures, key);
         }
 
         public void ReplacePictures(List<Stream> pictures, string key)
         {
-            _cache.RemoveCache(key);
+            Cache.RemoveCache(key);
             SetCachedPictures(pictures, key);
         }
     }

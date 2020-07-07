@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Entities.Models;
 using TastyBot.Utility;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -11,11 +14,15 @@ namespace TastyBot.Modules
     {
         private readonly CommandService _service;
         private readonly Config _config;
+        private readonly IUserRepository _repo;
 
-        public HelpModule(CommandService service, Config config)
+        public HelpModule(CommandService service, Config config, IUserRepository repo)
         {
             _service = service;
             _config = config;
+            _repo = repo;
+
+            Logging.LogReadyMessage(this);
         }
 
         [Command("help")]
@@ -31,6 +38,13 @@ namespace TastyBot.Modules
 
             foreach (var module in _service.Modules)
             {
+                
+                if (module.Name == "Administrator Tools")
+                {
+                    User user = _repo.ByDiscordId(Context.User.Id);
+                    if (user != null && !user.Administrator) continue;
+                }
+
                 string description = null;
                 foreach (var cmd in module.Commands.GroupBy(x => x.Name).Select(x => x.FirstOrDefault()).ToList())
                 {

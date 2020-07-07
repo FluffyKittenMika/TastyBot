@@ -1,9 +1,6 @@
 ﻿using Discord.Commands;
 using MasterMind.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -17,7 +14,9 @@ namespace TastyBot.Modules
 
         public MasterMindModule(IMasterMindModule module)
         {
-            _module = module;
+            _module = module; 
+
+            Logging.LogReadyMessage(this);
         }
     }
 }

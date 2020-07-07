@@ -1,6 +1,4 @@
-﻿using Interfaces.Contracts.Utilities;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,7 +10,7 @@ namespace Utilities.FileManager
     /// <summary>
     /// Manages saving random data into .json files. The files will have the name of the class of the objects being saved.
     /// </summary>
-    public class FileManager : IFileManager
+    public static class FileManager
     {
         /// <summary>
         /// Path to the hidden "ProgramData" folder next to the "Program Files" and "Program Files (x86)" folders.
@@ -22,9 +20,9 @@ namespace Utilities.FileManager
         /// <summary>
         /// Contains all the lock objects for each type of data. This way we have a per file lock system.
         /// </summary>
-        private readonly Dictionary<string, object> dicWriteLock = new Dictionary<string, object>();
+        private static readonly Dictionary<string, object> dicWriteLock = new Dictionary<string, object>();
 
-        public void Init()
+        public static void Init()
         {
             if (!saveDirectory.Exists)
             {
@@ -32,7 +30,7 @@ namespace Utilities.FileManager
             }
         }
 
-        private object GetLock(string type)
+        private static object GetLock(string type)
         {
             if (!dicWriteLock.TryGetValue(type, out object writelock))
             {
@@ -49,7 +47,7 @@ namespace Utilities.FileManager
         /// <param name="data">The data to serialize into json.</param>
         /// <param name="id">A uinque id that identifies the server the data files belong to.</param>
         /// <returns></returns>
-        public Task SaveData<T>(List<T> data, string id)
+        public static Task SaveData<T>(List<T> data, string id)
         {
             string type = typeof(T).Name;
             object writeLock = GetLock(type);
@@ -72,7 +70,7 @@ namespace Utilities.FileManager
         /// <typeparam name="T">The type of data to load. Also the name of the file to load data from</typeparam>
         /// <param name="id">A uinque id that identifies the server the data files belong to.</param>
         /// <returns>The file or an empty list</returns>
-        public Task<List<T>> LoadData<T>(string id)
+        public static Task<List<T>> LoadData<T>(string id)
         {
             string type = typeof(T).Name;
             object writeLock = GetLock(type);

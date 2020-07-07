@@ -1,12 +1,15 @@
 ﻿using TastyBot.Extensions;
 using TastyBot.Utility;
 
+using Utilities.LoggingService;
+
 using System;
 using System.Threading.Tasks;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Utilities.RainbowUtilities;
 
 namespace TastyBot.Services
 {
@@ -52,6 +55,9 @@ namespace TastyBot.Services
             var provider = services.BuildServiceProvider();                         // Build the service provider
             provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
+            await Logging.LogReadyMessage(typeof(Logging));
+            Logging.LogRainbowMessage(typeof(RainbowUtilities).Name, "Ready");
+
             await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
         }
@@ -67,13 +73,6 @@ namespace TastyBot.Services
             #region TastyBot
             services.ConfigureCommandHandlingService();
             services.ConfigureStartupService();
-            #endregion
-
-            #region Utilities
-            services.ConfigureLoggingService();
-            services.ConfigureRainbowService();
-            services.ConfigureCacheContainer();
-            services.ConfigureFileManager();
             #endregion
 
             #region BusinessLogicLayer

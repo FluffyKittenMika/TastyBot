@@ -1,42 +1,36 @@
 ﻿using System.Runtime.Caching;
-using Interfaces.Contracts.Utilities;
 
 namespace Utilities.Cache
 {
-    public class CacheContainer : ICacheContainer
+    public static class Cache
     {
-        private readonly MemoryCache _globalCache;
+        private static readonly MemoryCache _globalCache = new MemoryCache("GlobalCache");
 
-        public CacheContainer()
-        {
-            _globalCache = new MemoryCache("GlobalCache");
-        }
-
-        public T RetrieveItems<T>(string key)
+        public static T RetrieveItems<T>(string key)
         {
             T cacheObjects = (T)_globalCache.Get(key);
             return cacheObjects;
         }
 
-        public bool CacheExists(string key)
+        public static bool CacheExists(string key)
         {
             bool cacheExists = _globalCache.Contains(key);
             return cacheExists;
         }
 
-        public void StoreItems<T>(T items, string key)
+        public static void StoreItems<T>(T items, string key)
         {
             var cacheItemPolicy = new CacheItemPolicy();
 
             _globalCache.Add(key, items, cacheItemPolicy);
         }
 
-        public void RemoveCache(string key)
+        public static void RemoveCache(string key)
         {
             _globalCache.Remove(key);
         }
 
-        public void ResetGlobalCache()
+        public static void ResetGlobalCache()
         {
             _globalCache.Dispose();
         }

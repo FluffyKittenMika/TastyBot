@@ -4,28 +4,16 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-using Interfaces.Contracts.Utilities;
-
 namespace Utilities.LoggingService
 {
-    public class LoggingService : ILoggingService
+    using Utilities.RainbowUtilities;
+
+    public static class Logging
     {
-        private readonly IRainbowUtilities _rainbow;
+        private static readonly string _logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
+        private static readonly string _logFile = Path.Combine(_logDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
-        private readonly string _logDirectory;
-        private readonly string _logFile;
-
-        public LoggingService(IRainbowUtilities rainbow)
-        {
-            _logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
-            _logFile = Path.Combine(_logDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
-
-            _rainbow = rainbow;
-
-            LogReadyMessage(this);
-        }
-
-        public Task LogAsync(LogMessage msg)
+        public static Task LogAsync(LogMessage msg)
         {
             if (!Directory.Exists(_logDirectory))     // Create the log directory if it doesn't exist
                 Directory.CreateDirectory(_logDirectory);
@@ -56,20 +44,20 @@ namespace Utilities.LoggingService
             return Console.Out.WriteLineAsync(logText);       // Write the log text to the console
         }
 
-        public Task LogReadyMessage<T>(T Class)
+        public static Task LogReadyMessage<T>(T Class)
         {
             string source = Class.GetType().Name;
             LogMessage logMessage = new LogMessage(LogSeverity.Info, source, "Ready");
             return LogAsync(logMessage);
         }
 
-        public Task LogDebugMessage(string source, string message)
+        public static Task LogDebugMessage(string source, string message)
         {
             LogMessage logMessage = new LogMessage(LogSeverity.Debug, source, message);
             return LogAsync(logMessage);
         }
 
-        public void LogRainbowMessage(string source, string message)
+        public static void LogRainbowMessage(string source, string message)
         {
             if (!Directory.Exists(_logDirectory))     // Create the log directory if it doesn't exist
                 Directory.CreateDirectory(_logDirectory);
@@ -90,7 +78,7 @@ namespace Utilities.LoggingService
 
             foreach(char c in logText)
             {
-                Console.ForegroundColor = _rainbow.CreateConsoleRainbowColor();
+                Console.ForegroundColor = RainbowUtilities.CreateConsoleRainbowColor();
                 Console.Write(c);
             }
             Console.WriteLine();

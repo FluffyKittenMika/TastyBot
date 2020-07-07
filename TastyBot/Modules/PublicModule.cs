@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -8,9 +9,10 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
+
         public PublicModule()
         {
-
+            Logging.LogReadyMessage(this);
         }
 
 
