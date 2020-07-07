@@ -10,9 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cache\Cache.csproj" />
     <ProjectReference Include="..\Enums\Enums.csproj" />
-    <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Enums.PictureServices;
 using HeadpatPictures.Contracts;
-using TastyBot.Contracts;
 using System;
 using System.Linq;
 using System.Globalization;

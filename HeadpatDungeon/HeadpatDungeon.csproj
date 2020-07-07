@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="DataFiles\crafting_smelting.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

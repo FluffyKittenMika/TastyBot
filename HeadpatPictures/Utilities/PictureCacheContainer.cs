@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Cache.Contracts;
+using Interfaces.Contracts.Utilities;
 using HeadpatPictures.Contracts;
 
 namespace HeadpatPictures.Utilities

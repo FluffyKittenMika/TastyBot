@@ -1,9 +1,5 @@
-﻿using Authorization.Contracts;
-
-using Discord;
+﻿using Discord;
 using Discord.Commands;
-
-using TastyBot.Services;
 using System.Threading.Tasks;
 
 namespace TastyBot.Modules
@@ -12,12 +8,9 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-        public readonly IPermissionHandler _permissionHandler;
-        public BotCatService CatBotService { get; set; }
-
-        public PublicModule(IPermissionHandler permissionHandler)
+        public PublicModule()
         {
-            _permissionHandler = permissionHandler;
+
         }
 
 

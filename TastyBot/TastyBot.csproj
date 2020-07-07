@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
     <PackageReference Include="Discord.Net" Version="2.2.0" />
     <PackageReference Include="Nekos-Sharp" Version="3.3.1" />
@@ -23,17 +24,22 @@
     <None Update="config_example.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="staff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Authorization\Authorization.csproj" />
-    <ProjectReference Include="..\Cache\Cache.csproj" />
+    <ProjectReference Include="..\BusinessLogicLayer\BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\Enums\Enums.csproj" />
-    <ProjectReference Include="..\FileMananger\FileMananger.csproj" />
     <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
     <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />
     <ProjectReference Include="..\HeadpatPictures\HeadpatPictures.csproj" />
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
     <ProjectReference Include="..\MasterMind\MasterMind.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

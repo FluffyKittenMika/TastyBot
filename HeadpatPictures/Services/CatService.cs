@@ -3,12 +3,6 @@ using System.IO;
 using System.Net.Http;
 
 using System.Threading.Tasks;
-using NekosSharp;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System;
-using Enums.PictureServices;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace HeadpatPictures.Services

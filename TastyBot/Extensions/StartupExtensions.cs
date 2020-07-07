@@ -1,13 +1,4 @@
-﻿using Authorization.Contracts;
-using Authorization.HelperClasses;
-using Authorization.Users;
-
-using FileManager.Contracts;
-
-using Cache.Contracts;
-using Cache.Containers;
-
-using HeadpatPictures.Contracts;
+﻿using HeadpatPictures.Contracts;
 using HeadpatPictures.Modules;
 using HeadpatPictures.Services;
 using HeadpatPictures.Utilities;
@@ -21,7 +12,19 @@ using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Containers;
 using HeadpatDungeon.Strategies;
 
-using TastyBot.Contracts;
+using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Contracts.DataAccessLayer;
+using Interfaces.Contracts.Database;
+using Interfaces.Contracts.Utilities;
+
+using Utilities.Cache;
+using Utilities.FileManager;
+using Utilities.RainbowUtilities;
+using Utilities.LoggingService;
+
+using BusinessLogicLayer.Repositories;
+using DataAccessLayer.Context;
+
 using TastyBot.Services;
 using TastyBot.Utility;
 
@@ -72,55 +75,62 @@ namespace TastyBot.Extensions
             services.AddSingleton<CommandHandlingService>();
         }
 
+        public static void ConfigureStartupService(this IServiceCollection services)
+        {
+            services.AddSingleton<StartupService>();
+        }
+
+        #endregion
+
         public static void ConfigureLoggingService(this IServiceCollection services)
         {
             services.AddScoped<ILoggingService, LoggingService>();
         }
 
-        public static void ConfigureStartupService(this IServiceCollection services)
-        {
-            services.AddScoped<IStartupService, StartupService>();
-        }
-
         public static void ConfigureRainbowService(this IServiceCollection services)
         {
-            services.AddScoped<IRainbowService, RainbowService>();
+            services.AddScoped<IRainbowUtilities, RainbowUtilities>();
         }
-        public static void ConfigureBotcatService(this IServiceCollection services)
-        {
-            services.AddSingleton<BotCatService>();
-        }
-
-        #endregion
-
-        #region Authorization
-
-        public static void ConfigurePermissionHandler(this IServiceCollection services)
-        {
-            services.AddScoped<IPermissionHandler, PermissionHandler>();
-        }
-
-        public static void ConfigureUsersContainer(this IServiceCollection services)
-        {
-            services.AddScoped<IUsersContainer, UsersContainer>();
-        }
-
-        #endregion
-
-        #region FileManager
 
         public static void ConfigureFileManager(this IServiceCollection services)
         {
-            services.AddScoped<IFileManager, FileManager.FileManager>();
+            services.AddScoped<IFileManager, FileManager>();
         }
-
-        #endregion
-
-        #region Cache
 
         public static void ConfigureCacheContainer(this IServiceCollection services)
         {
             services.AddScoped<ICacheContainer, CacheContainer>();
+        }
+
+        #region Utilities
+
+
+
+        #endregion
+
+        #region BusinessLogicLayer
+
+        public static void ConfigureUserRepository(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        #endregion
+
+        #region DataAccessLayer
+
+        public static void ConfigureUserContext(this IServiceCollection services)
+        {
+            services.AddScoped<IUserContext, UserContext>();
+        }
+
+        #endregion
+
+        #region Database
+
+        public static void ConfigureLiteDB(this IServiceCollection services)
+        {
+            services.AddScoped<ILiteDB, Database.LiteDB>();
         }
 
         #endregion
