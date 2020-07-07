@@ -2,13 +2,13 @@
 {
     public enum ActionNekos
     {
-        CuddleGif,
-        FeedGif,
-        HugGif,
-        KissGif,
-        PatGif,
-        PokeGif,
-        SlapGif,
-        TickleGif
+        Cuddlegif,
+        Feedgif,
+        Huggif,
+        Kissgif,
+        Patgif,
+        Pokegif,
+        Slapgif,
+        Ticklegif
     }
 }

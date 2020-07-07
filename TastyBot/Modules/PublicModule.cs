@@ -1,10 +1,7 @@
-﻿using Authorization.Contracts;
-
-using Discord;
+﻿using Discord;
 using Discord.Commands;
-
-using TastyBot.Services;
 using System.Threading.Tasks;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -12,12 +9,10 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-        public readonly IPermissionHandler _permissionHandler;
-        public BotCatService CatBotService { get; set; }
 
-        public PublicModule(IPermissionHandler permissionHandler)
+        public PublicModule()
         {
-            _permissionHandler = permissionHandler;
+            Logging.LogReadyMessage(this);
         }
 
 
@@ -55,8 +50,7 @@ namespace TastyBot.Modules
         }
 
         /* Commenting out theese commands as they're really not needed, keeping them around for reference. 
-		 
-		
+		 		
 		// [Remainder] takes the rest of the command's arguments as one argument, rather than splitting every space
 		[Command("echo")]
 		public Task EchoAsync([Remainder] string text)
@@ -75,7 +69,5 @@ namespace TastyBot.Modules
 		public Task GuildOnlyCommand()
 			=> ReplyAsync("Nothing to see here!");
 		*/
-
-
     }
 }

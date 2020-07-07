@@ -2,20 +2,20 @@
 {
     public enum AnimatedNSFWNekos
     {
-        AnalGif,
-        BlowJobGif,
-        BoobsGif,
-        ClassicGif,
-        CumGif,
-        FeetGif,
-        HentaiGif,
-        KuniGif,
-        NekoGif,
-        PussyGif,
-        PwankGif,
-        SoloGif,
-        SpankGif,
-        YiffGif,
-        YuriGif
+        Analgif,
+        BlowJobgif,
+        Boobsgif,
+        Classicgif,
+        Cumgif,
+        Feetgif,
+        Hentaigif,
+        Kunigif,
+        Nekogif,
+        Pussygif,
+        Pwankgif,
+        Sologif,
+        Spankgif,
+        Yiffgif,
+        Yurigif
     }
 }

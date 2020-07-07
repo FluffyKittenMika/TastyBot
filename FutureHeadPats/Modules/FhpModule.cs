@@ -7,21 +7,21 @@ using System.Linq;
 using System.Text;
 using System;
 
-using Authorization.Contracts;
-
 using Enums.UserPermissions;
+using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Entities.Models;
 
 namespace FutureHeadPats.Modules
 {
     public class FhpModule : IFhpModule
     {
         private readonly IHeadpatService _serv;
-        private readonly IPermissionHandler _permission;
+        private readonly IUserRepository _repo;
 
-        public FhpModule(IHeadpatService serv, IPermissionHandler permission)
+        public FhpModule(IHeadpatService serv, IUserRepository repo)
         {
             _serv = serv;
-            _permission = permission;
+            _repo = repo;
         }
 
         public void Give(IUser receiver, long amount)
@@ -44,10 +44,11 @@ namespace FutureHeadPats.Modules
         {
             FhpUser senderFPH = _serv.GetUser(sender);
             FhpUser receiverFPH = _serv.GetUser(receiver);
+            User user = _repo.ByDiscordId(receiver.Id);
 
             if (receiver.IsBot)
                 return "Can't pat a bot! Baka!";
-            else if (_permission.HasPermissions(receiver.Id, Permissions.FutureHeadPatsAlmightyPatter))
+            else if (user != null && user.HasPermission(Permissions.FutureHeadPatsAlmightyPatter))
                 return "You cannot give headpats to the one giving out the headpats";
 
             if (amount < 0)

@@ -1,11 +1,9 @@
 ﻿using FutureHeadPats.Entities;
 using FutureHeadPats.Contracts;
-using FileManager.Contracts;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 

@@ -7,7 +7,9 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 
-using Authorization.Contracts;
+using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Entities.Models;
+using Utilities.LoggingService;
 
 namespace TastyBot.Modules
 {
@@ -18,12 +20,13 @@ namespace TastyBot.Modules
     public class ModuleFHP : ModuleBase<SocketCommandContext>
     {
         private readonly IFhpModule _module;
-        private readonly IPermissionHandler _permissionHandler;
+        private readonly IUserRepository _repo;
 
-        public ModuleFHP(IFhpModule module, IPermissionHandler permissionHandler)
+        public ModuleFHP(IFhpModule module, IUserRepository repo)
         {
             _module = module;
-            _permissionHandler = permissionHandler;
+            _repo = repo; 
+            Logging.LogReadyMessage(this);
         }
 
         /// <summary>
@@ -35,8 +38,8 @@ namespace TastyBot.Modules
         [Summary("Hands out headpats to the user")]
         public async Task Give(IUser userReceive, long amount)
         {
-            ulong discordUId = Context.User.Id;
-            if (_permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsGive))
+            User user = _repo.ByDiscordId(Context.User.Id);
+            if (user != null && user.HasPermission(Permissions.FutureHeadPatsGive))
             {
                 _module.Give(userReceive, amount);
                 string given = (amount < 0) ? "taken from" : "given to";
@@ -55,8 +58,8 @@ namespace TastyBot.Modules
         [Summary("Deletes the wallet of the tagged user, if the user has a wallet")]
         public async Task Delete(IUser userDelete)
         {
-            ulong discordUId = Context.User.Id;
-            if (_permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsDelete))
+            User user = _repo.ByDiscordId(Context.User.Id);
+            if (user != null && user.HasPermission(Permissions.FutureHeadPatsDelete))
             {
                 await ReplyAsync(_module.Delete(userDelete));
                 return;
@@ -73,8 +76,8 @@ namespace TastyBot.Modules
         [Summary("Instantly saves the current users")]
         public async Task Save()
         {
-            ulong discordUId = Context.User.Id;
-            if (_permissionHandler.IsAdministrator(discordUId) || _permissionHandler.HasPermissions(discordUId, Permissions.FutureHeadPatsSave))
+            User user = _repo.ByDiscordId(Context.User.Id);
+            if (user.Administrator || user.HasPermission(Permissions.FutureHeadPatsSave))
             {
                 await ReplyAsync(_module.Save());
                 return;

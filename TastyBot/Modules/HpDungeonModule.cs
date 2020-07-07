@@ -1,6 +1,4 @@
-﻿using FileManager.Contracts;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +8,6 @@ using Discord;
 using Discord.Commands;
 
 using TastyBot.Utility;
-using Authorization.Contracts;
 using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Models.Entities;
 
