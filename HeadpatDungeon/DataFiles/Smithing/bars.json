@@ -1,10 +1,11 @@
 ﻿{
-  "bronze dagger": {
+  "bronze bar": {
     "Requirements": {
-      "Copper bar": 1
+      "Copper ore": 1,
+      "Tin ore": 1
     },
     "Result": {
-      "ItemCount": 0,
+      "ItemCount": 1,
       "Type": 3,
       "Description": "A bronze bar, brown and boring",
       "ItemName": "Bronze Bar",
@@ -97,21 +98,6 @@
       "ItemName": "Adamantine Bar",
       "ItemLevel": 70,
       "ItemXp": 38
-    },
-    "Skill": "smithing"
-  },
-  "redite bar": {
-    "Requirements": {
-      "Redite ore": 1,
-      "Coal ore": 8
-    },
-    "Result": {
-      "ItemCount": 1,
-      "Type": 3,
-      "Description": "Red and powerfull material",
-      "ItemName": "Redite Bar",
-      "ItemLevel": 85,
-      "ItemXp": 50
     },
     "Skill": "smithing"
   }

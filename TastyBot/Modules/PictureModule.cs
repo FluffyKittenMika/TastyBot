@@ -154,7 +154,7 @@ namespace TastyBot.Modules
                 res = GetNSFWGifFromString(text);
 
             var s = await _nekoClientModule.NSFWNekoClientGifAsync(res);
-            await Context.Channel.SendFileAsync(s, "OwO.png");
+            await Context.Channel.SendFileAsync(s, "OwO.gif");
         }
 
 

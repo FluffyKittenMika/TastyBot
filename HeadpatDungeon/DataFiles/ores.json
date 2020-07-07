@@ -61,12 +61,5 @@
     "ItemName": "Adamantine ore",
     "ItemXp": 95,
     "ItemLevel": 70
-  },
-  "redite ore": {
-    "Type": 3,
-    "Description": "Some redite ore",
-    "ItemName": "Redite ore",
-    "ItemXp": 125,
-    "ItemLevel": 85
   }
 }
