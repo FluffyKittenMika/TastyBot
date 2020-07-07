@@ -144,17 +144,16 @@ namespace TastyBot.Modules
         /// <returns>Lewd animations to your discord channel</returns>
         [Command("NSFWGIF")]
         [RequireNsfw]
-        public async Task NSFWGIFAhegaoAsync([Remainder] string text = "")
+        public async Task NSFWGIFAsync([Remainder] string text = "")
         {
-            NSFWNekos res;
+            AnimatedNSFWNekos res;
 
             if (text == "")
-                res = RandomEnumValue<NSFWNekos>();
+                res = RandomEnumValue<AnimatedNSFWNekos>();
             else
-                res = GetNSFWNekoFromString(text);
+                res = GetNSFWGifFromString(text);
 
-            text = string.Join(' ', text.Split(' ').Skip(1));
-            var s = await _nekoClientModule.NSFWNekoClientPictureAsync(res, text);
+            var s = await _nekoClientModule.NSFWNekoClientGifAsync(res);
             await Context.Channel.SendFileAsync(s, "OwO.png");
         }
 
@@ -179,59 +178,58 @@ namespace TastyBot.Modules
         [Command("Cuddle")]
         public async Task CuddleAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Cuddlegif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Cuddlegif);
             await Context.Channel.SendFileAsync(s, "Cuffle.gif");
         }
 
         [Command("Feed")]
         public async Task FeedAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Feedgif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Feedgif);
             await Context.Channel.SendFileAsync(s, "Feed.gif");
         }
 
         [Command("Hug")]
         public async Task HugAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Huggif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Huggif);
             await Context.Channel.SendFileAsync(s, "Hug.gif");
         }
 
         [Command("Kiss")]
         public async Task KissAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Kissgif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Kissgif);
             await Context.Channel.SendFileAsync(s, "Kiss.gif");
         }
 
         [Command("Pat")]
         public async Task PatAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Patgif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Patgif);
             await Context.Channel.SendFileAsync(s, "Pat.gif");
         }
 
         [Command("Poke")]
         public async Task PokeAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Pokegif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Pokegif);
             await Context.Channel.SendFileAsync(s, "Poke.gif");
         }
 
         [Command("Slap")]
         public async Task SlapAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Slapgif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Slapgif);
             await Context.Channel.SendFileAsync(s, "Slap.gif");
         }
 
         [Command("Tickle")]
         public async Task TickleAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientPictureAsync(ActionNekos.Ticklegif);
+            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Ticklegif);
             await Context.Channel.SendFileAsync(s, "Tickle.gif");
         }
-
 
         #endregion
 

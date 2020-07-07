@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Enums.PictureServices;
 using System.Net.Http;
+using Utilities.LoggingService;
 
 namespace HeadpatPictures.Services
 {
@@ -29,7 +30,7 @@ namespace HeadpatPictures.Services
         /// </summary>
         /// <param name="action">The wanted action</param>
         /// <returns>Stream of a Gif</returns>
-        public async Task<Stream> GetActionNekoClientPictureAsync(ActionNekos Types)
+        public async Task<Stream> GetActionNekoClientGifAsync(ActionNekos Types)
         {
             var Req = Types switch
             {
@@ -50,8 +51,7 @@ namespace HeadpatPictures.Services
             //Fetch the goodies
             Stream s = await resp.Content.ReadAsStreamAsync();
 
-            //bitmap = WriteOnBitmap(bitmap, Text, Size);
-            Console.WriteLine(Req.ImageUrl);
+            await Logging.LogInfoMessage("ActionNekos", Req.ImageUrl);
             return s;
         }
 
@@ -90,8 +90,7 @@ namespace HeadpatPictures.Services
             if (Text != "")
                 s = _writer.WriteOnStream(s, Text);
 
-            //bitmap = WriteOnBitmap(bitmap, Text, Size);
-            Console.WriteLine(Req.ImageUrl);
+            await Logging.LogInfoMessage("RegularNekos", Req.ImageUrl);
             return s;
         }
 
@@ -161,8 +160,59 @@ namespace HeadpatPictures.Services
             if (Text != "")
                 s = _writer.WriteOnStream(s, Text);
 
-            //bitmap = WriteOnBitmap(bitmap, Text, Size);
-            Console.WriteLine(Req.ImageUrl);
+            await Logging.LogInfoMessage("NSFWNekos", Req.ImageUrl);
+            return s;
+        }
+
+        public async Task<Stream> NSFWNekoClientGifAsync(AnimatedNSFWNekos actionNekos)
+        {
+            var Req = actionNekos switch
+            {
+                AnimatedNSFWNekos.Analgif => await NekoClient.Nsfw_v3.AnalGif(),
+                AnimatedNSFWNekos.BlowJobgif => await NekoClient.Nsfw_v3.BlowjobGif(),
+                AnimatedNSFWNekos.Boobsgif => await NekoClient.Nsfw_v3.BoobsGif(),
+                AnimatedNSFWNekos.Classicgif => await NekoClient.Nsfw_v3.ClassicGif(),
+                AnimatedNSFWNekos.Cumgif => await NekoClient.Nsfw_v3.CumGif(),
+                AnimatedNSFWNekos.Feetgif => await NekoClient.Nsfw_v3.FeetGif(),
+                AnimatedNSFWNekos.Hentaigif => await NekoClient.Nsfw_v3.HentaiGif(),
+                AnimatedNSFWNekos.Kunigif => await NekoClient.Nsfw_v3.KuniGif(),
+                AnimatedNSFWNekos.Nekogif => await NekoClient.Nsfw_v3.NekoGif(),
+                AnimatedNSFWNekos.Pussygif => await NekoClient.Nsfw_v3.PussyGif(),
+                AnimatedNSFWNekos.Pwankgif => await NekoClient.Nsfw_v3.PwankGif(),
+                AnimatedNSFWNekos.Sologif => await NekoClient.Nsfw_v3.SoloGif(),
+                AnimatedNSFWNekos.Spankgif => await NekoClient.Nsfw_v3.SpankGif(),
+                AnimatedNSFWNekos.Yiffgif => await NekoClient.Nsfw_v3.YiffGif(),
+                AnimatedNSFWNekos.Yurigif => await NekoClient.Nsfw_v3.YuriGif(),
+                _ => await NekoClient.Nsfw_v3.BoobsGif(),
+            };
+
+            //process it into a bitmap
+            var resp = await _http.GetAsync(Req.ImageUrl);
+
+            //Fetch the goodies
+            Stream s = await resp.Content.ReadAsStreamAsync();
+
+            await Logging.LogInfoMessage("AnimatedNSFWNekos", Req.ImageUrl);
+            return s;
+        }
+
+        public async Task<Stream> SFWNekoClientGifAsync(AnimatedNekos actionNekos)
+        {
+            var Req = actionNekos switch
+            {
+                AnimatedNekos.Bakagif => await NekoClient.Image_v3.BakaGif(),
+                AnimatedNekos.Nekogif => await NekoClient.Image_v3.NekoGif(),
+                AnimatedNekos.Smuggif => await NekoClient.Image_v3.SmugGif(),
+                _ => await NekoClient.Image_v3.BakaGif(),
+            };
+
+            //process it into a bitmap
+            var resp = await _http.GetAsync(Req.ImageUrl);
+
+            //Fetch the goodies
+            Stream s = await resp.Content.ReadAsStreamAsync();
+
+            await Logging.LogInfoMessage("AnimatedSFWNekos", Req.ImageUrl);
             return s;
         }
     }

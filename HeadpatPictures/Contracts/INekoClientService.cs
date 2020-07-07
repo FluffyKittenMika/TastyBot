@@ -8,5 +8,8 @@ namespace HeadpatPictures.Contracts
     {
         Task<Stream> GetSFWNekoClientPictureAsync(RegularNekos Types, string Text = "");
         Task<Stream> GetNSFWNekoClientPictureAsync(NSFWNekos Types, string Text = "");
+        Task<Stream> GetActionNekoClientGifAsync(ActionNekos actionNekos);
+        Task<Stream> NSFWNekoClientGifAsync(AnimatedNSFWNekos actionNekos);
+        Task<Stream> SFWNekoClientGifAsync(AnimatedNekos actionNekos);
     }
 }

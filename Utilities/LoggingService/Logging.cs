@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Utilities.LoggingService
 {
+    using System.Runtime.CompilerServices;
     using Utilities.RainbowUtilities;
 
     public static class Logging
@@ -56,6 +57,31 @@ namespace Utilities.LoggingService
             LogMessage logMessage = new LogMessage(LogSeverity.Debug, source, message);
             return LogAsync(logMessage);
         }
+
+        public static Task LogErrorMessage(string source, string message)
+        {
+            LogMessage logMessage = new LogMessage(LogSeverity.Error, source, message);
+            return LogAsync(logMessage);
+        }
+
+        public static Task LogCriticalMessage(string source, string message)
+        {
+            LogMessage logMessage = new LogMessage(LogSeverity.Critical, source, message);
+            return LogAsync(logMessage);
+        }
+
+        public static Task LogInfoMessage(string source, string message)
+        {
+            LogMessage logMessage = new LogMessage(LogSeverity.Info, source, message);
+            return LogAsync(logMessage);
+        }
+
+        public static Task LogWarningMessage(string source, string message)
+        {
+            LogMessage logMessage = new LogMessage(LogSeverity.Warning, source, message);
+            return LogAsync(logMessage);
+        }
+
 
         public static void LogRainbowMessage(string source, string message)
         {

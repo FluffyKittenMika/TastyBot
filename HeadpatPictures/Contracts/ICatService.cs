@@ -6,6 +6,6 @@ namespace HeadpatPictures.Contracts
     public interface ICatService
     {
         Task<Stream> GetCatGifAsync();
-        Task<Stream> ReturnCachedOrNormalPicture(string text);
+        Task<Stream> ReturnCacheAction(string key, string text);
     }
 }

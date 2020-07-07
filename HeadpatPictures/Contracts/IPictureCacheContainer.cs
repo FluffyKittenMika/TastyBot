@@ -9,5 +9,7 @@ namespace HeadpatPictures.Contracts
         List<Stream> GetCachedPictures(string key);
         void ReplacePictures(List<Stream> pictures, string key);
         void SetCachedPictures(List<Stream> pictures, string key);
+
+        int GetCacheCount(string key);
     }
 }

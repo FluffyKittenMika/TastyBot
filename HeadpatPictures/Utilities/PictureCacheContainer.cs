@@ -14,6 +14,13 @@ namespace HeadpatPictures.Utilities
             return Cache.CacheExists(key);
         }
 
+        public int GetCacheCount(string key)
+        {
+            if (Exists(key))
+                return GetCachedPictures(key).Count;
+            return 0;
+        }
+
         public List<Stream> GetCachedPictures(string key)
         {
             return Cache.RetrieveItems<List<Stream>>(key);

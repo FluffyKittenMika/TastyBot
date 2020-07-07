@@ -4,6 +4,9 @@ using System.Net.Http;
 
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
+using System.Linq;
+using Utilities.LoggingService;
 
 namespace HeadpatPictures.Services
 {
@@ -13,10 +16,7 @@ namespace HeadpatPictures.Services
         private readonly IPictureCacheContainer _pictureCache;
         private readonly ITextStreamWriter _writer;
 
-        private int CachedPictureCount = 0;
-        private readonly int MaxCachedItemCount = 3;
-        private readonly string CatPicturesCache = "CatPictures";
-        private readonly string CatGifsCache = "CatGifs";
+        private readonly int MaxUniqueCounter = 3;
 
         public CatService(IPictureCacheContainer pictureCache, ITextStreamWriter writer)
         {
@@ -37,42 +37,44 @@ namespace HeadpatPictures.Services
             return await resp.Content.ReadAsStreamAsync();
         }
 
-        public async Task<Stream> ReturnCachedOrNormalPicture(string text)
+
+        public async Task<Stream> ReturnCacheAction(string key, string text = "")
         {
-            if (CachedPictureCount > MaxCachedItemCount || !_pictureCache.Exists(CatPicturesCache))
-            {
-                CachedPictureCount = 0;
-                await FillPictureCache();
-                Stream catPicture = await GetCatPictureAsync();
-                return _writer.WriteOnStream(catPicture, text);
-            }
-            else
-            {
-                await ReplaceCachePicture();
-                Stream stream = _pictureCache.GetCachedPictures(CatPicturesCache)[CachedPictureCount];
-                return _writer.WriteOnStream(stream, text);
-            }
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            //If amount of images is equal to 0, or the key does not exist, fill it
+            if (_pictureCache.GetCachedPictures(key).Count == 0 || !_pictureCache.Exists(key))
+                await FillPictureCache(key); //Fills it to MaxUniqueCounter
+
+            //Get the first image from the cache
+            Stream stream = _pictureCache.GetCachedPictures(key).FirstOrDefault();
+
+            //Remove it from the cache, and replace it with a new.
+            await ReplaceCachePicture(key);
+
+            watch.Stop();
+            await Logging.LogDebugMessage("Cache", $"Fetching image took: {watch.ElapsedMilliseconds}ms - Key:{key}");
+
+            return _writer.WriteOnStream(stream, text);
         }
 
-        private async Task ReplaceCachePicture()
+
+        private async Task ReplaceCachePicture(string key)
         {
-            List<Stream> pictures = _pictureCache.GetCachedPictures(CatPicturesCache);
-            pictures.Remove(pictures[CachedPictureCount]);
+            List<Stream> pictures = _pictureCache.GetCachedPictures(key);
+            pictures.Remove(pictures.FirstOrDefault());
             pictures.Add(await GetCatPictureAsync());
-            _pictureCache.ReplacePictures(pictures, CatPicturesCache);
-            CachedPictureCount = 0;
+            _pictureCache.ReplacePictures(pictures, key);
         }
 
-        private async Task FillPictureCache()
+        private async Task FillPictureCache(string key)
         {
             List<Stream> picturesToCache = new List<Stream>();
 
-            for (int i = 0; i < MaxCachedItemCount; i++)
-            {
+            for (int i = 0; i < MaxUniqueCounter; i++)
                 picturesToCache.Add(await GetCatPictureAsync());
-            }
 
-            _pictureCache.ReplacePictures(picturesToCache, CatPicturesCache);
+            _pictureCache.ReplacePictures(picturesToCache, key);
         }
+
     }
 }

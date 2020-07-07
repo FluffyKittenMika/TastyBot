@@ -77,6 +77,7 @@ namespace TastyBot.Services
             // Ignore system messages, or messages from other bots
             if (!(socketMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
+            if (message.Channel.GetType() == typeof(SocketDMChannel)) return; //drop direct messages aswell.
 
             //The try is here to ignore anything that we don't give a shit about :)
             try
@@ -94,7 +95,7 @@ namespace TastyBot.Services
             }
             catch (Exception e)
             {
-                await Logging.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, "Unable to change rainbow channel name; ", e));
+                await Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}");
             }
         }
 
