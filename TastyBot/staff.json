@@ -23,6 +23,8 @@
     "name": "Mikas",
     "discordId": 83183880869253120,
     "administrator": true,
-    "permissions": []
+    "permissions": [
+      "HeadpatDungeonHDPSave"
+    ]
   }
 ]

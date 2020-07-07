@@ -115,7 +115,16 @@ namespace TastyBot.Modules
         }
 
         #endregion
-  
+
+        #region Action Nekos
+        [Command("Cuddle")]
+        public async Task CuddleAsync([Remainder] string text = "")
+        {
+            var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Neko, text);
+            await Context.Channel.SendFileAsync(s, "Cuffle.gif");
+        }
+        #endregion
+
         private T RandomEnumValue<T>()
         {
             var v = Enum.GetValues(typeof(T));

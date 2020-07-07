@@ -22,6 +22,40 @@ namespace HeadpatPictures.Services
             _writer = writer;
         }
 
+
+        /// <summary>
+        /// Gets an action gif.
+        /// Does not support writing to the Gif
+        /// </summary>
+        /// <param name="action">The wanted action</param>
+        /// <returns>Stream of a Gif</returns>
+        public async Task<Stream> GetActionNekoClientPictureAsync(ActionNekos Types)
+        {
+            var Req = Types switch
+            {
+                ActionNekos.Cuddlegif => await NekoClient.Action_v3.CuddleGif(),
+                ActionNekos.Feedgif => await NekoClient.Action_v3.FeedGif(),
+                ActionNekos.Huggif => await NekoClient.Action_v3.HugGif(),
+                ActionNekos.Kissgif => await NekoClient.Action_v3.KissGif(),
+                ActionNekos.Patgif => await NekoClient.Action_v3.PatGif(),
+                ActionNekos.Pokegif => await NekoClient.Action_v3.PokeGif(),
+                ActionNekos.Slapgif => await NekoClient.Action_v3.SlapGif(),
+                ActionNekos.Ticklegif => await NekoClient.Action_v3.TickleGif(),
+                _ => await NekoClient.Action_v3.PatGif(),
+            };
+
+            //process it into a bitmap
+            var resp = await _http.GetAsync(Req.ImageUrl);
+
+            //Fetch the goodies
+            Stream s = await resp.Content.ReadAsStreamAsync();
+
+            //bitmap = WriteOnBitmap(bitmap, Text, Size);
+            Console.WriteLine(Req.ImageUrl);
+            return s;
+        }
+
+
         /// <summary>
         /// Gets picture from NekoClient based on the given type.
         /// Appends text to the image if there's any given.

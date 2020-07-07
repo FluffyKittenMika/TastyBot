@@ -15,6 +15,13 @@ namespace HeadpatPictures.Modules
             _serv = serv;
         }
 
+        public async Task<Stream> ActionNekoClientPictureAsync(ActionNekos actionNekos)
+        {
+            var stream = await _serv.GetActionNekoClientPictureAsync(actionNekos);
+            stream.Seek(0, SeekOrigin.Begin);
+            return stream;
+        }
+
         public async Task<Stream> SFWNekoClientPictureAsync(RegularNekos regularNekos, string text)
         {
             var stream = await _serv.GetSFWNekoClientPictureAsync(regularNekos, text);
@@ -28,5 +35,6 @@ namespace HeadpatPictures.Modules
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
+
     }
 }
