@@ -6,7 +6,7 @@ namespace Database
 {
     public class LiteDB : ILiteDB
     {
-        private readonly string connectionString = AppContext.BaseDirectory + "Databases/LiteDB.db";
+        private readonly string connectionString = $"Filename={AppContext.BaseDirectory}Databases/LiteDB.db;Password=QDgDAKIAEReA9EgYG102TJ1eQO0";
 
         public LiteDatabase GetDatabase()
         {
