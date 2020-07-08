@@ -16,21 +16,20 @@ namespace TastyBot.Services
 
         public Startup()
         {
-            string time = DateTime.UtcNow.ToString("hh:mm:ss");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Starting up bot...");
             try
             {
-                Console.WriteLine($"{time} [StartUp - Info] Base Directory: {AppContext.BaseDirectory}");
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Base Directory: {AppContext.BaseDirectory}");
                 _botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
             }
             catch (Exception)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"{time} [StartUp - Critical] No configuration file found, please create one, or the bot simply will not work.");
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No configuration file found, please create one from the given template.");
             }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine($"{time} [StartUp - Info] Prefix: '{_botconfig.Prefix}'");
+            Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Prefix: '{_botconfig.Prefix}'");
         }
 
         public static async Task RunAsync(string[] args)

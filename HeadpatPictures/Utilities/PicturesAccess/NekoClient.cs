@@ -13,6 +13,8 @@ namespace HeadpatPictures.Utilities.PictureAccess
         private static readonly NekosSharp.NekoClient _nekoClient = new NekosSharp.NekoClient("TastyBot");
         private static readonly HttpClient _http = new HttpClient();
 
+       
+
         #region ActionNeko
 
         public static async Task<Stream> GetActionNekoClientGifAsync(ActionNekos actionNekosValue)
