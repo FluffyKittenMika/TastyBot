@@ -1,9 +1,0 @@
-{
-  "zombie": {
-    "name": "Zombie",
-    "level": 1,
-    "maxHP": 40,
-    "minATK": 1,
-    "maxATK": 5
-  }
-}

@@ -1,16 +1,17 @@
 ﻿using HeadpatDungeon.Containers;
 using HeadpatDungeon.Contracts;
+using HeadpatDungeon.Definitions.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HeadpatDungeon.Models.Entities
 {
-    public class HpPlayer : HpCreature
+    public class HpPlayer 
     {
         public Dictionary<string, int> Skills { get; set; }
 
-        public Dictionary<string, HpItem> Items { get; set; }
+        public Dictionary<string, HpItem> Inventory { get; set; }
 
         public ulong Id { get; set; }
 
@@ -22,7 +23,7 @@ namespace HeadpatDungeon.Models.Entities
         public new string GetInfo()
         {
             string s = " ";
-            foreach (var item in Items)
+            foreach (var item in Inventory)
                 s += item.Value.ItemName + "; ";
 
             return "This is player " + Id + " Inventory:" + s + " Base: " + base.GetInfo();
@@ -59,17 +60,17 @@ namespace HeadpatDungeon.Models.Entities
         public void AddItem(HpItem item)
         {
             //Make sure there's an inventory
-            if (Items == null)
-                Items = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
+            if (Inventory == null)
+                Inventory = new Dictionary<string, HpItem>(StringComparer.OrdinalIgnoreCase);
 
-            if (Items.ContainsKey(item.ItemName))
-                Items[item.ItemName].ItemCount++;
+            if (Inventory.ContainsKey(item.ItemName))
+                Inventory[item.ItemName].ItemCount++;
             else
             {
                 //We do not want it to say, you got 0 apples. when we do have 1.
                 if (item.ItemCount == 0)
                     item.ItemCount = 1;
-                Items.Add(item.ItemName, item);
+                Inventory.Add(item.ItemName, item);
             }
         }
 
@@ -80,14 +81,14 @@ namespace HeadpatDungeon.Models.Entities
         /// <param name="item">The name of the item you want to remove</param>
         public void RemoveItem(string item)
         {
-            if (Items == null) //HALT EARAN, HE'S ESCAPING
+            if (Inventory == null) //HALT EARAN, HE'S ESCAPING
                 return;
 
-            if (Items.ContainsKey(item))
+            if (Inventory.ContainsKey(item))
             {
-                Items[item].ItemCount--;
-                if (Items[item].ItemCount <= 0) //We remove this item
-                    Items.Remove(item);
+                Inventory[item].ItemCount--;
+                if (Inventory[item].ItemCount <= 0) //We remove this item
+                    Inventory.Remove(item);
             }
             //Nothing to remove if not.
         }

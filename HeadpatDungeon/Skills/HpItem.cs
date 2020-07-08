@@ -1,10 +1,9 @@
 ﻿using HeadpatDungeon.Models.Enums;
 
-namespace HeadpatDungeon.Models
+namespace HeadpatDungeon.Definitions.Contracts
 {
     /// <summary>
     /// Abstract item class, so we can always override functions, or use the base function of this class. Not using an interface as it does not allow for base.Use();
-    /// And we would load items from JSON, so we got a few things to do
     /// </summary>
     public class HpItem
     {

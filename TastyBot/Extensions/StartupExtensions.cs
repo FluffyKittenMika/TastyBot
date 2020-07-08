@@ -30,6 +30,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
+using TastyBot.HpDungeon;
 
 namespace TastyBot.Extensions
 {
@@ -158,25 +159,6 @@ namespace TastyBot.Extensions
 
         #region HeadpatDungeon
 
-        /*public static void ConfigureEntityContainer(this IServiceCollection services)
-        {
-            services.AddScoped<IEntityContainer, EntityContainer>();
-        }
-
-        public static void ConfigureItemContainer(this IServiceCollection services)
-        {
-            services.AddScoped<IItemContainer, ItemContainer>();
-        }
-
-        public static void ConfigureRecipeContainer(this IServiceCollection services)
-        {
-            services.AddScoped<IRecipeContainer, RecipeContainer>();
-        }
-
-        public static void ConfigureCrafting(this IServiceCollection services)
-        {
-            services.AddScoped<ICrafting, Crafting>();
-        }*/
 
         #endregion
 

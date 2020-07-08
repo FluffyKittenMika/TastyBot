@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using HeadpatDungeon.Definitions.Contracts;
+using System.Collections.Generic;
 
 namespace HeadpatDungeon.Models
 {

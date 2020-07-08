@@ -10,16 +10,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DataFiles\crafting_smelting.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="DataFiles\ores.json">
+    <None Update="Skills\ores.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataFiles\Crafting\" />
+    <Folder Include="Skills\Crafting\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using HeadpatDungeon.Contracts;
+using HeadpatDungeon.Definitions.Contracts;
 
 namespace HeadpatDungeon.Containers
 {
     /// <summary>
     /// This class keeps items in memory
     /// </summary>
-    public class ItemContainer : IItemContainer
+    public class ItemContainer 
     {
         //Items
         private Dictionary<string, HpItem> ItemList = null; //everything list

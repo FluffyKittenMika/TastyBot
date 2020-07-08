@@ -102,10 +102,13 @@ namespace TastyBot.Services
             services.ConfigureHeadPatModule();
             #endregion
 
-            #region HeadpatDungeon
-            /*services.ConfigureEntityContainer();
-			services.ConfigureItemContainer();
-			services.ConfigureRecipeContainer();*/
+
+            #region HeadPatDungeon
+            services.ConfigureHPDCrafting();
+            services.ConfigureHPDEntityContainer();
+            services.ConfigureHPDItemContainer();
+            services.ConfigureHPDRecipeContainer();
+            services.ConfigureHPDModule();
             #endregion
 
             #region Mastermind

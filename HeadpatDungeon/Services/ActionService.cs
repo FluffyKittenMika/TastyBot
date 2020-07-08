@@ -1,10 +1,10 @@
 ﻿using HeadpatDungeon.Contracts;
+using HeadpatDungeon.Definitions.Contracts;
 using HeadpatDungeon.Models;
 using HeadpatDungeon.Models.Entities;
 
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace HeadpatDungeon.Services
@@ -23,58 +23,14 @@ namespace HeadpatDungeon.Services
 
         public string ExecuteAction(string action, HpPlayer player, string actionObject = null)
         {
-            switch (action)
+            return action switch
             {
-                case "agility":
-                    return TrainAgility(player);
-                case "strength":
-                    return TrainStrength(player);
-                case "mine":
-                    return Mine(player, actionObject);
-                case "chop":
-                    return Chop();
-                default:
-                    return DefaultText(action);
-            }
+                "mine" => Mine(player, actionObject),
+                _ => DefaultText(action),
+            };
         }
 
-        #region Skills
-
-        private string TrainAgility(HpPlayer player)
-        {
-            int gainedEXP = rng.Next(10, 200);
-            bool levelUp = player.AddXPToSkill("agility", gainedEXP);
-
-            _playerServ.SavePlayer(player);
-
-            StringBuilder response = new StringBuilder();
-            response.Append($"You did some running and gained {gainedEXP}XP");
-
-            if (levelUp)
-            {
-                response.Append(LevelUpText("agility", player));
-            }
-            return response.ToString();
-        }
-
-        private string TrainStrength(HpPlayer player)
-        {
-            int gainedEXP = rng.Next(10, 200);
-            bool levelUp = player.AddXPToSkill("strength", gainedEXP);
-
-            _playerServ.SavePlayer(player);
-
-            StringBuilder response = new StringBuilder();
-            response.Append($"You did some pushups and gained {gainedEXP}XP");
-
-            if (levelUp)
-            {
-                response.Append(LevelUpText("strength", player));
-            }
-            return response.ToString();
-        }
-
-        #endregion
+     
 
         #region Actions
 
@@ -112,15 +68,9 @@ namespace HeadpatDungeon.Services
             response.Append($"You've gone mining and have obtained **{item.ItemName}** \r\nand gained {item.ItemXp}XP");
 
             if (levelUp)
-            {
                 response.Append(LevelUpText("mining", player));
-            }
-            return response.ToString();
-        }
 
-        private string Chop()
-        {
-            throw new NotImplementedException();
+            return response.ToString();
         }
 
         #endregion

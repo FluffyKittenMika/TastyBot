@@ -1,25 +1,25 @@
-﻿using HeadpatDungeon.Contracts;
+﻿
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HeadpatDungeon.Models.Entities
 {
-    public class HpCreature : DefaultCreature
+    public class HpCreature
     {
         private int CurrentHP { get; set; }
         private readonly Random _rng;
 
-        public HpCreature(DefaultCreature defaultCreature)
+
+
+        public HpCreature()
         {
-            Name = defaultCreature.Name;
-            Level = defaultCreature.Level;
-            MaxHP = defaultCreature.MaxHP;
+            Name = "";
+            Level = GetLevel(); //Level is based upon attack, defence and strenght
+                                //Same goes with Min and max attack. Min is always 0, max is based on strenght and equipment.
+            MaxHP = defaultCreature.MaxHP; //Hp is soley based on Health level
             CurrentHP = MaxHP;
             MinATK = defaultCreature.MinATK;
             MaxATK = defaultCreature.MaxATK;
             _rng = new Random();
-
         }
 
         public void Attack(HpCreature Target)

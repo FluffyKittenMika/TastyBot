@@ -7,7 +7,7 @@ namespace HeadpatDungeon.Strategies
     /// <summary>
     /// Crafting class. 
     /// </summary>
-    public class Crafting : ICrafting
+    public class Crafting
     {
         private readonly IRecipeContainer _recipeContainer;
 
@@ -15,6 +15,13 @@ namespace HeadpatDungeon.Strategies
         {
             _recipeContainer = recipeContainer;
         }
+
+
+        public IRecipeContainer GetRecepies()
+        {
+            return _recipeContainer;
+        }
+
         /// <summary>
         /// Makes an item
         /// </summary>  
@@ -30,9 +37,9 @@ namespace HeadpatDungeon.Strategies
                 Recipe recepie = _recipeContainer.GetRecipesList()[target];
                 foreach (var targetItemReq in recepie.Requirements) //for every requirement, we check if they have enough of the required item.
                 {
-                    if (player.Items.ContainsKey(targetItemReq.Key)) //check if they got the item
+                    if (player.Inventory.ContainsKey(targetItemReq.Key)) //check if they got the item
                     {
-                        if (targetItemReq.Value > player.Items[targetItemReq.Key].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
+                        if (targetItemReq.Value > player.Inventory[targetItemReq.Key].ItemCount) //check the amount they got, and if they don't have enough, we break and end it all
                         {
                             CanCraft = false;
                             break; //stop looping, and go on as we can't craft this item.
