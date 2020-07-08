@@ -1,15 +1,12 @@
 ﻿using TastyBot.Extensions;
 using TastyBot.Utility;
 
-using Utilities.LoggingService;
-
 using System;
 using System.Threading.Tasks;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Utilities.RainbowUtilities;
 
 namespace TastyBot.Services
 {
@@ -55,60 +52,20 @@ namespace TastyBot.Services
             var provider = services.BuildServiceProvider();                         // Build the service provider
             provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
-            await Logging.LogReadyMessage(typeof(Logging));
-            await Task.Run(() => Logging.LogRainbowMessage("RainbowUtilities", "Ready"));
-
             await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
-            #region Discord
-            services.ConfigureDiscordSocketClient();
-            services.ConfigureCommandService();
-            services.ConfigureBotConfig(_botconfig);
-            #endregion
-
-            #region TastyBot
-            services.ConfigureCommandHandlingService();
-            services.ConfigureStartupService();
-            #endregion
-
-            #region BusinessLogicLayer
-            services.ConfigureUserRepository();
-            #endregion
-
-            #region DataAccessLayer
-            services.ConfigureUserContext();
-            #endregion
-
-            #region Database
-            services.ConfigureLiteDB();
-            #endregion
-
-            #region HeadpatPictures
-            services.ConfigureCatModule();
-            services.ConfigureCatService();
-            services.ConfigureNekoClientModule();
-            services.ConfigureNekoClientService();
-            #endregion
-
-            #region FutureHeadPats
-            services.ConfigureFileManagerFPH();
-            services.ConfigureHeadpatService();
-            services.ConfigureHeadPatModule();
-            #endregion
-
-            #region HeadpatDungeon
-            /*services.ConfigureEntityContainer();
-			services.ConfigureItemContainer();
-			services.ConfigureRecipeContainer();*/
-            #endregion
-
-            #region Mastermind
-            services.ConfigureMasterMindModule();
-            #endregion
+            services.ConfigureDiscord(_botconfig);
+            services.ConfigureTastyBot();
+            services.ConfigureBusinessLogicLayer();
+            services.ConfigureDataAccessLayer();
+            services.ConfigureDatabases();
+            services.ConfigureHeadpatPictures();
+            services.ConfigureFutureHeadPats();
+            services.ConfigureMasterMind();
         }
     }
 }

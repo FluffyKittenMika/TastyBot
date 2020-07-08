@@ -1,5 +1,11 @@
 ﻿using TastyBot.Utility;
+
 using Utilities.RainbowUtilities;
+using Utilities.LoggingService;
+
+using Interfaces.Contracts.HeadpatPictures;
+
+using Enums.PictureServices;
 
 using Discord;
 using Discord.Commands;
@@ -8,9 +14,7 @@ using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using HeadpatPictures.Contracts;
-using Utilities.LoggingService;
-using Enums.PictureServices;
+using Utilities.TasksManager;
 
 namespace TastyBot.Services
 {
@@ -20,15 +24,15 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly Config _config;
         private readonly IServiceProvider _services;
-        private readonly ICatModule _catModule;
+        private readonly IPictureModule _pictureModule;
 
-        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, ICatModule catModule)
+        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, IPictureModule pictureModule)
         {
             _discord = discord;
             _commands = commands;
             _config = config;
             _services = services;
-            _catModule = catModule;
+            _pictureModule = pictureModule;
 
             //Hook Messages so we can process them if they're commands.
             _discord.MessageReceived += OnMessageReceivedAsync;
@@ -68,7 +72,7 @@ namespace TastyBot.Services
                 var result = await _commands.ExecuteAsync(context, argPos, _services);      // Execute the command
                 if (!result.IsSuccess)
                 {
-                    await Logging.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, result.ErrorReason));
+                    Logging.LogErrorMessage(GetType().Name, result.ErrorReason).PerformAsyncTaskWithoutAwait();
                 }
             }
         }
@@ -96,7 +100,7 @@ namespace TastyBot.Services
             }
             catch (Exception e)
             {
-                await Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}");
+                Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}").PerformAsyncTaskWithoutAwait();
             }
         }
 
@@ -106,7 +110,7 @@ namespace TastyBot.Services
             if (userMessage.Channel.Name.ToLower() == "botcat") //More generic
             {
                 string logMessage = $"catbot:{userMessage.Author} - {userMessage.Content.ToLower()} - cattified :3";
-                await Logging.LogDebugMessage(GetType().Name, logMessage);
+                Logging.LogDebugMessage(GetType().Name, logMessage).PerformAsyncTaskWithoutAwait();
 
                 //remove the evicence
                 await userMessage.DeleteAsync();
@@ -119,7 +123,7 @@ namespace TastyBot.Services
                     {
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
                         logMessage = $"Regexed into: {content}";
-                        await Logging.LogDebugMessage(GetType().Name, logMessage);
+                        Logging.LogDebugMessage(GetType().Name, logMessage).PerformAsyncTaskWithoutAwait();
                     }
                     catch (TimeoutException)
                     {
@@ -129,7 +133,7 @@ namespace TastyBot.Services
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";
-                    var stream = await _catModule.GetCatItemAsync(CatItems.Picture, content);
+                    var stream = await _pictureModule.GetStreamFromEnumAsync(RegularCats.Cat, content);
                     await userMessage.Channel.SendFileAsync(stream, "cat.png");
                 }
             }

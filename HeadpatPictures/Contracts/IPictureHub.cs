@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace HeadpatPictures.Contracts
 {
-    public interface INekoClientService
+    public interface IPictureHub
     {
-        Task<Stream> ReturnCacheAction<T>(T nekoEnum);
+        Task<Stream> GetPictureAsync<T>(T pictureTypeSubEnum);
     }
 }

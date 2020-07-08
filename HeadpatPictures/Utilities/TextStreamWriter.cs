@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using Utilities.LoggingService;
 
 namespace HeadpatPictures.Utilities
 {
@@ -61,10 +62,14 @@ namespace HeadpatPictures.Utilities
         {
             string Col = check.Split(' ').FirstOrDefault();
             Color color = Color.FromName(Col);
-            if (!color.IsKnownColor) //checks if known
-                color = Color.FromName("black"); //if not, black it is!
-            else
-                check = check.Substring(check.IndexOf(' ') + 1); // skips first word
+            
+            if (color.Name == "rainbow")
+            {
+                Logging.LogRainbowMessage(typeof(TextStreamWriter).Name, "Rainbow Color Detected!");
+                color = Color.FromName("black"); // Default color black;
+            }
+            else if (!color.IsKnownColor)
+                color = Color.FromName("black"); // Default color black;
             return color;
         }
     }

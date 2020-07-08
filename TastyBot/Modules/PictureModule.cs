@@ -1,24 +1,22 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
 using Enums.PictureServices;
-using HeadpatPictures.Contracts;
 using System;
 using System.Linq;
 using System.Globalization;
 using Utilities.LoggingService;
+using Interfaces.Contracts.HeadpatPictures;
 
 namespace TastyBot.Modules
 {
     [Name("Picture Commands")]
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
-        private readonly ICatModule _catModule;
-        private readonly INekoClientModule _nekoClientModule;
+        private readonly IPictureModule _module;
 
-        public PictureModule(ICatModule catModule, INekoClientModule nekoClientModule)
+        public PictureModule(IPictureModule module)
         {
-            _catModule = catModule;
-            _nekoClientModule = nekoClientModule;
+            _module = module;
 
             Logging.LogReadyMessage(this);
         }
@@ -28,7 +26,7 @@ namespace TastyBot.Modules
         [Command("cat")]
         public async Task CatAsync([Remainder] string text = "")
         {
-            var stream = await _catModule.GetCatItemAsync(CatItems.Picture, text);
+            var stream = await _module.GetStreamFromEnumAsync(RegularCats.Cat, text);
             await Context.Channel.SendFileAsync(stream, "cat.png");
         }
 
@@ -39,35 +37,35 @@ namespace TastyBot.Modules
         [Command("neko")]
 		public async Task NekoAsync([Remainder]string text = "")
 		{
-			var s = await _nekoClientModule.NekoClientItemAsync(RegularNekos.Neko, text);
+			var s = await _module.GetStreamFromEnumAsync(RegularNekos.Neko, text);
 			await Context.Channel.SendFileAsync(s, "Neko.png");
         }
 
 		[Command("nekoavatar")]
 		public async Task NekoAvatarAsync([Remainder]string text = "")
 		{
-			var s = await _nekoClientModule.NekoClientItemAsync(RegularNekos.Avatar, text);
+			var s = await _module.GetStreamFromEnumAsync(RegularNekos.Avatar, text);
 			await Context.Channel.SendFileAsync(s, "Avatar.png");
 		}
 
 		[Command("nekowallpaper")]
 		public async Task NekoWallpaperAsync([Remainder]string text = "")
 		{
-			var s = await _nekoClientModule.NekoClientItemAsync(RegularNekos.Wallpaper, text);
+			var s = await _module.GetStreamFromEnumAsync(RegularNekos.Wallpaper, text);
 			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
 		}
 
 		[Command("fox")]
 		public async Task FoxAsync([Remainder]string text = "")
 		{
-			var s = await _nekoClientModule.NekoClientItemAsync(RegularNekos.Fox, text);
+			var s = await _module.GetStreamFromEnumAsync(RegularNekos.Fox, text);
 			await Context.Channel.SendFileAsync(s, "Fox.png");
 		}
 
         [Command("waifu")]
         public async Task WaifuAsync([Remainder] string text = "")
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(RegularNekos.Waifu, text);
+            var s = await _module.GetStreamFromEnumAsync(RegularNekos.Waifu, text);
             await Context.Channel.SendFileAsync(s, "Waifu.png");
         }
 
@@ -93,7 +91,7 @@ namespace TastyBot.Modules
                 res = GetNSFWNekoFromString(text);
 
             text = string.Join(' ', text.Split(' ').Skip(1));
-            var s = await _nekoClientModule.NekoClientItemAsync(res, text);
+            var s = await _module.GetStreamFromEnumAsync(res, text);
             await Context.Channel.SendFileAsync(s, "OwO.png");
         }
 
@@ -130,7 +128,7 @@ namespace TastyBot.Modules
             else
                 res = GetNSFWGifFromString(text);
 
-            var s = await _nekoClientModule.NekoClientItemAsync(res);
+            var s = await _module.GetStreamFromEnumAsync(res);
             await Context.Channel.SendFileAsync(s, "OwO.gif");
         }
 
@@ -157,56 +155,56 @@ namespace TastyBot.Modules
         [Command("Cuddle")]
         public async Task CuddleAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Cuddlegif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Cuddlegif);
             await Context.Channel.SendFileAsync(s, "Cuffle.gif");
         }
 
         [Command("Feed")]
         public async Task FeedAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Feedgif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Feedgif);
             await Context.Channel.SendFileAsync(s, "Feed.gif");
         }
 
         [Command("Hug")]
         public async Task HugAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Huggif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Huggif);
             await Context.Channel.SendFileAsync(s, "Hug.gif");
         }
 
         [Command("Kiss")]
         public async Task KissAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Kissgif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Kissgif);
             await Context.Channel.SendFileAsync(s, "Kiss.gif");
         }
 
         [Command("Pat")]
         public async Task PatAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Patgif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Patgif);
             await Context.Channel.SendFileAsync(s, "Pat.gif");
         }
 
         [Command("Poke")]
         public async Task PokeAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Pokegif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Pokegif);
             await Context.Channel.SendFileAsync(s, "Poke.gif");
         }
 
         [Command("Slap")]
         public async Task SlapAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Slapgif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Slapgif);
             await Context.Channel.SendFileAsync(s, "Slap.gif");
         }
 
         [Command("Tickle")]
         public async Task TickleAsync()
         {
-            var s = await _nekoClientModule.NekoClientItemAsync(ActionNekos.Ticklegif);
+            var s = await _module.GetStreamFromEnumAsync(ActionNekos.Ticklegif);
             await Context.Channel.SendFileAsync(s, "Tickle.gif");
         }
 

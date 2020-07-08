@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Enums.UserPermissions;
 using Utilities.LoggingService;
+using Utilities.TasksManager;
 
 namespace TastyBot.Services
 {
@@ -42,7 +43,7 @@ namespace TastyBot.Services
             if (string.IsNullOrWhiteSpace(discordToken))
             {
                 string logMessage = "Please enter your bot's token into the `config.json` file found in the applications root directory.";
-                await Logging.LogAsync(new LogMessage(LogSeverity.Critical, GetType().Name, logMessage));
+                Logging.LogCriticalMessage(GetType().Name, logMessage).PerformAsyncTaskWithoutAwait();
                 throw new Exception();
             }
 

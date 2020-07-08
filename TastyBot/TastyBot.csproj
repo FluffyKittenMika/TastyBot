@@ -32,7 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogicLayer\BusinessLogicLayer.csproj" />
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
-    <ProjectReference Include="..\Database\Database.csproj" />
+    <ProjectReference Include="..\Database\Databases.csproj" />
     <ProjectReference Include="..\Enums\Enums.csproj" />
     <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
     <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />

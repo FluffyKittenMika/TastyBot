@@ -1,12 +1,12 @@
 ﻿using NekosSharp;
-using System.Threading.Tasks;
-using System.IO;
-using Enums.PictureServices;
-using System.Net.Http;
-using Utilities.LoggingService;
-using System;
 
-namespace HeadpatPictures.Utilities
+using Enums.PictureServices;
+
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace HeadpatPictures.Utilities.PictureAccess
 {
     public static class NekoClient
     {
@@ -15,15 +15,9 @@ namespace HeadpatPictures.Utilities
 
         #region ActionNeko
 
-        /// <summary>
-        /// Gets an action gif.
-        /// Does not support writing to the Gif
-        /// </summary>
-        /// <param name="action">The wanted action</param>
-        /// <returns>Stream of a Gif</returns>
-        private static async Task<Request> GetActionNekoClientGifAsync(ActionNekos Types)
+        public static async Task<Stream> GetActionNekoClientGifAsync(ActionNekos actionNekosValue)
         {
-            return Types switch
+            Request request = actionNekosValue switch
             {
                 ActionNekos.Cuddlegif => await _nekoClient.Action_v3.CuddleGif(),
                 ActionNekos.Feedgif => await _nekoClient.Action_v3.FeedGif(),
@@ -35,23 +29,16 @@ namespace HeadpatPictures.Utilities
                 ActionNekos.Ticklegif => await _nekoClient.Action_v3.TickleGif(),
                 _ => await _nekoClient.Action_v3.PatGif(),
             };
+            return await GetStreamFromRequestAsync(request);
         }
 
         #endregion
 
         #region SFW
 
-        /// <summary>
-        /// Gets picture from NekoClient based on the given type.
-        /// Appends text to the image if there's any given.
-        /// First words can be treated as a color.
-        /// </summary>
-        /// <param name="Types"></param>
-        /// <param name="Text"></param>
-        /// <returns></returns>
-        private static async Task<Request> GetSFWNekoClientPictureAsync(RegularNekos Types)
+        public static async Task<Stream> GetSFWNekoClientPictureAsync(RegularNekos regularNekosValue)
         {
-            return Types switch
+            Request request = regularNekosValue switch
             {
                 RegularNekos.Avatar => await _nekoClient.Image_v3.Avatar(),
                 RegularNekos.Fox => await _nekoClient.Image_v3.Fox(),
@@ -62,36 +49,28 @@ namespace HeadpatPictures.Utilities
                 RegularNekos.Wallpaper => await _nekoClient.Image_v3.Wallpaper(),
                 _ => await _nekoClient.Image_v3.Neko(),
             };
+            return await GetStreamFromRequestAsync(request);
         }
 
-        private static async Task<Request> SFWNekoClientGifAsync(AnimatedNekos actionNekos)
+        public static async Task<Stream> SFWNekoClientGifAsync(AnimatedNekos animatedNekosValue)
         {
-            return actionNekos switch
+            Request request = animatedNekosValue switch
             {
                 AnimatedNekos.Bakagif => await _nekoClient.Image_v3.BakaGif(),
                 AnimatedNekos.Nekogif => await _nekoClient.Image_v3.NekoGif(),
                 AnimatedNekos.Smuggif => await _nekoClient.Image_v3.SmugGif(),
                 _ => await _nekoClient.Image_v3.BakaGif(),
             };
+            return await GetStreamFromRequestAsync(request);
         }
 
         #endregion
 
         #region NSFW
 
-        /// <summary>
-        /// Gets picture from NekoClient based on the given type.
-        /// Appends text to the image if there's any given.
-        /// First words can be treated as a color.
-        /// </summary>
-        /// <param name="Types"></param>
-        /// <param name="Text"></param>
-        /// <returns></returns>
-        private static async Task<Request> GetNSFWNekoClientPictureAsync(NSFWNekos Types)
+        public static async Task<Stream> GetNSFWNekoClientPictureAsync(NSFWNekos NSFWNekosValue)
         {
-            //Request the neko url
-            //I hate this work - Mik
-            return Types switch
+            Request request = NSFWNekosValue switch
             {
                 NSFWNekos.Ahegao => await _nekoClient.Nsfw_v3.Ahegao(),
                 NSFWNekos.Anal => await _nekoClient.Nsfw_v3.Anal(),
@@ -134,11 +113,12 @@ namespace HeadpatPictures.Utilities
                 NSFWNekos.Yuri => await _nekoClient.Nsfw_v3.Yuri(),
                 _ => await _nekoClient.Nsfw_v3.Yuri(),
             };
+            return await GetStreamFromRequestAsync(request);
         }
 
-        private static async Task<Request> NSFWNekoClientGifAsync(AnimatedNSFWNekos actionNekos)
+        public static async Task<Stream> NSFWNekoClientGifAsync(AnimatedNSFWNekos animatedNSFWNekosValue)
         {
-            return actionNekos switch
+            Request request = animatedNSFWNekosValue switch
             {
                 AnimatedNSFWNekos.Analgif => await _nekoClient.Nsfw_v3.AnalGif(),
                 AnimatedNSFWNekos.BlowJobgif => await _nekoClient.Nsfw_v3.BlowjobGif(),
@@ -157,44 +137,18 @@ namespace HeadpatPictures.Utilities
                 AnimatedNSFWNekos.Yurigif => await _nekoClient.Nsfw_v3.YuriGif(),
                 _ => await _nekoClient.Nsfw_v3.BoobsGif(),
             };
+            return await GetStreamFromRequestAsync(request);
         }
 
         #endregion
 
-        /// <summary>
-        /// Gets a picture or a gif depending on the given pictureType and enum
-        /// </summary>
-        /// <param name="pictureType">The type of picture you want</param>
-        /// <param name="nekoEnum">The subcatogory of pictures from that type</param>
-        /// <returns>
-        /// Stream of either a gif or a picture
-        /// </returns>
-        public static async Task<Stream> GetNekoClientItem<T>(PictureTypes pictureType, T nekoEnum)
+        private static async Task<Stream> GetStreamFromRequestAsync(Request request)
         {
-            Request req = pictureType switch
-            {
-                PictureTypes.ActionNekos => await GetActionNekoClientGifAsync(Enum.Parse<ActionNekos>(nekoEnum.ToString())),
-                PictureTypes.AnimatedNekos => await SFWNekoClientGifAsync(Enum.Parse<AnimatedNekos>(nekoEnum.ToString())),
-                PictureTypes.AnimatedNSFWNekos => await NSFWNekoClientGifAsync(Enum.Parse<AnimatedNSFWNekos>(nekoEnum.ToString())),
-                PictureTypes.NSFWNekos => await GetNSFWNekoClientPictureAsync(Enum.Parse<NSFWNekos>(nekoEnum.ToString())),
-                PictureTypes.RegularNekos => await GetSFWNekoClientPictureAsync(Enum.Parse<RegularNekos>(nekoEnum.ToString())),
-                _ => null,
-            };
+            // Process it into a response
+            var response = await _http.GetAsync(request.ImageUrl);
 
-            if (req == null)
-            {
-                await Logging.LogDebugMessage($"Neko", $"Default PictureType triggered, Please add this new pictureType to the switch.");
-                throw new NotImplementedException();
-            }
-
-            //process it into a bitmap
-            var resp = await _http.GetAsync(req.ImageUrl);
-
-            //Fetch the goodies
-            Stream s = await resp.Content.ReadAsStreamAsync();
-
-            await Logging.LogInfoMessage(pictureType.ToString(), req.ImageUrl);
-            return s;
+            // Convert response to stream
+            return await response.Content.ReadAsStreamAsync();
         }
     }
 }

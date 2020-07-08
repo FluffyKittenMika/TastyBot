@@ -1,10 +1,9 @@
 ﻿using Interfaces.Contracts.Database;
 using System;
 using LiteDB;
-using Discord;
 using System.IO;
 
-namespace Database
+namespace Databases
 {
     public class LiteDB : ILiteDB
     {

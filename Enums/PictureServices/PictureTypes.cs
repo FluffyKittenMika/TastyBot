@@ -2,10 +2,17 @@
 {
     public enum PictureTypes
     {
+        #region NekoClient
         ActionNekos,
         AnimatedNekos,
         AnimatedNSFWNekos,
         NSFWNekos,
-        RegularNekos
+        RegularNekos,
+        #endregion
+
+        #region Cat
+        RegularCats,
+        AnimatedCats,
+        #endregion
     }
 }

@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "..\DataA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "..\Interfaces\Interfaces.csproj", "{83187C51-AA06-4AA8-9E6E-635212A647F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "..\Database\Database.csproj", "{F051F253-0E15-431D-86CA-E32CB7EC22B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Databases", "..\Database\Databases.csproj", "{F051F253-0E15-431D-86CA-E32CB7EC22B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "..\BusinessLogicLayer\BusinessLogicLayer.csproj", "{AB4DF63A-D02A-438E-8E72-AEBCCD7AC25F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\Utilities\Utilities.csproj", "{D3035A34-4563-4A00-A078-A956E3722EF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\Utilities.csproj", "{D3035A34-4563-4A00-A078-A956E3722EF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
