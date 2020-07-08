@@ -105,19 +105,9 @@ namespace TastyBot.Extensions
 
         #region HeadpatPictures
 
-        public static void ConfigureTextStreamWriter(this IServiceCollection services)
-        {
-            services.AddScoped<ITextStreamWriter, TextStreamWriter>();
-        }
-
         public static void ConfigureCatService(this IServiceCollection services)
         {
             services.AddScoped<ICatService, CatService>();
-        }
-
-        public static void ConfigureNekoClientService(this IServiceCollection services)
-        {
-            services.AddScoped<INekoClientService, NekoClientService>();
         }
 
         public static void ConfigureCatModule(this IServiceCollection services)
@@ -130,9 +120,9 @@ namespace TastyBot.Extensions
             services.AddScoped<INekoClientModule, NekoClientModule>();
         }
 
-        public static void ConfigurePictureCacheContainer(this IServiceCollection services)
+        public static void ConfigureNekoClientService(this IServiceCollection services)
         {
-            services.AddScoped<IPictureCacheContainer, PictureCacheContainer>();
+            services.AddScoped<INekoClientService, NekoClientService>();
         }
 
         #endregion

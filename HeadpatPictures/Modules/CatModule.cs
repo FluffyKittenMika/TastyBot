@@ -2,8 +2,8 @@
 
 using System.Threading.Tasks;
 using System.IO;
-using System;
-using Utilities.LoggingService;
+using Enums.PictureServices;
+using HeadpatPictures.Utilities;
 
 namespace HeadpatPictures.Modules
 {
@@ -16,16 +16,13 @@ namespace HeadpatPictures.Modules
             _serv = serv;
         }
 
-        public async Task<Stream> CatPictureAsync(int textSize, string color, string text)
+        public async Task<Stream> GetCatItemAsync(CatItems catEnum, string text)
         {
-            var stream = await _serv.ReturnCacheAction("RegularBoringCat",text);
-            stream.Seek(0, SeekOrigin.Begin);
-            return stream;
-        }
+            var stream = await _serv.ReturnCacheAction(catEnum);
 
-        public async Task<Stream> CatGifAsync()
-        {
-            var stream = await _serv.ReturnCacheAction("RegularAnimatedButBoringCat","");
+            if (!CatItemsEnumUtilities.IsGif(catEnum) && text != "")
+                stream = TextStreamWriter.WriteOnStream(stream, text);
+
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }

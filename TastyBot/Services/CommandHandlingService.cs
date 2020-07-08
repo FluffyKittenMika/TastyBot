@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using HeadpatPictures.Contracts;
 using Utilities.LoggingService;
+using Enums.PictureServices;
 
 namespace TastyBot.Services
 {
@@ -128,7 +129,7 @@ namespace TastyBot.Services
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";
-                    var stream = await _catModule.CatPictureAsync(32, "", content);
+                    var stream = await _catModule.GetCatItemAsync(CatItems.Picture, content);
                     await userMessage.Channel.SendFileAsync(stream, "cat.png");
                 }
             }

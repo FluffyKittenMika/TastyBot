@@ -1,6 +1,4 @@
-﻿using HeadpatPictures.Contracts;
-
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -8,7 +6,7 @@ using System.Linq;
 
 namespace HeadpatPictures.Utilities
 {
-    public class TextStreamWriter : ITextStreamWriter
+    public static class TextStreamWriter
     {
         //TODO: Text wrapping to fit more text into the fucking thing
         //TODO: Enable rainbow text
@@ -18,8 +16,9 @@ namespace HeadpatPictures.Utilities
         /// <param name="stream">Image Stream</param>
         /// <param name="text">Text for the image</param>
         /// <returns>PNG formatted memorystream</returns>
-        public Stream WriteOnStream(Stream stream, string text = "")
+        public static Stream WriteOnStream(Stream stream, string text)
         {
+            if (text == "") return stream;
             Bitmap bitmap = new Bitmap(stream);
             Color color = GetColor(ref text);
 
@@ -58,7 +57,7 @@ namespace HeadpatPictures.Utilities
         /// </summary>          
         /// <param name="check">Input string to check, if there's a color it also shortens the string to not include it</param>
         /// <returns>Correct color, default Black</returns>
-        private Color GetColor(ref string check)
+        private static Color GetColor(ref string check)
         {
             string Col = check.Split(' ').FirstOrDefault();
             Color color = Color.FromName(Col);

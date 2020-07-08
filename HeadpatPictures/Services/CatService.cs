@@ -1,80 +1,73 @@
 ﻿using HeadpatPictures.Contracts;
 using System.IO;
-using System.Net.Http;
 
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using Utilities.LoggingService;
+using HeadpatPictures.Utilities;
+using Utilities.TasksManager;
+using Enums.PictureServices;
 
 namespace HeadpatPictures.Services
 {
     public class CatService : ICatService
     {
-        private readonly HttpClient _http;
-        private readonly IPictureCacheContainer _pictureCache;
-        private readonly ITextStreamWriter _writer;
+        private readonly int MaxUniqueCounter = 6;
 
-        private readonly int MaxUniqueCounter = 3;
-
-        public CatService(IPictureCacheContainer pictureCache, ITextStreamWriter writer)
+        public async Task<Stream> ReturnCacheAction(CatItems catEnum)
         {
-            _http = new HttpClient();
-            _pictureCache = pictureCache;
-            _writer = writer;
-        }
+            Stream stream;
 
-        public async Task<Stream> GetCatGifAsync()
-        {
-            var resp = await _http.GetAsync("https://cataas.com/cat/gif");
-            return await resp.Content.ReadAsStreamAsync();
-        }
+            //Sets the name to Type + value
+            string key = typeof(CatItems).Name + catEnum.ToString();
 
-        private async Task<Stream> GetCatPictureAsync()
-        {
-            var resp = await _http.GetAsync($"https://cataas.com/cat");
-            return await resp.Content.ReadAsStreamAsync();
-        }
-
-
-        public async Task<Stream> ReturnCacheAction(string key, string text = "")
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
             //If amount of images is equal to 0, or the key does not exist, fill it
-            if (_pictureCache.GetCacheCount(key) == 0 || !_pictureCache.Exists(key))
-                await FillPictureCache(key); //Fills it to MaxUniqueCounter
+            if (CacheCommands.GetCacheCount(key) == 0 || !CacheCommands.Exists(key))
+            {
+                //Fills cache with pictures to MaxUniqueCounter
+                FillPictureCache(key, catEnum).PerformAsyncTaskWithoutAwait();
 
-            //Get the first image from the cache
-            Stream stream = _pictureCache.GetCachedPictures(key).FirstOrDefault();
-
-            //Remove it from the cache, and replace it with a new.
-            await ReplaceCachePicture(key);
-
-            watch.Stop();
-            await Logging.LogDebugMessage("Cache", $"Fetching image took: {watch.ElapsedMilliseconds}ms - Key:{key}");
-
-            return _writer.WriteOnStream(stream, text);
+                // Get an image directly from NekoClient while the cache is filling up
+                stream = await CatPicture.GetCatItem(catEnum);
+            }
+            else
+            {
+                // Get the first image in the cache
+                stream = CacheCommands.GetCachedPictures(key).FirstOrDefault();
+                // Replace that image
+                ReplaceCachePicture(key, catEnum).PerformAsyncTaskWithoutAwait();
+            }
+            return stream;
         }
 
-
-        private async Task ReplaceCachePicture(string key)
+        private async Task ReplaceCachePicture(string key, CatItems catEnum)
         {
-            List<Stream> pictures = _pictureCache.GetCachedPictures(key);
-            pictures.Remove(pictures.FirstOrDefault());
-            pictures.Add(await GetCatPictureAsync());
-            _pictureCache.ReplacePictures(pictures, key);
+            CacheCommands.RemoveFirstCachePicture(key);
+            await AddNewCachePicture(key, catEnum);
         }
 
-        private async Task FillPictureCache(string key)
+        private async Task AddNewCachePicture(string key, CatItems catEnum)
         {
-            List<Stream> picturesToCache = new List<Stream>();
+            if (CacheCommands.GetCachedPictures(key).Count == MaxUniqueCounter)
+            {
+                await Logging.LogErrorMessage("NekoClientModule", $"Unable to add a picture to cache {key}, maximum pictures of {MaxUniqueCounter} has been reached.");
+                return;
+            }
+            CacheCommands.AddCachePicture(await CatPicture.GetCatItem(catEnum), key);
+        }
+
+        private async Task FillPictureCache(string key, CatItems catEnum)
+        {
+            List<Task<Stream>> tasks = new List<Task<Stream>>();
 
             for (int i = 0; i < MaxUniqueCounter; i++)
-                picturesToCache.Add(await GetCatPictureAsync());
+            {
+                tasks.Add(CatPicture.GetCatItem(catEnum));
+            }
 
-            _pictureCache.ReplacePictures(picturesToCache, key);
+            List<Stream> picturesToCache = (await Task.WhenAll(tasks)).OfType<Stream>().ToList();
+            CacheCommands.ReplacePictures(picturesToCache, key);
         }
-
     }
 }

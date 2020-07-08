@@ -14,7 +14,7 @@ namespace Utilities.RainbowUtilities
 
         public static ConsoleColor CreateConsoleRainbowColor()
         {
-            int count = Enum.GetNames(typeof(ConsoleColor)).Length;
+            int count = System.Enum.GetNames(typeof(ConsoleColor)).Length;
             return (ConsoleColor)typeof(ConsoleColor).GetEnumValues().GetValue(_random.Next(0, count));
         }
     }

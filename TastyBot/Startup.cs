@@ -56,7 +56,7 @@ namespace TastyBot.Services
             provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
             await Logging.LogReadyMessage(typeof(Logging));
-            Logging.LogRainbowMessage(typeof(RainbowUtilities).Name, "Ready");
+            await Task.Run(() => Logging.LogRainbowMessage("RainbowUtilities", "Ready"));
 
             await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
@@ -88,8 +88,6 @@ namespace TastyBot.Services
             #endregion
 
             #region HeadpatPictures
-            services.ConfigureTextStreamWriter();
-            services.ConfigurePictureCacheContainer();
             services.ConfigureCatModule();
             services.ConfigureCatService();
             services.ConfigureNekoClientModule();
