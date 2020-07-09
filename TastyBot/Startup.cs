@@ -1,92 +1,70 @@
 ﻿using TastyBot.Extensions;
+using TastyBot.Utility;
 
 using System;
 using System.Threading.Tasks;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
-using TastyBot.Utility;
 using Newtonsoft.Json;
-using TastyBot.Contracts;
 
 namespace TastyBot.Services
 {
-	class Startup
-	{
-		public Config Botconfig { get; }
-		public Startup()
-		{
-			//load config
-			try
-			{
-				Botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
-			}
-			catch (Exception)
-			{
-				Console.WriteLine("No configuration file found, please create one, or the bot simply will not work.");
-			}
-			Console.WriteLine("PREFIX IS: " + Botconfig.Prefix);
-		}
+    class Startup
+    {
+        private readonly Config _botconfig;
 
-		public static async Task RunAsync(string[] args)
-		{
-			var startup = new Startup();
-			await startup.RunAsync();
-		}
+        public Startup()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Starting up bot...");
+            try
+            {
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Base Directory: {AppContext.BaseDirectory}");
+                _botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No configuration file found, please create one from the given template.");
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Prefix: '{_botconfig.Prefix}'");
+        }
 
-		public async Task RunAsync()
-		{
-			var services = new ServiceCollection();                                 // Create a new instance of a service collection
-			ConfigureServices(services);
+        public static async Task RunAsync(string[] args)
+        {
+            if (args is null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
 
-			var provider = services.BuildServiceProvider();                         // Build the service provider
-			provider.GetRequiredService<LoggingService>();                          // Start the logging service
-			provider.GetRequiredService<ICommandHandlingService>();                  // Start the command handler service
+            var startup = new Startup();
+            await startup.RunAsync();
+        }
 
-			await provider.GetRequiredService<IStartupService>().StartAsync();       // Start the startup service
-			await Task.Delay(-1);                                                   // Keep the program alive
-		}
+        private async Task RunAsync()
+        {
+            var services = new ServiceCollection();                                 // Create a new instance of a service collection
+            ConfigureServices(services);
 
-		private void ConfigureServices(IServiceCollection services)
-		{
-			services.ConfigureDiscordSocketClient();
-			services.ConfigureCommandService();
-			services.ConfigureBotConfig(Botconfig);
+            var provider = services.BuildServiceProvider();                         // Build the service provider
+            provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
-			#region TastyBot
-			services.ConfigureCommandHandlingService();
-			services.ConfigureLoggingService();
+            await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
+            await Task.Delay(-1);                                                   // Keep the program alive
+        }
 
-			services.ConfigureStartupService();
-			services.ConfigureBotcatService();
-			services.ConfigurePictureService();
-			services.ConfigureRainbowService();
-            #endregion
-
-            #region Authorization
-            services.ConfigurePermissionHandler();
-			services.ConfigureUsersContainer();
-			#endregion
-
-			#region FileManager
-			services.ConfigureFileManager();
-			#endregion
-
-			#region FutureHeadPats
-			services.ConfigureFileManagerFPH();
-			services.ConfigureHeadpatService();
-			services.ConfigureHeadPatModule();
-			#endregion
-
-			#region HeadpatDungeon
-			/*services.ConfigureEntityContainer();
-			services.ConfigureItemContainer();
-			services.ConfigureRecipeContainer();*/
-			#endregion
-
-			#region MasterMind
-			services.ConfigureMasterMindModule();
-            #endregion
+        private void ConfigureServices(IServiceCollection services)
+        {
+            services.ConfigureDiscord(_botconfig);
+            services.ConfigureTastyBot();
+            services.ConfigureBusinessLogicLayer();
+            services.ConfigureDataAccessLayer();
+            services.ConfigureDatabases();
+            services.ConfigureHeadpatPictures();
+            services.ConfigureFutureHeadPats();
+            services.ConfigureMasterMind();
         }
     }
 }

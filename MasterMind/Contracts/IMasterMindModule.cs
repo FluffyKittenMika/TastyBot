@@ -9,8 +9,8 @@ namespace MasterMind.Contracts
 {
     public interface IMasterMindModule
     {
-        Task StartGame();
-        Task<MemoryStream> StartBoardMaker(int Height, int width);
+        void StartGame();
+        MemoryStream StartBoardMaker(int Height, int width);
         bool IsGameRunning();
     }
 }

@@ -1,8 +1,12 @@
-﻿using Authorization.Contracts;
-using Authorization.HelperClasses;
-using Authorization.Users;
+﻿using Interfaces.Contracts.BusinessLogicLayer;
+using Interfaces.Contracts.DataAccessLayer;
+using Interfaces.Contracts.Database;
+using Interfaces.Contracts.HeadpatPictures;
 
-using FileManager.Contracts;
+using HeadpatPictures.Contracts;
+using HeadpatPictures.Modules;
+using HeadpatPictures.Services;
+using HeadpatPictures.Utilities;
 
 using FutureHeadPats.Contracts;
 using FutureHeadPats.Modules;
@@ -13,7 +17,9 @@ using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Containers;
 using HeadpatDungeon.Strategies;
 
-using TastyBot.Contracts;
+using BusinessLogicLayer.Repositories;
+using DataAccessLayer.Context;
+
 using TastyBot.Services;
 using TastyBot.Utility;
 
@@ -25,13 +31,24 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
-using HeadpatDungeon.Models;
+using Utilities.LoggingService;
 
 namespace TastyBot.Extensions
 {
+    // Logging.LogInfoMessage("Namespace", "Ready");
     public static class StartupExtensions
     {
-        public static void ConfigureDiscordSocketClient(this IServiceCollection services)
+        #region Discord
+
+        public static void ConfigureDiscord(this IServiceCollection services, Config botConfig)
+        {
+            services.ConfigureDiscordSocketClient();
+            services.ConfigureCommandService();
+            services.ConfigureBotConfig(botConfig);
+            Logging.LogInfoMessage("Discord", "Ready");
+        }
+
+        private static void ConfigureDiscordSocketClient(this IServiceCollection services)
         {
             services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
             {                                       // Add discord to the collection
@@ -40,7 +57,7 @@ namespace TastyBot.Extensions
             }));
         }
 
-        public static void ConfigureCommandService(this IServiceCollection services)
+        private static void ConfigureCommandService(this IServiceCollection services)
         {
             services.AddSingleton(new CommandService(new CommandServiceConfig
             {                                       // Add the command service to the collection
@@ -49,80 +66,127 @@ namespace TastyBot.Extensions
             }));
         }
 
-        #region TastyBot
-
-        public static void ConfigureCommandHandlingService(this IServiceCollection services)
-        {
-            services.AddScoped<ICommandHandlingService, CommandHandlingService>(); // Add the Command handler to the collection
-        }
-
-        public static void ConfigureLoggingService(this IServiceCollection services)
-        {
-            services.AddSingleton<LoggingService>();         // Add loggingservice to the collection
-        }
-
-        public static void ConfigureStartupService(this IServiceCollection services)
-        {
-            services.AddScoped<IStartupService, StartupService>();         // Add startupservice to the collection
-        }
-
-        public static void ConfigurePictureService(this IServiceCollection services)
-        {
-            services.AddScoped<IPictureService, PictureService>();         // Add the picture service, it depends on HTTP
-        }
-        public static void ConfigureRainbowService(this IServiceCollection services)
-        {
-            services.AddSingleton<RainbowService>();         // Add Rainbow Service, not sure if it needs to be one
-        }
-        public static void ConfigureBotcatService(this IServiceCollection services)
-        {
-            services.AddSingleton<BotCatService>();
-        }
-
-        public static void ConfigureBotConfig(this IServiceCollection services, Config botConfig)
+        private static void ConfigureBotConfig(this IServiceCollection services, Config botConfig)
         {
             services.AddSingleton(botConfig);				// Add the configuration to the collection
         }
 
+        #endregion
+
+        #region TastyBot
+
+        public static void ConfigureTastyBot(this IServiceCollection services)
+        {
+            services.ConfigureCommandHandlingService();
+            services.ConfigureStartupService();
+            Logging.LogInfoMessage("TastyBot", "Ready");
+        }
+
+        public static void ConfigureCommandHandlingService(this IServiceCollection services)
+        {
+            services.AddSingleton<CommandHandlingService>();
+        }
+
+        public static void ConfigureStartupService(this IServiceCollection services)
+        {
+            services.AddSingleton<StartupService>();
+        }
 
         #endregion
 
-        #region Authorization
+        #region BusinessLogicLayer
 
-        public static void ConfigurePermissionHandler(this IServiceCollection services)
+        public static void ConfigureBusinessLogicLayer(this IServiceCollection services)
         {
-            services.AddScoped<IPermissionHandler, PermissionHandler>();
+            services.ConfigureUserRepository();
+            Logging.LogInfoMessage("BusinessLogicLayer", "Ready");
         }
 
-        public static void ConfigureUsersContainer(this IServiceCollection services)
+        private static void ConfigureUserRepository(this IServiceCollection services)
         {
-            services.AddScoped<IUsersContainer, UsersContainer>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         #endregion
 
-        #region FileManager
+        #region DataAccessLayer
 
-        public static void ConfigureFileManager(this IServiceCollection services)
+        public static void ConfigureDataAccessLayer(this IServiceCollection services)
         {
-            services.AddScoped<IFileManager, FileManager.FileManager>();
+            services.ConfigureUserContext();
+            Logging.LogInfoMessage("DataAccessLayer", "Ready");
+        }
+
+        private static void ConfigureUserContext(this IServiceCollection services)
+        {
+            services.AddScoped<IUserContext, UserContext>();
+        }
+
+        #endregion
+
+        #region Databases
+
+        public static void ConfigureDatabases(this IServiceCollection services)
+        {
+            services.ConfigureLiteDB();
+            Logging.LogInfoMessage("Databases", "Ready");
+        }
+
+        private static void ConfigureLiteDB(this IServiceCollection services)
+        {
+            services.AddScoped<ILiteDB, Databases.LiteDB>();
+        }
+
+        #endregion
+
+        #region HeadpatPictures
+
+        public static void ConfigureHeadpatPictures(this IServiceCollection services)
+        {
+            services.ConfigurePictureModule();
+            services.ConfigurePictureService();
+            services.ConfigurePictureHub();
+            Logging.LogInfoMessage("HeadpatPictures", "Ready");
+        }
+
+        private static void ConfigurePictureModule(this IServiceCollection services)
+        {
+            services.AddScoped<IPictureModule, PictureModule>();
+        }
+
+        private static void ConfigurePictureService(this IServiceCollection services)
+        {
+            services.AddScoped<IPictureService, PictureService>();
+        }
+
+        private static void ConfigurePictureHub(this IServiceCollection services)
+        {
+            services.AddScoped<IPictureHub, PictureHub>();
         }
 
         #endregion
 
         #region FutureHeadPats
 
-        public static void ConfigureFileManagerFPH(this IServiceCollection services)
+        public static void ConfigureFutureHeadPats(this IServiceCollection services)
+        {
+            services.ConfigureFileManagerFPH();
+            services.ConfigureHeadpatService();
+            services.ConfigureHeadPatModule();
+            Logging.LogInfoMessage("FutureHeadPats", "Ready");
+        }
+
+        private static void ConfigureFileManagerFPH(this IServiceCollection services)
         {
             services.AddScoped<IFileManagerFHP, FileManagerFHP>();
         }
 
-        public static void ConfigureHeadpatService(this IServiceCollection services)
+        private static void ConfigureHeadpatService(this IServiceCollection services)
         {
             services.AddScoped<IHeadpatService, HeadpatService>();
         }
 
-        public static void ConfigureHeadPatModule(this IServiceCollection services)
+        private static void ConfigureHeadPatModule(this IServiceCollection services)
         {
             services.AddScoped<IFhpModule, FhpModule>();
         }
@@ -155,7 +219,13 @@ namespace TastyBot.Extensions
 
         #region MasterMind
 
-        public static void ConfigureMasterMindModule(this IServiceCollection services)
+        public static void ConfigureMasterMind(this IServiceCollection services)
+        {
+            services.ConfigureMasterMindModule();
+            Logging.LogInfoMessage("MasterMind", "Ready");
+        }
+
+        private static void ConfigureMasterMindModule(this IServiceCollection services)
         {
             services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
         }

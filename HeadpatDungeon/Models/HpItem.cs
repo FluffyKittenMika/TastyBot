@@ -28,7 +28,7 @@ namespace HeadpatDungeon.Models
         /// <summary>
         /// Constructor, empty, DEFINE IT PROPERLY PLEASE
         /// </summary>
-        public HpItem() 
+        public HpItem()
         {
 
         }

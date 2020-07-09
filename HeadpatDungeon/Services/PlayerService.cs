@@ -8,7 +8,6 @@ namespace HeadpatDungeon.Services
     {
         public HpPlayer GetPlayer(ulong Id)
         {
-            HpPlayer player = null;
             throw new NotImplementedException();
         }
 

@@ -1,17 +1,8 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Discord;
-using Discord.WebSocket;
-using Discord.Commands;
+﻿using System.Threading.Tasks;
 using TastyBot.Services;
-using System.IO;
-using System.Linq;
 
 namespace TastyBot
 {
-    //See Startup.cs
     class Program
     {
         public static Task Main(string[] args)

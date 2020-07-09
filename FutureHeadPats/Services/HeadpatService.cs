@@ -15,8 +15,8 @@ namespace FutureHeadPats.Services
     public class HeadpatService : IHeadpatService
     {
         private readonly IFileManagerFHP _fileManager;
-        private Dictionary<ulong, FhpUser> _Users;
-        private Timer _SaveTimer;
+        private readonly Dictionary<ulong, FhpUser> _Users;
+        private readonly Timer _SaveTimer;
 
         public HeadpatService(IFileManagerFHP fileManager)
         {
@@ -28,7 +28,7 @@ namespace FutureHeadPats.Services
                 Interval = 5 * 60 * 1000,
                 Enabled = true,
             };
-            _SaveTimer.Elapsed += _SaveTimer_Elapsed;
+            _SaveTimer.Elapsed += SaveTimer_Elapsed;
             List<FhpUser> users = _fileManager.LoadFhpUserData();
             foreach (var item in users)
             {
@@ -36,7 +36,7 @@ namespace FutureHeadPats.Services
             }
         }
 
-        private void _SaveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void SaveTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _fileManager.SaveFhpUserData(_Users.Values.ToList());
         }

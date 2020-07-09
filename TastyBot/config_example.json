@@ -1,5 +1,5 @@
 ﻿{
   "Prefix": "!",
   "Savecounter": 50,
-  "DiscordToken": "BOT TOKEN GOES HERE"
+  "DiscordToken": "" // DiscordBot Token
 }
