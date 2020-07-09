@@ -32,7 +32,12 @@ namespace TastyBot.Modules
             _discord = discord;
             _discord.ReactionAdded += OnReactionAddedAsync;
         }
-        
+
+        private Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        {
+            throw new NotImplementedException();
+        }
+
         [Command("start")]
         [Summary("starts game of mastermind\nto start a game do !start\nfor additional customization do !start {height} {width}")]
         
