@@ -3,17 +3,10 @@ using Discord.Commands;
 using Discord.WebSocket;
 using MasterMind.Contracts;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Net.Http;
-using TastyBot.Contracts;
-using MasterMind.Modules;
 using Discord.Rest;
-using System.Linq;
+using Utilities.TasksManager;
 
 namespace TastyBot.Modules
 {
@@ -32,7 +25,12 @@ namespace TastyBot.Modules
             _discord = discord;
             _discord.ReactionAdded += OnReactionAddedAsync;
         }
-        
+
+        private Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        {
+            throw new NotImplementedException();
+        }
+
         [Command("start")]
         [Summary("starts game of mastermind\nto start a game do !start\nfor additional customization do !start {height} {width}")]
         
@@ -58,30 +56,30 @@ namespace TastyBot.Modules
                 return;
             }
 
-            await _module.StartGame();
-            stream = await _module.StartBoardMaker(height, width);
+            _module.StartGame();
+            stream = _module.StartBoardMaker(height, width);
             imageMessage = await Context.Channel.SendFileAsync(stream, "MasterMind.png");
-            await SendEmote();
+            SendEmote();
             /* Task.Delay(6000);
             await imageMessage.ModifyAsync(msg => msg.Content = "test [edited]"); */
 
         }
-        public async Task SendEmote()
+        public void SendEmote()
         {
             Emoji YourEmoji = new Emoji("⚫");
-            imageMessage.AddReactionAsync(YourEmoji);
+            imageMessage.AddReactionAsync(YourEmoji).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji1 = new Emoji("🟡");
-            imageMessage.AddReactionAsync(YourEmoji1);
+            imageMessage.AddReactionAsync(YourEmoji1).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji2 = new Emoji("🟠");
-            imageMessage.AddReactionAsync(YourEmoji2);
+            imageMessage.AddReactionAsync(YourEmoji2).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji3 = new Emoji("🟣");
-            imageMessage.AddReactionAsync(YourEmoji3);
+            imageMessage.AddReactionAsync(YourEmoji3).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji4 = new Emoji("🟢");
-            imageMessage.AddReactionAsync(YourEmoji4);
+            imageMessage.AddReactionAsync(YourEmoji4).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji5 = new Emoji("🔵");
-            imageMessage.AddReactionAsync(YourEmoji5);
+            imageMessage.AddReactionAsync(YourEmoji5).PerformAsyncTaskWithoutAwait();
             Emoji YourEmoji6 = new Emoji("🔴");
-            imageMessage.AddReactionAsync(YourEmoji6);
+            imageMessage.AddReactionAsync(YourEmoji6).PerformAsyncTaskWithoutAwait();
         }
         
     }

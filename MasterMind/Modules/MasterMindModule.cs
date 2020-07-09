@@ -34,7 +34,6 @@ namespace MasterMind.Modules
         MemoryStream streamPicture;
         List<Line> lines;
         
-        MemoryStream pictureStream;
         Bitmap bitPicture;
         Graphics g;
         int widthX, heightY;
@@ -45,7 +44,7 @@ namespace MasterMind.Modules
         {
             return GameRunning;
         }
-        public async Task<MemoryStream> StartBoardMaker(int height, int width)
+        public MemoryStream StartBoardMaker(int height, int width)
         {
             //calculates the amount of pixels needed
             int numOfPizelHeight;
@@ -112,7 +111,7 @@ namespace MasterMind.Modules
             return streamPicture;
         }
         
-        public async Task MakePattern()
+        public void MakePattern()
         {
             Random random = new Random();
             SecretPattern = new List<int>();
@@ -124,7 +123,7 @@ namespace MasterMind.Modules
             }
         }
 
-        public async Task LineEditor(int lineNum, List<System.Drawing.Color> colors, int amountRed, int amountWhite)
+        public void LineEditor(int lineNum, List<System.Drawing.Color> colors, int amountRed, int amountWhite)
         {
             int pixelsHeight = bitPicture.Height;
             pixelsHeight -= lineNum * 100;
@@ -160,7 +159,7 @@ namespace MasterMind.Modules
             }
 
         }
-        public async Task<List<bool>> RedNumberPosition(List<int> colorGuess)
+        public List<bool> RedNumberPosition(List<int> colorGuess)
         {
             List<bool> redPosition = new List<bool>();
             for (int i = 0; i < widthX; i++)
@@ -179,7 +178,7 @@ namespace MasterMind.Modules
             return redPosition;
         }
 
-        public async Task<int> RedNum(List<int> colorGuess)
+        public int RedNum(List<int> colorGuess)
         {
             int i = 0;
             int red = 0;
@@ -194,9 +193,9 @@ namespace MasterMind.Modules
             return red;
         }
 
-        public async Task<int> WhiteNum(List<int> colorGuessGuess)
+        public int WhiteNum(List<int> colorGuessGuess)
         {
-            List<bool> RedNumber = await RedNumberPosition(colorGuessGuess);
+            List<bool> RedNumber = RedNumberPosition(colorGuessGuess);
             int x = 0;
             int y = 0;
             int white = 0;
@@ -223,10 +222,10 @@ namespace MasterMind.Modules
         }
 
         //called when the game starts in case it wasnt obv enough
-        public async Task StartGame()
+        public void StartGame()
         {
             GameRunning = true;
-            await MakePattern();
+            MakePattern();
             int num = 0;
             numberIds = new List<NumberId>();
 
@@ -247,7 +246,7 @@ namespace MasterMind.Modules
             }
         }
 
-        public async Task RunGame()
+        public void RunGame()
         {
             
         }
