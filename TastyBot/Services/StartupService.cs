@@ -14,26 +14,30 @@ using Newtonsoft.Json;
 using System.IO;
 using Enums.UserPermissions;
 using Utilities.LoggingService;
-using Utilities.TasksManager;
+using Utilities.TasksUtilities;
+using Interfaces.Contracts.HeadpatPictures;
 
 namespace TastyBot.Services
 {
     public class StartupService
     {
         private readonly IServiceProvider _provider;
+        private readonly IPictureAPIHub _hub;
         private readonly IUserRepository _repo;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly Config _config;
 
-        public StartupService(IServiceProvider provider, IUserRepository repo, DiscordSocketClient discord, CommandService commands, Config config)
+        public StartupService(IServiceProvider provider, IUserRepository repo, IPictureAPIHub hub, DiscordSocketClient discord, CommandService commands, Config config)
         {
             _provider = provider;
             _repo = repo;
+            _hub = hub;
             _config = config;
             _discord = discord;
             _commands = commands;
 
+            
             Logging.LogReadyMessage(this);
         }
 

@@ -7,6 +7,8 @@ using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Utilities.RestAPI;
+using System.Net.Http;
 
 namespace TastyBot.Services
 {
@@ -65,6 +67,8 @@ namespace TastyBot.Services
             services.ConfigureHeadpatPictures();
             services.ConfigureFutureHeadPats();
             services.ConfigureMasterMind();
+            services.ConfigureHttpClient();
+            services.ConfigurePictureAPIs();
         }
     }
 }

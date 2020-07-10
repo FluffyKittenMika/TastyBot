@@ -1,4 +1,4 @@
-﻿namespace Enums.PictureServices
+﻿namespace Enums.PictureServices.NekoClientEnums
 {
     public enum AnimatedNSFWNekos
     {

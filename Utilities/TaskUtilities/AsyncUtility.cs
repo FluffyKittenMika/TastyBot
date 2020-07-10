@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Utilities.LoggingService;
 
-namespace Utilities.TasksManager
+namespace Utilities.TasksUtilities
 {
     public static class AsyncUtility { 
         public static void PerformAsyncTaskWithoutAwait(this Task task) 

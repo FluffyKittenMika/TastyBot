@@ -1,6 +1,6 @@
-﻿namespace Enums.PictureServices
+﻿namespace Enums.PictureServices.NekoClientEnums
 {
-    public enum RegularNekos
+    public enum SFWNekos
     {
         Avatar,
         Fox,

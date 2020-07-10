@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.IO;
 using Discord.Rest;
-using Utilities.TasksManager;
+using Utilities.TasksUtilities;
 
 namespace TastyBot.Modules
 {

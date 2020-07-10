@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "..\Enums\Enums.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MasterMind", "..\MasterMind\MasterMind.csproj", "{1485329D-08A4-4495-88FF-112A007D376B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeadpatPictures", "..\HeadpatPictures\HeadpatPictures.csproj", "{D083EF25-FF5A-499A-B125-C824DF2DED5A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "..\DataAccessLayer\DataAccessLayer.csproj", "{7A610716-2CAA-4218-A1BA-885D6D8C5A29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "..\Interfaces\Interfaces.csproj", "{83187C51-AA06-4AA8-9E6E-635212A647F9}"
@@ -24,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "..\BusinessLogicLayer\BusinessLogicLayer.csproj", "{AB4DF63A-D02A-438E-8E72-AEBCCD7AC25F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\Utilities.csproj", "{D3035A34-4563-4A00-A078-A956E3722EF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PictureHub", "..\PictureAPI\PictureHub.csproj", "{7A3CD7A1-84AD-441C-953C-346DD21C877E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +51,6 @@ Global
 		{1485329D-08A4-4495-88FF-112A007D376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1485329D-08A4-4495-88FF-112A007D376B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D083EF25-FF5A-499A-B125-C824DF2DED5A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A610716-2CAA-4218-A1BA-885D6D8C5A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A610716-2CAA-4218-A1BA-885D6D8C5A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A610716-2CAA-4218-A1BA-885D6D8C5A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,6 +71,10 @@ Global
 		{D3035A34-4563-4A00-A078-A956E3722EF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3035A34-4563-4A00-A078-A956E3722EF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3035A34-4563-4A00-A078-A956E3722EF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

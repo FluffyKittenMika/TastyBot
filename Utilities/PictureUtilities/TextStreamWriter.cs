@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using Utilities.LoggingService;
 
-namespace HeadpatPictures.Utilities
+namespace Utilities.PictureUtilities
 {
-    public static class TextStreamWriter
+    public class TextStreamWriter
     {
         //TODO: Text wrapping to fit more text into the fucking thing
         //TODO: Enable rainbow text
@@ -48,6 +48,7 @@ namespace HeadpatPictures.Utilities
             }
             MemoryStream resultstream = new MemoryStream();
             bitmap.Save(resultstream, ImageFormat.Png);
+            
 
             return resultstream;
         }
@@ -62,7 +63,7 @@ namespace HeadpatPictures.Utilities
         {
             string Col = check.Split(' ').FirstOrDefault();
             Color color = Color.FromName(Col);
-            
+
             if (color.Name == "rainbow")
             {
                 Logging.LogRainbowMessage(typeof(TextStreamWriter).Name, "Rainbow Color Detected!");

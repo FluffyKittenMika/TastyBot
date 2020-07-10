@@ -1,25 +1,20 @@
 ﻿using NekosSharp;
 
-using Enums.PictureServices;
+using Enums.PictureServices.NekoClientEnums;
 
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
+using System.Net.Http;
 
-namespace HeadpatPictures.Utilities.PictureAccess
+namespace PictureAPIs.PictureAPIs
 {
     public static class NekoClient
     {
         private static readonly NekosSharp.NekoClient _nekoClient = new NekosSharp.NekoClient("TastyBot");
-        private static readonly HttpClient _http = new HttpClient();
 
-       
-
-        #region ActionNeko
-
-        public static async Task<Stream> GetActionNekoClientGifAsync(ActionNekos actionNekosValue)
+        public static async Task<Stream> GetActionNekos(HttpClient http, ActionNekos actionNekos)
         {
-            Request request = actionNekosValue switch
+            Request request = actionNekos switch
             {
                 ActionNekos.Cuddlegif => await _nekoClient.Action_v3.CuddleGif(),
                 ActionNekos.Feedgif => await _nekoClient.Action_v3.FeedGif(),
@@ -31,48 +26,40 @@ namespace HeadpatPictures.Utilities.PictureAccess
                 ActionNekos.Ticklegif => await _nekoClient.Action_v3.TickleGif(),
                 _ => await _nekoClient.Action_v3.PatGif(),
             };
-            return await GetStreamFromRequestAsync(request);
+            return await GetStreamFromRequestAsync(request, http);
         }
 
-        #endregion
-
-        #region SFW
-
-        public static async Task<Stream> GetSFWNekoClientPictureAsync(RegularNekos regularNekosValue)
+        public static async Task<Stream> GetSFWNekos(HttpClient http, SFWNekos sFWNekos)
         {
-            Request request = regularNekosValue switch
+            Request request = sFWNekos switch
             {
-                RegularNekos.Avatar => await _nekoClient.Image_v3.Avatar(),
-                RegularNekos.Fox => await _nekoClient.Image_v3.Fox(),
-                RegularNekos.Holo => await _nekoClient.Image_v3.Holo(),
-                RegularNekos.Neko => await _nekoClient.Image_v3.Neko(),
-                RegularNekos.NekoAvatar => await _nekoClient.Image_v3.NekoAvatar(),
-                RegularNekos.Waifu => await _nekoClient.Image_v3.Waifu(),
-                RegularNekos.Wallpaper => await _nekoClient.Image_v3.Wallpaper(),
+                SFWNekos.Avatar => await _nekoClient.Image_v3.Avatar(),
+                SFWNekos.Fox => await _nekoClient.Image_v3.Fox(),
+                SFWNekos.Holo => await _nekoClient.Image_v3.Holo(),
+                SFWNekos.Neko => await _nekoClient.Image_v3.Neko(),
+                SFWNekos.NekoAvatar => await _nekoClient.Image_v3.NekoAvatar(),
+                SFWNekos.Waifu => await _nekoClient.Image_v3.Waifu(),
+                SFWNekos.Wallpaper => await _nekoClient.Image_v3.Wallpaper(),
                 _ => await _nekoClient.Image_v3.Neko(),
             };
-            return await GetStreamFromRequestAsync(request);
+            return await GetStreamFromRequestAsync(request, http);
         }
 
-        public static async Task<Stream> SFWNekoClientGifAsync(AnimatedNekos animatedNekosValue)
+        public static async Task<Stream> GetAnimatedNekos(HttpClient http, AnimatedSFWNekos animatedSFWNekos)
         {
-            Request request = animatedNekosValue switch
+            Request request = animatedSFWNekos switch
             {
-                AnimatedNekos.Bakagif => await _nekoClient.Image_v3.BakaGif(),
-                AnimatedNekos.Nekogif => await _nekoClient.Image_v3.NekoGif(),
-                AnimatedNekos.Smuggif => await _nekoClient.Image_v3.SmugGif(),
+                AnimatedSFWNekos.Bakagif => await _nekoClient.Image_v3.BakaGif(),
+                AnimatedSFWNekos.Nekogif => await _nekoClient.Image_v3.NekoGif(),
+                AnimatedSFWNekos.Smuggif => await _nekoClient.Image_v3.SmugGif(),
                 _ => await _nekoClient.Image_v3.BakaGif(),
             };
-            return await GetStreamFromRequestAsync(request);
+            return await GetStreamFromRequestAsync(request, http);
         }
 
-        #endregion
-
-        #region NSFW
-
-        public static async Task<Stream> GetNSFWNekoClientPictureAsync(NSFWNekos NSFWNekosValue)
+        public static async Task<Stream> GetNSFWNekos(HttpClient http, NSFWNekos nSFWNekos)
         {
-            Request request = NSFWNekosValue switch
+            Request request = nSFWNekos switch
             {
                 NSFWNekos.Ahegao => await _nekoClient.Nsfw_v3.Ahegao(),
                 NSFWNekos.Anal => await _nekoClient.Nsfw_v3.Anal(),
@@ -115,10 +102,10 @@ namespace HeadpatPictures.Utilities.PictureAccess
                 NSFWNekos.Yuri => await _nekoClient.Nsfw_v3.Yuri(),
                 _ => await _nekoClient.Nsfw_v3.Yuri(),
             };
-            return await GetStreamFromRequestAsync(request);
+            return await GetStreamFromRequestAsync(request, http);
         }
 
-        public static async Task<Stream> NSFWNekoClientGifAsync(AnimatedNSFWNekos animatedNSFWNekosValue)
+        public static async Task<Stream> GetAnimatedNSFWNekos(HttpClient http, AnimatedNSFWNekos animatedNSFWNekosValue)
         {
             Request request = animatedNSFWNekosValue switch
             {
@@ -139,15 +126,13 @@ namespace HeadpatPictures.Utilities.PictureAccess
                 AnimatedNSFWNekos.Yurigif => await _nekoClient.Nsfw_v3.YuriGif(),
                 _ => await _nekoClient.Nsfw_v3.BoobsGif(),
             };
-            return await GetStreamFromRequestAsync(request);
+            return await GetStreamFromRequestAsync(request, http);
         }
 
-        #endregion
-
-        private static async Task<Stream> GetStreamFromRequestAsync(Request request)
+        private static async Task<Stream> GetStreamFromRequestAsync(Request request, HttpClient http)
         {
             // Process it into a response
-            var response = await _http.GetAsync(request.ImageUrl);
+            var response = await http.GetAsync(request.ImageUrl);
 
             // Convert response to stream
             return await response.Content.ReadAsStreamAsync();

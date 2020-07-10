@@ -1,7 +1,14 @@
 ﻿using Discord;
 using Discord.Commands;
+using Enums.PictureServices.NekoClientEnums;
+using Interfaces.Contracts.HeadpatPictures;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using Utilities.PictureUtilities;
 using Utilities.LoggingService;
+using Utilities.TasksUtilities;
 
 namespace TastyBot.Modules
 {
@@ -9,9 +16,11 @@ namespace TastyBot.Modules
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
+        private readonly IPictureAPIHub _hub;
 
-        public PublicModule()
+        public PublicModule(IPictureAPIHub hub)
         {
+            _hub = hub;
             Logging.LogReadyMessage(this);
         }
 
@@ -69,5 +78,13 @@ namespace TastyBot.Modules
 		public Task GuildOnlyCommand()
 			=> ReplyAsync("Nothing to see here!");
 		*/
+
+        [Command("runlol")]
+        public async Task ddddd(string text = "Cat")
+        {
+            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, text);
+            stream = TextStreamWriter.WriteOnStream(stream, text);
+            await Context.Channel.SendFileAsync(stream, "OwO.gif");
+        }
     }
 }

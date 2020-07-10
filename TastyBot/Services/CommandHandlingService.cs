@@ -5,8 +5,6 @@ using Utilities.LoggingService;
 
 using Interfaces.Contracts.HeadpatPictures;
 
-using Enums.PictureServices;
-
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -14,7 +12,10 @@ using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using Utilities.TasksManager;
+using Utilities.TasksUtilities;
+using System.IO;
+using Utilities.PictureUtilities;
+using System.Collections.Generic;
 
 namespace TastyBot.Services
 {
@@ -24,15 +25,15 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly Config _config;
         private readonly IServiceProvider _services;
-        private readonly IPictureModule _pictureModule;
+        private readonly IPictureAPIHub _hub;
 
-        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, IPictureModule pictureModule)
+        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, IPictureAPIHub hub)
         {
             _discord = discord;
             _commands = commands;
             _config = config;
             _services = services;
-            _pictureModule = pictureModule;
+            _hub = hub;
 
             //Hook Messages so we can process them if they're commands.
             _discord.MessageReceived += OnMessageReceivedAsync;
@@ -133,7 +134,9 @@ namespace TastyBot.Services
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";
-                    var stream = await _pictureModule.GetStreamFromEnumAsync(RegularCats.Cat, content);
+                    Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, "Cat");
+                    stream = TextStreamWriter.WriteOnStream(stream, content);
+                    
                     await userMessage.Channel.SendFileAsync(stream, "cat.png");
                 }
             }
