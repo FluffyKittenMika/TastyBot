@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using TastyBot.Services;
+using DiscordUI.Services;
 
-namespace TastyBot
+namespace DiscordUI
 {
     class Program
     {

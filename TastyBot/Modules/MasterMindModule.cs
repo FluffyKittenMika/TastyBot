@@ -8,7 +8,7 @@ using System.IO;
 using Discord.Rest;
 using Utilities.TasksUtilities;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     /// <summary>
     /// The Module that handles all MasterMind Things

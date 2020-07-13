@@ -2,7 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using TastyBot.Utility;
+using DiscordUI.Utility;
 
 using System;
 using System.Reflection;
@@ -15,24 +15,24 @@ using System.IO;
 using Enums.UserPermissions;
 using Utilities.LoggingService;
 using Utilities.TasksUtilities;
-using Interfaces.Contracts.HeadpatPictures;
+using Interfaces.Entities.ViewModels;
+using System.Linq;
+using Utilities.Converters;
 
-namespace TastyBot.Services
+namespace DiscordUI.Services
 {
     public class StartupService
     {
         private readonly IServiceProvider _provider;
-        private readonly IPictureAPIHub _hub;
-        private readonly IUserRepository _repo;
+        private readonly IUserService _serv;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly Config _config;
 
-        public StartupService(IServiceProvider provider, IUserRepository repo, IPictureAPIHub hub, DiscordSocketClient discord, CommandService commands, Config config)
+        public StartupService(IServiceProvider provider, IUserService serv, DiscordSocketClient discord, CommandService commands, Config config)
         {
             _provider = provider;
-            _repo = repo;
-            _hub = hub;
+            _serv = serv;
             _config = config;
             _discord = discord;
             _commands = commands;
@@ -51,7 +51,7 @@ namespace TastyBot.Services
                 throw new Exception();
             }
 
-            LoadStaff();
+            LoadStaffInDatabase();
 
             await _discord.LoginAsync(TokenType.Bot, discordToken);                         // Login to discord
             await _discord.StartAsync();                                                    // Connect to the websocket
@@ -59,40 +59,72 @@ namespace TastyBot.Services
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);        // Load commands and modules into the command service
         }
 
-        private void LoadStaff()
+        private void LoadStaffInDatabase()
         {
-            string time = DateTime.UtcNow.ToString("hh:mm:ss");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Loading in staff...");
             try
             {
-                Console.WriteLine($"{time} [StartUp - Info] Default staff:");
-                List<UserCreate> staff = JsonConvert.DeserializeObject<List<UserCreate>>(File.ReadAllText(AppContext.BaseDirectory + "staff.json"));
-                int staffCount = 0;
-                foreach (UserCreate staffMember in staff)
-                {
-                    if (_repo.ByDiscordId(staffMember.DiscordId) == null)
-                        _repo.Create(staffMember);
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Default staff:");
+                List<UserCreateVM> staffToUpload = JsonConvert.DeserializeObject<List<UserCreateVM>>(File.ReadAllText(AppContext.BaseDirectory + "staff.json"));
 
-                    staffCount++;
-                    Console.Write($"Staff#{staffCount:D2}: - ");
-                    foreach (var staffMemberProperty in staffMember.GetType().GetProperties())
+                int staffMemberCount = 0;
+                int newlyAddedStaffMember = 0;
+                foreach(var staffMember in staffToUpload)
+                {
+                    if (UploadStaffMember(staffMember))
                     {
-                        if(staffMemberProperty.PropertyType != typeof(List<Permissions>))
-                        {
-                            Console.Write($"{staffMemberProperty.Name}: {staffMemberProperty.GetValue(staffMember)} - ");
-                        }
+                        newlyAddedStaffMember++;
                     }
-                    Console.WriteLine("");
+                    LogStaffMember(staffMember, staffMemberCount);
+                    staffMemberCount++;
+
                 }
-                time = DateTime.UtcNow.ToString("hh:mm:ss");
-                Console.WriteLine($"{time} [StartUp - Info] Staff successfully loaded in");
+                
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Staff successfully loaded in (New loaded: { newlyAddedStaffMember })");
             }
             catch (Exception)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"{time} [StartUp - Critical] No staff file found, please create one, or the bot simply will not work.");
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No staff file found, please create one (staff.json).");
             }
+        }
+
+        private bool UploadStaffMember(UserCreateVM staffMember)
+        {
+            if (_serv.ByDiscordId(staffMember.DiscordId) == null)
+            {
+                List<Permissions> permissions = staffMember.Permissions.Select(x => Enum.Parse<Permissions>(x)).ToList();
+                User staffMemberCreate = new User()
+                {
+                    Name = staffMember.Name,
+                    DiscordId = staffMember.DiscordId,
+                    Administrator = staffMember.Administrator,
+                    Permissions = permissions
+                };
+
+                _serv.Create(staffMemberCreate);
+                return true;
+            }
+            return false;
+        }
+
+        private void LogStaffMember(UserCreateVM staffMember, int staffMemberCount)
+        {
+            Console.Write($"Staff#{staffMemberCount:D2}: - ");
+            foreach (var staffMemberProperty in staffMember.GetType().GetProperties())
+            {
+                if (staffMemberProperty.PropertyType != typeof(List<string>))
+                {
+                    Console.Write($"{ staffMemberProperty.Name }: { staffMemberProperty.GetValue(staffMember) } - ");
+                }
+                else
+                {
+                    List<string> permissionsStringList = (List<string>)staffMemberProperty.GetValue(staffMember);
+                    Console.Write($"{ staffMemberProperty.Name }: { string.Join(", ", permissionsStringList) } - ");
+                }
+            }
+            Console.WriteLine("");
         }
     }
 }

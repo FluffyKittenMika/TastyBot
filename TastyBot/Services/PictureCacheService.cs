@@ -4,22 +4,29 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using DiscordUI.Contracts;
 using Utilities.TasksUtilities;
 
-namespace Utilities.PictureUtilities
+namespace DiscordUI.Services
 {
-    public static class PictureCacheHandler
+    public class PictureCacheService : IPictureCacheService
     {
-        private static readonly int MaximumCachedStreams = 3;
-        private static string _cacheKey;
-        private static Type _pictureType;
-        private static dynamic _pictureTypeValue;
-        private static bool _linkSupport;
+        private readonly int MaximumCachedStreams;
+        private string _cacheKey;
+        private Type _pictureType;
+        private dynamic _pictureTypeValue;
+        private bool _linkSupport;
+        private readonly getStreamFromAPI _getStream;
+
+        public PictureCacheService(int MaximumCachedStreams, getStreamFromAPI getStreamFromAPI)
+        {
+            this.MaximumCachedStreams = MaximumCachedStreams;
+            _getStream = getStreamFromAPI;
+        }
 
         public delegate Task<Stream> getStreamFromAPI(string pictureTypeName, object[] optionalArgs = null);
 
-        public async static Task<Stream> ReturnFastestStream<T>(Func<string, List<Stream>> getStreamsFromCache,
-            getStreamFromAPI getStreamFromAPI,
+        public async Task<Stream> ReturnFastestStream<T>(Func<string, List<Stream>> getStreamsFromCache,
             Action<List<Stream>, string> setCache,
             Func<string, bool> cacheExists,
             T pictureTypeValue,
@@ -29,19 +36,19 @@ namespace Utilities.PictureUtilities
 
             if (!cacheExists(_cacheKey))
             {
-                FillCache(setCache, getStreamFromAPI).PerformAsyncTaskWithoutAwait();
+                FillCache(setCache).PerformAsyncTaskWithoutAwait();
 
-                return await GetStreamFromAPITranslated(getStreamFromAPI);
+                return await GetStreamFromAPITranslated();
             }
             else
             {
                 List<Stream> cachedStreams = getStreamsFromCache(_cacheKey);
-                ReplacePicture(setCache, getStreamFromAPI, cachedStreams).PerformAsyncTaskWithoutAwait();
+                ReplacePicture(setCache, cachedStreams).PerformAsyncTaskWithoutAwait();
                 return cachedStreams.FirstOrDefault();
             }
         }
 
-        private static void InitVariables<T>(T pictureTypeValue, bool linkSupport)
+        private void InitVariables<T>(T pictureTypeValue, bool linkSupport)
         {
             _pictureType = typeof(T);
             _pictureTypeValue = pictureTypeValue;
@@ -49,24 +56,22 @@ namespace Utilities.PictureUtilities
             _linkSupport = linkSupport;
         }
 
-        private async static Task ReplacePicture(
-            Action<List<Stream>, string> setCache, 
-            getStreamFromAPI getStreamFromAPI,
+        private async Task ReplacePicture(
+            Action<List<Stream>, string> setCache,
             List<Stream> cachedStreams)
         {
             cachedStreams.Remove(cachedStreams.FirstOrDefault());
-            cachedStreams.Add(await GetStreamFromAPITranslated(getStreamFromAPI));
+            cachedStreams.Add(await GetStreamFromAPITranslated());
             setCache(cachedStreams, _cacheKey);
         }
 
-        private async static Task FillCache(Action<List<Stream>, string> setCache,
-            getStreamFromAPI getStreamFromAPI)
+        private async Task FillCache(Action<List<Stream>, string> setCache)
         {
             List<Task<Stream>> streamTasks = new List<Task<Stream>>();
 
             for (int i = 0; i < MaximumCachedStreams; i++)
             {
-                streamTasks.Add(GetStreamFromAPITranslated(getStreamFromAPI));
+                streamTasks.Add(GetStreamFromAPITranslated());
             }
             List<Stream> streams = (await Task.WhenAll(streamTasks)).ToList();
 
@@ -74,15 +79,15 @@ namespace Utilities.PictureUtilities
         }
 
         // TODO: Add link support
-        private async static Task<Stream> GetStreamFromAPITranslated(getStreamFromAPI getStreamFromAPI)
+        private async Task<Stream> GetStreamFromAPITranslated()
         {
             if (_pictureType == typeof(string))
             {
-                return await getStreamFromAPI(_pictureTypeValue.ToString());
+                return await _getStream(_pictureTypeValue.ToString());
             }
             else
             {
-                return await getStreamFromAPI(_pictureType.Name, new object[] { _pictureTypeValue });
+                return await _getStream(_pictureType.Name, new object[] { _pictureTypeValue });
             }
         }
     }

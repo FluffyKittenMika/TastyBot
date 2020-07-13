@@ -1,6 +1,6 @@
 ﻿using NekosSharp;
 
-using Enums.PictureServices.NekoClientEnums;
+using Enums.PictureServices;
 
 using System.IO;
 using System.Threading.Tasks;

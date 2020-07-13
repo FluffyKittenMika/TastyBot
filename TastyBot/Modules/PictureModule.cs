@@ -1,27 +1,24 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
-using Enums.PictureServices.NekoClientEnums;
+using Enums.PictureServices;
 using System;
 using System.Linq;
 using System.Globalization;
-using Utilities.LoggingService;
-using Interfaces.Contracts.HeadpatPictures;
 using System.IO;
 using Utilities.PictureUtilities;
 using System.Collections.Generic;
+using DiscordUI.Contracts;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     [Name("Picture Commands")]
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IPictureAPIHub _hub;
+        private readonly IPictureCacheService _pic;
 
-        public PictureModule(IPictureAPIHub hub)
+        public PictureModule(IPictureCacheService pic)
         {
-            _hub = hub;
-
-            Logging.LogReadyMessage(this);
+            _pic = pic;
         }
 
         #region Cat meow meow region
@@ -29,7 +26,7 @@ namespace TastyBot.Modules
         [Command("cat")]
         public async Task CatAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, "Cat");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, "Cat");
             stream = TextStreamWriter.WriteOnStream(stream, text);
             var image = await Context.Channel.SendFileAsync(stream, "cat.png");
         }
@@ -37,7 +34,7 @@ namespace TastyBot.Modules
         [Command("catgif")]
         public async Task CatGifAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, "CatGif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, "CatGif");
             await Context.Channel.SendFileAsync(stream, "cat.gif");
         }
 
@@ -48,7 +45,7 @@ namespace TastyBot.Modules
         [Command("neko")]
         public async Task NekoAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, SFWNekos.Neko);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Neko);
             stream = TextStreamWriter.WriteOnStream(stream, text);            
             await Context.Channel.SendFileAsync(stream, "Neko.png");
         }
@@ -56,7 +53,7 @@ namespace TastyBot.Modules
         [Command("nekoavatar")]
         public async Task NekoAvatarAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, SFWNekos.Avatar);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Avatar);
             stream = TextStreamWriter.WriteOnStream(stream, text);            
             await Context.Channel.SendFileAsync(stream, "Avatar.png");
         }
@@ -64,7 +61,7 @@ namespace TastyBot.Modules
         [Command("nekowallpaper")]
         public async Task NekoWallpaperAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, SFWNekos.Wallpaper);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Wallpaper);
             stream = TextStreamWriter.WriteOnStream(stream, text);    
             await Context.Channel.SendFileAsync(stream, "Wallpaper.png");
         }
@@ -72,7 +69,7 @@ namespace TastyBot.Modules
         [Command("fox")]
         public async Task FoxAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, SFWNekos.Fox);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Fox);
             stream = TextStreamWriter.WriteOnStream(stream, text);            
             await Context.Channel.SendFileAsync(stream, "Fox.png");
         }
@@ -80,7 +77,7 @@ namespace TastyBot.Modules
         [Command("waifu")]
         public async Task WaifuAsync([Remainder] string text = "")
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, SFWNekos.Waifu);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Waifu);
             stream = TextStreamWriter.WriteOnStream(stream, text);
             await Context.Channel.SendFileAsync(stream, "Waifu.png");
         }
@@ -107,7 +104,7 @@ namespace TastyBot.Modules
                 res = GetNSFWNekoFromString(text);
 
             text = string.Join(' ', text.Split(' ').Skip(1));
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, res);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, res);
             stream = TextStreamWriter.WriteOnStream(stream, text);            
             await Context.Channel.SendFileAsync(stream, "OwO.png");
         }
@@ -147,7 +144,7 @@ namespace TastyBot.Modules
             else
                 res = GetNSFWGifFromString(text);
 
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, res);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, res);
             await Context.Channel.SendFileAsync(stream, "OwO.gif");
         }
 
@@ -176,56 +173,56 @@ namespace TastyBot.Modules
         [Command("Cuddle")]
         public async Task CuddleAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Cuddlegif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Cuddlegif);
             await Context.Channel.SendFileAsync(stream, "Cuffle.gif");
         }
 
         [Command("Feed")]
         public async Task FeedAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Feedgif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Feedgif);
             await Context.Channel.SendFileAsync(stream, "Feed.gif");
         }
 
         [Command("Hug")]
         public async Task HugAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Huggif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Huggif);
             await Context.Channel.SendFileAsync(stream, "Hug.gif");
         }
 
         [Command("Kiss")]
         public async Task KissAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Kissgif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Kissgif);
             await Context.Channel.SendFileAsync(stream, "Kiss.gif");
         }
 
         [Command("Pat")]
         public async Task PatAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Patgif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Patgif);
             await Context.Channel.SendFileAsync(stream, "Pat.gif");
         }
 
         [Command("Poke")]
         public async Task PokeAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Pokegif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Pokegif);
             await Context.Channel.SendFileAsync(stream, "Poke.gif");
         }
 
         [Command("Slap")]
         public async Task SlapAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Slapgif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Slapgif);
             await Context.Channel.SendFileAsync(stream, "Slap.gif");
         }
 
         [Command("Tickle")]
         public async Task TickleAsync()
         {
-            Stream stream = await PictureCacheHandler.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, _hub.GetStreamByPictureTypeName, Cache.StoreItems, Cache.CacheExists, ActionNekos.Ticklegif);
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Ticklegif);
             await Context.Channel.SendFileAsync(stream, "Tickle.gif");
         }
 

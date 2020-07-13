@@ -1,5 +1,5 @@
-﻿using TastyBot.Extensions;
-using TastyBot.Utility;
+﻿using DiscordUI.Extensions;
+using DiscordUI.Utility;
 
 using System;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Utilities.RestAPI;
 using System.Net.Http;
 
-namespace TastyBot.Services
+namespace DiscordUI.Services
 {
     class Startup
     {
@@ -59,12 +59,13 @@ namespace TastyBot.Services
 
         private void ConfigureServices(IServiceCollection services)
         {
+            int MaximumCachedPicturesPerCache = 3;
+
             services.ConfigureDiscord(_botconfig);
-            services.ConfigureTastyBot();
+            services.ConfigureTastyBot(MaximumCachedPicturesPerCache);
             services.ConfigureBusinessLogicLayer();
             services.ConfigureDataAccessLayer();
             services.ConfigureDatabases();
-            services.ConfigureHeadpatPictures();
             services.ConfigureFutureHeadPats();
             services.ConfigureMasterMind();
             services.ConfigureHttpClient();

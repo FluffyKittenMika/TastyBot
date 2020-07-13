@@ -21,47 +21,67 @@ namespace PictureAPIs
 
         public async Task<Stream> GetStreamByPictureTypeName(string pictureTypeName, object[] optionalArgs = null)
         {
-            Type[] classes = GetTypesInNamespace(Assembly.GetExecutingAssembly(), "PictureAPIs.PictureAPIs");
+            Type[] classes = GetClassTypesInNamespace(Assembly.GetExecutingAssembly(), "PictureAPIs.PictureAPIs");
+            string methodName = $"Get{pictureTypeName}";
+
+            if (classes == null)
+            {
+                Logging.LogErrorMessage("PictureAPIsHub", $"No pictureAPI found.").PerformAsyncTaskWithoutAwait();
+                throw new NotImplementedException();
+            }
+
+            var args = SetUpArguments(optionalArgs);
+            var method = GetMethodFromClassList(classes.ToList(), methodName);
+
+            if (method == null)
+            {
+                Logging.LogErrorMessage("PictureAPIsHub", $"Method {methodName} does not exists in the included PictureAPI's.").PerformAsyncTaskWithoutAwait();
+                throw new NotImplementedException();
+            }
+
+            return await (Task<Stream>)method.Invoke(null, args);
+        }
+
+        private object[] SetUpArguments(object[] arguments)
+        {
             List<object> args = new List<object>()
             {
                 _http
             };
-            string methodName = $"Get{pictureTypeName}";
-            Stream stream = null;
+            
 
-            if(optionalArgs != null)
+            if (arguments != null)
             {
-                foreach (var arg in optionalArgs)
+                foreach (var argument in arguments)
                 {
-                    args.Add(arg);
+                    args.Add(argument);
                 }
             }
 
-            foreach (Type @class in classes) 
-            {
-                var method = @class.GetMethod(methodName);
-                if(method != null)
-                {
-                    stream = await (Task<Stream>)method.Invoke(null, args.ToArray());
-                    break;
-                }
-            }
-
-            if(stream == null)
-            {
-                Logging.LogErrorMessage("PictureAPIsHub", $"Method {methodName} does not exists in the included PictureAPI's").PerformAsyncTaskWithoutAwait();
-                throw new NotImplementedException();
-            }
-
-            return stream;
+            return args.ToArray();
         }
 
-        private Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        private Type[] GetClassTypesInNamespace(Assembly assembly, string @namespace)
         {
             return
               assembly.GetTypes()
-                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
+                      .Where(t => string.Equals(t.Namespace, @namespace, StringComparison.Ordinal))
                       .ToArray();
+        }
+
+        private MethodInfo GetMethodFromClassList(List<Type> classes, string methodName)
+        {
+            MethodInfo method = null;
+            foreach (var @class in classes)
+            {
+                var potentialMethod = @class.GetMethod(methodName);
+                if (potentialMethod != null)
+                {
+                    method = potentialMethod;
+                    break;
+                }
+            }
+            return method;
         }
     }
 }

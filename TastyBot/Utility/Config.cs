@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TastyBot.Utility
+namespace DiscordUI.Utility
 {
     /// <summary>
     /// This is the bot config file, loaded from config.json

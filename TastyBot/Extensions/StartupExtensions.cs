@@ -13,10 +13,11 @@ using HeadpatDungeon.Containers;
 using HeadpatDungeon.Strategies;
 
 using BusinessLogicLayer.Repositories;
+using BusinessLogicLayer.Services;
 using DataAccessLayer.Context;
 
-using TastyBot.Services;
-using TastyBot.Utility;
+using DiscordUI.Services;
+using DiscordUI.Utility;
 
 using MasterMind.Contracts;
 using MasterMind.Modules;
@@ -29,8 +30,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Utilities.LoggingService;
 using PictureAPIs;
 using System.Net.Http;
+using DiscordUI.Contracts;
 
-namespace TastyBot.Extensions
+namespace DiscordUI.Extensions
 {
     // Logging.LogInfoMessage("Namespace", "Ready");
     public static class StartupExtensions
@@ -72,10 +74,11 @@ namespace TastyBot.Extensions
 
         #region TastyBot
 
-        public static void ConfigureTastyBot(this IServiceCollection services)
+        public static void ConfigureTastyBot(this IServiceCollection services, int MaximumCachedPicturePerCache)
         {
             services.ConfigureCommandHandlingService();
             services.ConfigureStartupService();
+            services.ConfigurePictureCacheService(MaximumCachedPicturePerCache);
             Logging.LogInfoMessage("TastyBot", "Ready");
         }
 
@@ -89,6 +92,11 @@ namespace TastyBot.Extensions
             services.AddSingleton<StartupService>();
         }
 
+        private static void ConfigurePictureCacheService(this IServiceCollection services, int MaximumCachedPicturePerCache)
+        {
+            services.AddScoped<IPictureCacheService>(i => new PictureCacheService(MaximumCachedPicturePerCache, services.BuildServiceProvider().GetService<IPictureAPIHub>().GetStreamByPictureTypeName));
+        }
+
         #endregion
 
         #region BusinessLogicLayer
@@ -96,12 +104,18 @@ namespace TastyBot.Extensions
         public static void ConfigureBusinessLogicLayer(this IServiceCollection services)
         {
             services.ConfigureUserRepository();
+            services.ConfigureUserService();
             Logging.LogInfoMessage("BusinessLogicLayer", "Ready");
         }
 
         private static void ConfigureUserRepository(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        private static void ConfigureUserService(this IServiceCollection services)
+        {
+            services.AddScoped<IUserService, UserService>();
         }
 
         #endregion
@@ -133,33 +147,6 @@ namespace TastyBot.Extensions
         {
             services.AddScoped<ILiteDB, Databases.LiteDB>();
         }
-
-        #endregion
-
-        #region HeadpatPictures
-
-        public static void ConfigureHeadpatPictures(this IServiceCollection services)
-        {
-            //services.ConfigurePictureModule();
-            //services.ConfigurePictureService();
-            //services.ConfigurePictureHub();
-            //Logging.LogInfoMessage("HeadpatPictures", "Ready");
-        }
-
-        //private static void ConfigurePictureModule(this IServiceCollection services)
-        //{
-        //    services.AddScoped<IPictureModule, PictureModule>();
-        //}
-
-        //private static void ConfigurePictureService(this IServiceCollection services)
-        //{
-        //    services.AddScoped<IPictureService, PictureService>();
-        //}
-
-        //private static void ConfigurePictureHub(this IServiceCollection services)
-        //{
-        //    services.AddScoped<IPictureHub, PictureHub>();
-        //}
 
         #endregion
 
