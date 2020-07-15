@@ -3,11 +3,6 @@ using Interfaces.Contracts.DataAccessLayer;
 using Interfaces.Contracts.Database;
 using Interfaces.Contracts.HeadpatPictures;
 
-using HeadpatPictures.Contracts;
-using HeadpatPictures.Modules;
-using HeadpatPictures.Services;
-using HeadpatPictures.Utilities;
-
 using FutureHeadPats.Contracts;
 using FutureHeadPats.Modules;
 using FutureHeadPats.Services;
@@ -18,16 +13,14 @@ using HeadpatDungeon.Containers;
 using HeadpatDungeon.Strategies;
 
 using BusinessLogicLayer.Repositories;
+using BusinessLogicLayer.Services;
 using DataAccessLayer.Context;
 
-using TastyBot.Services;
-using TastyBot.Utility;
+using DiscordUI.Services;
+using DiscordUI.Utility;
 
 using MasterMind.Contracts;
 using MasterMind.Modules;
-using MasterMind.HelperClasses;
-using MasterMind.Entities;
-using MasterMind.Services;
 
 using Discord;
 using Discord.Commands;
@@ -35,10 +28,11 @@ using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
 using Utilities.LoggingService;
+using PictureAPIs;
+using System.Net.Http;
+using DiscordUI.Contracts;
 
-
-
-namespace TastyBot.Extensions
+namespace DiscordUI.Extensions
 {
     // Logging.LogInfoMessage("Namespace", "Ready");
     public static class StartupExtensions
@@ -80,21 +74,27 @@ namespace TastyBot.Extensions
 
         #region TastyBot
 
-        public static void ConfigureTastyBot(this IServiceCollection services)
+        public static void ConfigureTastyBot(this IServiceCollection services, int MaximumCachedPicturePerCache)
         {
             services.ConfigureCommandHandlingService();
             services.ConfigureStartupService();
+            services.ConfigurePictureCacheService(MaximumCachedPicturePerCache);
             Logging.LogInfoMessage("TastyBot", "Ready");
         }
 
-        public static void ConfigureCommandHandlingService(this IServiceCollection services)
+        private static void ConfigureCommandHandlingService(this IServiceCollection services)
         {
             services.AddSingleton<CommandHandlingService>();
         }
 
-        public static void ConfigureStartupService(this IServiceCollection services)
+        private static void ConfigureStartupService(this IServiceCollection services)
         {
             services.AddSingleton<StartupService>();
+        }
+
+        private static void ConfigurePictureCacheService(this IServiceCollection services, int MaximumCachedPicturePerCache)
+        {
+            services.AddScoped<IPictureCacheService>(i => new PictureCacheService(MaximumCachedPicturePerCache, services.BuildServiceProvider().GetService<IPictureAPIHub>().GetStreamByPictureTypeName));
         }
 
         #endregion
@@ -104,12 +104,18 @@ namespace TastyBot.Extensions
         public static void ConfigureBusinessLogicLayer(this IServiceCollection services)
         {
             services.ConfigureUserRepository();
+            services.ConfigureUserService();
             Logging.LogInfoMessage("BusinessLogicLayer", "Ready");
         }
 
         private static void ConfigureUserRepository(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        private static void ConfigureUserService(this IServiceCollection services)
+        {
+            services.AddScoped<IUserService, UserService>();
         }
 
         #endregion
@@ -140,33 +146,6 @@ namespace TastyBot.Extensions
         private static void ConfigureLiteDB(this IServiceCollection services)
         {
             services.AddScoped<ILiteDB, Databases.LiteDB>();
-        }
-
-        #endregion
-
-        #region HeadpatPictures
-
-        public static void ConfigureHeadpatPictures(this IServiceCollection services)
-        {
-            services.ConfigurePictureModule();
-            services.ConfigurePictureService();
-            services.ConfigurePictureHub();
-            Logging.LogInfoMessage("HeadpatPictures", "Ready");
-        }
-
-        private static void ConfigurePictureModule(this IServiceCollection services)
-        {
-            services.AddScoped<IPictureModule, PictureModule>();
-        }
-
-        private static void ConfigurePictureService(this IServiceCollection services)
-        {
-            services.AddScoped<IPictureService, PictureService>();
-        }
-
-        private static void ConfigurePictureHub(this IServiceCollection services)
-        {
-            services.AddScoped<IPictureHub, PictureHub>();
         }
 
         #endregion
@@ -226,10 +205,7 @@ namespace TastyBot.Extensions
 
         public static void ConfigureMasterMind(this IServiceCollection services)
         {
-            services.ConfigureMasterMindService();
             services.ConfigureMasterMindModule();
-            services.ConfigureFileManagerMM();
-            services.ConfigureFileManagerCommands();
             Logging.LogInfoMessage("MasterMind", "Ready");
         }
 
@@ -238,19 +214,29 @@ namespace TastyBot.Extensions
             services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
         }
 
-        private static void ConfigureMasterMindService(this IServiceCollection services)
+        #endregion
+
+        #region HttpClient
+
+        public static void ConfigureHttpClient(this IServiceCollection services)
         {
-            services.AddScoped<IMasterMindService, MasterMindService>(); // Add the Command handler to the collection
+            services.AddSingleton<HttpClient>();
+            Logging.LogInfoMessage("HttpClient", "Ready");
         }
 
-        private static void ConfigureFileManagerMM(this IServiceCollection services)
+        #endregion
+
+        #region PictureAPIs
+
+        public static void ConfigurePictureAPIs(this IServiceCollection services)
         {
-            services.AddScoped<IFileManagerMM, FileManagerMM>(); // Add the Command handler to the collection
+            services.ConfigurePictureAPIsHub();
+            Logging.LogInfoMessage("PictureAPIs", "Ready");
         }
 
-        private static void ConfigureFileManagerCommands(this IServiceCollection services)
+        private static void ConfigurePictureAPIsHub(this IServiceCollection services)
         {
-            services.AddScoped<IMasterMindCommands, MasterMindCommands>(); // Add the Command handler to the collection
+            services.AddScoped<IPictureAPIHub, PictureAPIHub>();
         }
 
         #endregion

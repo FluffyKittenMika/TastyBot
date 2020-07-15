@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
-using TastyBot.Utility;
+using DiscordUI.Utility;
 using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Models.Entities;
 
-namespace TastyBot.HpDungeon
+namespace DiscordUI.HpDungeon
 {
     /*
     [Name("HpDungeon")]

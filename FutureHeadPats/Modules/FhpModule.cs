@@ -10,6 +10,7 @@ using System;
 using Enums.UserPermissions;
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Entities.Models;
+using Interfaces.Entities.ViewModels;
 
 namespace FutureHeadPats.Modules
 {
@@ -44,7 +45,7 @@ namespace FutureHeadPats.Modules
         {
             FhpUser senderFPH = _serv.GetUser(sender);
             FhpUser receiverFPH = _serv.GetUser(receiver);
-            User user = _repo.ByDiscordId(receiver.Id);
+            UserVM user = new UserVM(_repo.ByDiscordId(receiver.Id));
 
             if (receiver.IsBot)
                 return "Can't pat a bot! Baka!";

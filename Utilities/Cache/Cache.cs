@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Caching;
 
-namespace Utilities.Cache
+namespace Utilities.PictureUtilities
 {
     public static class Cache
     {

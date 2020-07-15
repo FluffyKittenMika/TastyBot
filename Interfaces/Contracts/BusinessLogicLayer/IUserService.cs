@@ -2,7 +2,7 @@
 
 namespace Interfaces.Contracts.BusinessLogicLayer
 {
-    public interface IUserRepository
+    public interface IUserService
     {
         User ByDiscordId(ulong discordId);
         User ById(ulong id);

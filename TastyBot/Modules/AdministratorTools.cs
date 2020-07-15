@@ -3,31 +3,29 @@ using Discord.Commands;
 using System.Threading.Tasks;
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Entities.Models;
-using Utilities.LoggingService;
 using Enums.UserPermissions;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Interfaces.Entities.ViewModels;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     [Name("Administrator Tools")]
     public class AdministratorTools : ModuleBase<SocketCommandContext>
     {
-        private readonly IUserRepository _repo;
+        private readonly IUserService _serv;
 
-        public AdministratorTools(IUserRepository repo)
+        public AdministratorTools(IUserService serv)
         {
-            _repo = repo;
-
-            Logging.LogReadyMessage(this);
+            _serv = serv;
         }
 
         [Command("userdelete")]
         public async Task DeleteUser(IUser userToDelete)
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(userToDelete.Id);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(userToDelete.Id));
 
             if (!await CheckAdministrator(sender)) return;
             if (receiver.Permissions.Contains(Permissions.DBUsersUneditableByOthers) && sender.DiscordId != receiver.DiscordId)
@@ -36,18 +34,21 @@ namespace TastyBot.Modules
                 return;
             }
 
-            bool deleted = _repo.Delete(receiver);
-            if (deleted)
+            if (DeleteUser(receiver))
+            {
                 await ReplyAsync($"User {receiver.DiscordId} has been removed from the database.");
+            }
             else
+            {
                 await ReplyAsync($"User {receiver.DiscordId} could not be removed.");
+            }
         }
 
         [Command("userdelete")]
         public async Task DeleteUser(ulong discordId)
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(discordId);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(discordId));
 
             if (!await CheckAdministrator(sender)) return;
             if (receiver.Permissions.Contains(Permissions.DBUsersUneditableByOthers) && sender.DiscordId != receiver.DiscordId)
@@ -55,19 +56,23 @@ namespace TastyBot.Modules
                 await ReplyAsync($"Cannot edit user ({receiver.Name}){receiver.DiscordId} with permissions: 'DBUsersUneditableByOthers'");
                 return;
             }
+            
 
-            bool deleted = _repo.Delete(receiver);
-            if (deleted)
+            if (DeleteUser(receiver))
+            {
                 await ReplyAsync($"User {receiver.DiscordId} has been removed from the database.");
+            }
             else
+            {
                 await ReplyAsync($"User {receiver.DiscordId} could not be removed.");
+            }
         }
 
         [Command("dbuserinfo")]
         [Summary("Get all updatable fields for User")]
         public async Task GetUserFieldInfo()
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
             if (!await CheckAdministrator(sender)) return;
 
             await ReplyAsync(GetUserInfo());
@@ -77,8 +82,8 @@ namespace TastyBot.Modules
         [Summary("Get values of properties for specified user")]
         public async Task GetUserFieldInfo(IUser user)
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(user.Id);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(user.Id));
             if (!await CheckAdministrator(sender)) return;
 
             await ReplyAsync(GetUserInfo(receiver));
@@ -88,8 +93,8 @@ namespace TastyBot.Modules
         [Summary("Get values of properties for specified user")]
         public async Task GetUserFieldInfo(ulong DiscordId)
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(DiscordId);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(DiscordId));
             if (!await CheckAdministrator(sender)) return;
 
             await ReplyAsync(GetUserInfo(receiver));
@@ -98,7 +103,7 @@ namespace TastyBot.Modules
         [Command("dbuserpermissionsinfo")]
         public async Task GetUserPermissionsInfo()
         {
-            User sender = _repo.ByDiscordId(Context.User.Id);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
             if (!await CheckAdministrator(sender)) return;
 
             string output = "Permissions: \n";
@@ -123,8 +128,8 @@ namespace TastyBot.Modules
             else if (key.ToLower() == "permissions")
                 requiredPermissions.Add(Permissions.DBUsersUpdatePermissions);
 
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(userToUpdate.Id);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(userToUpdate.Id));
 
             if (!await CheckAdministrator(sender) || !await CheckRequiredPermissions(sender, requiredPermissions)) return;
             if (receiver.Permissions.Contains(Permissions.DBUsersUneditableByOthers) && sender.DiscordId != receiver.DiscordId)
@@ -146,8 +151,8 @@ namespace TastyBot.Modules
             else if (key.ToLower() == "permissions")
                 requiredPermissions.Add(Permissions.DBUsersUpdatePermissions);
 
-            User sender = _repo.ByDiscordId(Context.User.Id);
-            User receiver = _repo.ByDiscordId(discordId);
+            UserVM sender = new UserVM(_serv.ByDiscordId(Context.User.Id));
+            UserVM receiver = new UserVM(_serv.ByDiscordId(discordId));
 
             if (!await CheckAdministrator(sender) || !await CheckRequiredPermissions(sender, requiredPermissions)) return;
             if (receiver.Permissions.Contains(Permissions.DBUsersUneditableByOthers) && sender.DiscordId != receiver.DiscordId)
@@ -159,12 +164,12 @@ namespace TastyBot.Modules
             await ReplyAsync(UpdateUser(receiver, key, value));
         }
 
-        private string GetUserInfo(User user = null)
+        private string GetUserInfo(UserVM user = null)
         {
             string output = "User fields: \n";
             int count = 1;
 
-            foreach (var prop in typeof(User).GetProperties())
+            foreach (var prop in typeof(UserVM).GetProperties())
             {
                 if(user == null)
                     if (prop.Name == "Id" || prop.Name == "DiscordId") continue;
@@ -193,54 +198,95 @@ namespace TastyBot.Modules
             return output;
         }
 
-        private string UpdateUser(User receiver, string key, string value)
+        private bool DeleteUser(UserVM receiver)
+        {
+            User userToDelete = new User()
+            {
+                Id = receiver.Id,
+                Name = receiver.Name,
+                DiscordId = receiver.DiscordId,
+                Administrator = receiver.Administrator,
+                Permissions = receiver.Permissions
+            };
+
+            return _serv.Delete(userToDelete);
+        }
+
+        private string UpdateUser(UserVM receiver, string key, string value)
         {
             string propertyName = key.Substring(0, 1).ToUpper() + key.Substring(1);
+            User userToUpdate = new User() {
+                Id = receiver.Id, 
+                Name = receiver.Name, 
+                DiscordId = receiver.DiscordId, 
+                Administrator = receiver.Administrator, 
+                Permissions = receiver.Permissions 
+            };
+
             switch (key.ToLower())
             {
                 case "id":
                     return "Cannot change field 'Id'";
                 case "name":
-                    _repo.Update(new User(receiver.Id, value, receiver.DiscordId, receiver.Administrator, receiver.Permissions));
-                    return  $"User ({receiver.Name}){receiver.DiscordId}.{propertyName} changed to '{value}'";
+                    UpdateUserName(userToUpdate, value);
+                    return $"User ( {receiver.Name} ){ receiver.DiscordId }.{ propertyName } changed to '{ value }'.";
                 case "discordid":
                     return "Cannot change field 'DiscordId'";
                 case "administrator":
-                    bool changeAdminTo = bool.Parse(value);
-                    _repo.Update(new User(receiver.Id, receiver.Name, receiver.DiscordId, changeAdminTo, receiver.Permissions));
-                    return $"User ({receiver.Name}){receiver.DiscordId}.{propertyName} changed to '{changeAdminTo}'";
+                    UpdateUserAdministrator(userToUpdate, value);
+                    return $"User ( {receiver.Name} ){ receiver.DiscordId }.{ propertyName } changed to '{ bool.Parse(value) }'.";
                 case "permissions":
-                    string addOrRemove = value.Split(' ')[0].ToLower();
-                    List<Permissions> userPermissions = receiver.Permissions;
-                    if (addOrRemove == "add")
+                    if(!UpdateUserPermissions(userToUpdate, value))
                     {
-                        if (!Enum.TryParse(value.Split(' ')[1], out Permissions permissionToAdd))
-                        {
-                            return "Invalid user permissions, please check !dbuserpermissionsinfo";
-                        }
-                        userPermissions.Add(permissionToAdd);
+                        return "Use format !userupdate [user/discordid] permissions [add/remove] [permission] (!dbuserpermissionsinfo).";
                     }
-                    else if (addOrRemove == "remove")
-                    {
-                        if (!Enum.TryParse(value.Split(' ')[1], out Permissions permissionToRemove))
-                        {
-                            return "Invalid user permissions, please check !dbuserpermissionsinfo";
-                        }
-                        userPermissions.Remove(permissionToRemove);
-                    }
-                    else
-                    {
-                        return "Use format !userupdate [user/discordid] permissions [add/remove] [permission]";
-                    }
-                    _repo.Update(new User(receiver.Id, receiver.Name, receiver.DiscordId, receiver.Administrator, userPermissions));
-                    string addedOrRemoved = (addOrRemove == "add") ? "added" : "removed" ;
-                    return $"User ({receiver.Name}){receiver.DiscordId}.{propertyName} {addedOrRemoved} permission '{value.Split(' ')[1]}'";
+                    return $"User ({ userToUpdate.Name }){ userToUpdate.DiscordId }.{ propertyName } permission '{ value.Split(' ')[1] }' updated.";
                 default:
-                    return "Invalid user field";
+                    return "Invalid user field (!dbuserinfo)";
             }
         }
 
-        private async Task<bool> CheckAdministrator(User user)
+        private void UpdateUserName(User userToUpdate, string value)
+        {
+            userToUpdate.Name = value;
+            _serv.Update(userToUpdate);
+        }
+
+        private void UpdateUserAdministrator(User userToUpdate, string value)
+        {
+            userToUpdate.Administrator = bool.Parse(value);
+            _serv.Update(userToUpdate);
+        }
+
+        private bool UpdateUserPermissions(User userToUpdate, string value)
+        {
+            string addOrRemove = value.Split(' ')[0].ToLower();
+            List<Permissions> userPermissions = userToUpdate.Permissions;
+            if (addOrRemove == "add")
+            {
+                if (!Enum.TryParse(value.Split(' ')[1], out Permissions permissionToAdd))
+                {
+                    return false;
+                }
+                userPermissions.Add(permissionToAdd);
+            }
+            else if (addOrRemove == "remove")
+            {
+                if (!Enum.TryParse(value.Split(' ')[1], out Permissions permissionToRemove))
+                {
+                    return false;
+                }
+                userPermissions.Remove(permissionToRemove);
+            }
+            else
+            {
+                return false;
+            }
+            _serv.Update(userToUpdate);
+            return true;
+        }
+
+        private async Task<bool> CheckAdministrator(UserVM user)
         {
             if (user != null && !user.Administrator)
             {
@@ -250,7 +296,7 @@ namespace TastyBot.Modules
             return true;
         }
 
-        private async Task<bool> CheckRequiredPermissions(User sender, List<Permissions> requiredPermissions)
+        private async Task<bool> CheckRequiredPermissions(UserVM sender, List<Permissions> requiredPermissions)
         {
             foreach (var requiredPermission in requiredPermissions)
             {

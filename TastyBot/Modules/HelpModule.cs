@@ -4,10 +4,10 @@ using Discord;
 using Discord.Commands;
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Entities.Models;
-using TastyBot.Utility;
+using DiscordUI.Utility;
 using Utilities.LoggingService;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
@@ -21,8 +21,6 @@ namespace TastyBot.Modules
             _service = service;
             _config = config;
             _repo = repo;
-
-            Logging.LogReadyMessage(this);
         }
 
         [Command("help")]
