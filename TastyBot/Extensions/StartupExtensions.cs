@@ -25,6 +25,9 @@ using TastyBot.Utility;
 
 using MasterMind.Contracts;
 using MasterMind.Modules;
+using MasterMind.HelperClasses;
+using MasterMind.Entities;
+using MasterMind.Services;
 
 using Discord;
 using Discord.Commands;
@@ -32,6 +35,8 @@ using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
 using Utilities.LoggingService;
+
+
 
 namespace TastyBot.Extensions
 {
@@ -221,13 +226,31 @@ namespace TastyBot.Extensions
 
         public static void ConfigureMasterMind(this IServiceCollection services)
         {
+            services.ConfigureMasterMindService();
             services.ConfigureMasterMindModule();
+            services.ConfigureFileManagerMM();
+            services.ConfigureFileManagerCommands();
             Logging.LogInfoMessage("MasterMind", "Ready");
         }
 
         private static void ConfigureMasterMindModule(this IServiceCollection services)
         {
             services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
+        }
+
+        private static void ConfigureMasterMindService(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindService, MasterMindService>(); // Add the Command handler to the collection
+        }
+
+        private static void ConfigureFileManagerMM(this IServiceCollection services)
+        {
+            services.AddScoped<IFileManagerMM, FileManagerMM>(); // Add the Command handler to the collection
+        }
+
+        private static void ConfigureFileManagerCommands(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindCommands, MasterMindCommands>(); // Add the Command handler to the collection
         }
 
         #endregion

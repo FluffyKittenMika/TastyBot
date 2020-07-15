@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+
+using Discord;
 using Discord.WebSocket;
+
+using MasterMind.Modules;
+
 
 namespace MasterMind.Contracts
 {
     public interface IMasterMindModule
     {
-        void StartGame();
-        MemoryStream StartBoardMaker(int Height, int width);
-        bool IsGameRunning();
+        bool GameIsRunningM(IUser user);
     }
 }
