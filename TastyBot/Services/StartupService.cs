@@ -37,7 +37,7 @@ namespace DiscordUI.Services
             _discord = discord;
             _commands = commands;
 
-            
+
             Logging.LogReadyMessage(this);
         }
 
@@ -58,6 +58,10 @@ namespace DiscordUI.Services
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);        // Load commands and modules into the command service
         }
+        #region StaffThings
+        /* 
+         
+        The old version in case you want it :D
 
         private void LoadStaffInDatabase()
         {
@@ -70,7 +74,7 @@ namespace DiscordUI.Services
 
                 int staffMemberCount = 0;
                 int newlyAddedStaffMember = 0;
-                foreach(var staffMember in staffToUpload)
+                foreach (var staffMember in staffToUpload)
                 {
                     if (UploadStaffMember(staffMember))
                     {
@@ -80,7 +84,7 @@ namespace DiscordUI.Services
                     staffMemberCount++;
 
                 }
-                
+
                 Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Staff successfully loaded in (New loaded: { newlyAddedStaffMember })");
             }
             catch (Exception)
@@ -89,7 +93,44 @@ namespace DiscordUI.Services
                 Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No staff file found, please create one (staff.json).");
             }
         }
+        */
+        private void LoadStaffInDatabase()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Loading in staff...");
+            if (!File.Exists(AppContext.BaseDirectory + "staff.json"))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No staff file found, please create one (staff.json).");
+                return;
+            }
 
+            try
+            {
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Default staff:");
+                List<UserCreateVM> staffToUpload = JsonConvert.DeserializeObject<List<UserCreateVM>>(File.ReadAllText(AppContext.BaseDirectory + "staff.json"));
+
+                int staffMemberCount = 0;
+                int newlyAddedStaffMember = 0;
+                foreach (var staffMember in staffToUpload)
+                {
+                    if (UploadStaffMember(staffMember))
+                    {
+                        newlyAddedStaffMember++;
+                    }
+                    LogStaffMember(staffMember, staffMemberCount);
+                    staffMemberCount++;
+
+                }
+
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Staff successfully loaded in (New loaded: { newlyAddedStaffMember })");
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] An error has occured when trying to load in the staff.");
+            }
+        }
         private bool UploadStaffMember(UserCreateVM staffMember)
         {
             if (_serv.ByDiscordId(staffMember.DiscordId) == null)
@@ -126,5 +167,8 @@ namespace DiscordUI.Services
             }
             Console.WriteLine("");
         }
+        #endregion
+
+        
     }
 }

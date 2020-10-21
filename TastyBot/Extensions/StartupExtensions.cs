@@ -21,6 +21,10 @@ using DiscordUI.Utility;
 
 using MasterMind.Contracts;
 using MasterMind.Modules;
+using MasterMind.Entities;
+
+using MusicPlayer.Contracts;
+using MusicPlayer;
 
 using Discord;
 using Discord.Commands;
@@ -31,6 +35,12 @@ using Utilities.LoggingService;
 using PictureAPIs;
 using System.Net.Http;
 using DiscordUI.Contracts;
+
+using MultipurposeDataBase.Contracts;
+using MultipurposeDataBase;
+using MultipurposeDataBase.Service;
+using MultipurposeDataBase.Modules;
+using MultipurposeDataBase.Entities;
 
 namespace DiscordUI.Extensions
 {
@@ -79,6 +89,7 @@ namespace DiscordUI.Extensions
             services.ConfigureCommandHandlingService();
             services.ConfigureStartupService();
             services.ConfigurePictureCacheService(MaximumCachedPicturePerCache);
+            services.ConfigureMMCacheService();
             Logging.LogInfoMessage("TastyBot", "Ready");
         }
 
@@ -97,6 +108,11 @@ namespace DiscordUI.Extensions
             services.AddScoped<IPictureCacheService>(i => new PictureCacheService(MaximumCachedPicturePerCache, services.BuildServiceProvider().GetService<IPictureAPIHub>().GetStreamByPictureTypeName));
         }
 
+        private static void ConfigureMMCacheService(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindCacheService>(i => new MasterMindCacheService());
+        }
+
         #endregion
 
         #region BusinessLogicLayer
@@ -113,10 +129,14 @@ namespace DiscordUI.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
         }
 
+
+
         private static void ConfigureUserService(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
         }
+
+
 
         #endregion
 
@@ -132,6 +152,8 @@ namespace DiscordUI.Extensions
         {
             services.AddScoped<IUserContext, UserContext>();
         }
+
+
 
         #endregion
 
@@ -206,12 +228,60 @@ namespace DiscordUI.Extensions
         public static void ConfigureMasterMind(this IServiceCollection services)
         {
             services.ConfigureMasterMindModule();
+            services.ConfigureMasterMindFunctions();
             Logging.LogInfoMessage("MasterMind", "Ready");
         }
 
         private static void ConfigureMasterMindModule(this IServiceCollection services)
         {
             services.AddScoped<IMasterMindModule, MasterMindModule>(); // Add the Command handler to the collection
+        }
+
+        private static void ConfigureMasterMindFunctions(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindFunctions, MasterMindFunctions>();
+        }
+
+        #endregion
+
+        #region MusicPlayer
+
+        public static void ConfigureMusicPlayer(this IServiceCollection services)
+        {
+            services.ConfigureMusicPlayerModule();
+            Logging.LogInfoMessage("MusicPlayer", "Ready");
+
+        }
+
+        private static void ConfigureMusicPlayerModule(this IServiceCollection services)
+        {
+            services.AddScoped<IMusicPlayerModule, MusicPlayerModule>();
+        }
+        #endregion
+
+        #region MultipurposeDataBase
+        public static void ConfigureMultipurposeDataBase(this IServiceCollection services)
+        {
+            services.ConfigureFileManager();
+            services.ConfigureMasterMindDataBase();
+            services.ConfigureDBService();
+            Logging.LogInfoMessage("MultipurposeDataBase", "Ready");
+
+        }
+
+        private static void ConfigureFileManager(this IServiceCollection services)
+        {
+            services.AddScoped<IFileManager, FileManager>();
+        }
+
+        private static void ConfigureDBService(this IServiceCollection services)
+        {
+            services.AddScoped<IDBService, DBService>();
+        }
+
+        private static void ConfigureMasterMindDataBase(this IServiceCollection services)
+        {
+            services.AddScoped<IMasterMindDataBase, MasterMindDataBase>();
         }
 
         #endregion

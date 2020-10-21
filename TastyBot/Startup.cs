@@ -70,6 +70,8 @@ namespace DiscordUI.Services
             services.ConfigureMasterMind();
             services.ConfigureHttpClient();
             services.ConfigurePictureAPIs();
+            services.ConfigureMusicPlayer();
+            services.ConfigureMultipurposeDataBase();
         }
     }
 }

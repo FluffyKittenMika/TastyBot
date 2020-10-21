@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FM.LiveSwitch.Opus" Version="1.10.0.34671" />
+    <PackageReference Include="libsodium" Version="1.0.18" />
+    <PackageReference Include="MediaToolkit" Version="1.1.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="VideoLibrary" Version="3.0.6" />
+    <PackageReference Include="Xabe.FFmpeg" Version="4.3.1" />
+  </ItemGroup>
+
+</Project>

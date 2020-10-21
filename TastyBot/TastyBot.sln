@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PictureHub", "..\PictureAPI\PictureHub.csproj", "{7A3CD7A1-84AD-441C-953C-346DD21C877E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicPlayer", "..\MusicPlayer\MusicPlayer.csproj", "{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipurposeDataBase", "..\MultipurposeDataBase\MultipurposeDataBase.csproj", "{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A3CD7A1-84AD-441C-953C-346DD21C877E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

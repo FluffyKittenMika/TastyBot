@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace MasterMind.Entities
 {
-    public class Line
+    public class Linee
     {
         public int LineNum { get; set; }
         public List<System.Drawing.Color> ColorGuessColor { get; set; }
@@ -23,7 +23,7 @@ namespace MasterMind.Entities
     }
 
 
-    public class NumberId
+    public class NumberIdd
     {
         public System.Drawing.Color Color { get; set; }
         public int Id { get; set; }
@@ -31,7 +31,6 @@ namespace MasterMind.Entities
     public class MasterMindCommands : IMasterMindCommands
     {
         static public System.Drawing.Color[] aColor = { System.Drawing.Color.Gray, System.Drawing.Color.Black, System.Drawing.Color.Yellow, System.Drawing.Color.Orange, System.Drawing.Color.Purple, System.Drawing.Color.Green, System.Drawing.Color.Blue, System.Drawing.Color.Red };
-        List<NumberId> numberIds;
         MemoryStream streamPicture;
         List<Line> lines;
 
@@ -39,6 +38,7 @@ namespace MasterMind.Entities
         Graphics g;
         int widthX, heightY;
         bool GameRunning;
+
         int CurrentLine;
 
         List<int> SecretPattern;
@@ -234,21 +234,22 @@ namespace MasterMind.Entities
         }
 
         //called when the game starts in case it wasnt obv enough
+
         public void StartGame()
         {
             GameRunning = true;
             MakePattern();
             int num = 0;
             CurrentLine = -1;
-            numberIds = new List<NumberId>();
+            //numberIds = new List<NumberId>();
 
             foreach (var item in aColor)
             {
-                NumberId numberId = new NumberId();
-                numberId.Color = aColor[num];
-                numberId.Id = num;
+                //NumberId numberId = new NumberId();
+                //numberId.Color = aColor[num];
+                //numberId.Id = num;
                 num++;
-                numberIds.Add(numberId);
+                //numberIds.Add(numberId);
             }
             lines = new List<Line>();
             for (int i = 0; i < heightY; i++)
@@ -264,14 +265,14 @@ namespace MasterMind.Entities
             List<System.Drawing.Color> colorGuessColor = new List<System.Drawing.Color>();
             foreach (var cGN in colorGuessNumber)
             {
-                foreach (var numberId in numberIds)
-                {
-                    if (cGN == numberId.Id)
-                    {
-                        colorGuessColor.Add(numberId.Color);
-                        continue;
-                    }
-                }
+                //foreach (var numberId in numberIds)
+                //{
+                //    if (cGN == numberId.Id)
+                //    {
+                //        colorGuessColor.Add(numberId.Color);
+                //        continue;
+                //    }
+                //}
             }
             return colorGuessColor;
         }
