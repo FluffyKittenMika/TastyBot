@@ -8,10 +8,6 @@ using FutureHeadPats.Modules;
 using FutureHeadPats.Services;
 using FutureHeadPats.HelperClasses;
 
-using HeadpatDungeon.Contracts;
-using HeadpatDungeon.Containers;
-using HeadpatDungeon.Strategies;
-
 using BusinessLogicLayer.Repositories;
 using BusinessLogicLayer.Services;
 using DataAccessLayer.Context;
@@ -35,7 +31,6 @@ using Utilities.LoggingService;
 using PictureAPIs;
 using System.Net.Http;
 using DiscordUI.Contracts;
-using TastyBot.HpDungeon;
 
 using MultipurposeDataBase.Contracts;
 using MultipurposeDataBase;
@@ -197,11 +192,6 @@ namespace DiscordUI.Extensions
         {
             services.AddScoped<IFhpModule, FhpModule>();
         }
-
-        #endregion
-
-        #region HeadpatDungeon
-
 
         #endregion
 

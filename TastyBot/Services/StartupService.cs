@@ -125,10 +125,15 @@ namespace DiscordUI.Services
 
                 Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Staff successfully loaded in (New loaded: { newlyAddedStaffMember })");
             }
+#pragma warning disable CS0168 // Variable is used in debug mode only
             catch (Exception e)
+#pragma warning restore CS0168 // Variable is used in debug mode
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] An error has occured when trying to load in the staff.");
+#if DEBUG
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical DEBUG] {e.Message} ");
+#endif
             }
         }
         private bool UploadStaffMember(UserCreateVM staffMember)
@@ -167,7 +172,7 @@ namespace DiscordUI.Services
             }
             Console.WriteLine("");
         }
-        #endregion
+#endregion
 
         
     }

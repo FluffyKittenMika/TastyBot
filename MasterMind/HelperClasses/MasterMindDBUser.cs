@@ -7,6 +7,6 @@ namespace MasterMind.HelperClasses
 {
     public class MasterMindDBUser
     {
-        public int wins { get; set; }
+        public int Wins { get; set; }
     }
 }

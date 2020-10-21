@@ -30,14 +30,14 @@ namespace MasterMind.Entities
 
     public class MasterMindFunctions : IMasterMindFunctions
     {
-        private Emoji blackEmoji = new Emoji("⚫");
-        private Emoji yellowEmoji = new Emoji("🟡");
-        private Emoji orangeEmoji = new Emoji("🟠");
-        private Emoji purpleEmoji = new Emoji("🟣");
-        private Emoji greenEmoji = new Emoji("🟢");
-        private Emoji blueEmoji = new Emoji("🔵");
-        private Emoji redEmoji = new Emoji("🔴");
-        private Emoji ArrowEmoji = new Emoji("➡️");
+        private readonly Emoji blackEmoji = new Emoji("⚫");
+        private readonly Emoji yellowEmoji = new Emoji("🟡");
+        private readonly Emoji orangeEmoji = new Emoji("🟠");
+        private readonly Emoji purpleEmoji = new Emoji("🟣");
+        private readonly Emoji greenEmoji = new Emoji("🟢");
+        private readonly Emoji blueEmoji = new Emoji("🔵");
+        private readonly Emoji redEmoji = new Emoji("🔴");
+        private readonly Emoji ArrowEmoji = new Emoji("➡️");
 
         public Bitmap AddACircleIndicator(int line, int column, System.Drawing.Color color, Bitmap bitmap)
         {
@@ -127,9 +127,8 @@ namespace MasterMind.Entities
             int numOfPixelWidth;
             numOfPizelHeight = ((height * 2) + 1) * 50 + 50;
             numOfPixelWidth = width * 2;
-            numOfPixelWidth = numOfPixelWidth * 50;
-            numOfPixelWidth = numOfPixelWidth + ((width * 2 + 1) * 20);
-
+            numOfPixelWidth *= 50;
+            numOfPixelWidth += (width * 2 + 1) * 20;
 
             Bitmap bitPicture = new Bitmap(numOfPixelWidth, numOfPizelHeight);
             //changes every pixel color to gray

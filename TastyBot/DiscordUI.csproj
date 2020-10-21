@@ -33,7 +33,6 @@
     <ProjectReference Include="..\Database\Databases.csproj" />
     <ProjectReference Include="..\Enums\Enums.csproj" />
     <ProjectReference Include="..\FutureHeadPats\FutureHeadPats.csproj" />
-    <ProjectReference Include="..\HeadpatDungeon\HeadpatDungeon.csproj" />
     <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
     <ProjectReference Include="..\MasterMind\MasterMind.csproj" />
     <ProjectReference Include="..\MultipurposeDataBase\MultipurposeDataBase.csproj" />

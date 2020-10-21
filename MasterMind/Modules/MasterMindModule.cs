@@ -66,7 +66,7 @@ namespace MasterMind.Modules
 
         public long GetUserWins(IUser user)
         {
-            return _serv.GetMMDBUser(user).wins;
+            return _serv.GetMMDBUser(user).Wins;
         }
         /*
         public Bitmap StartGame(int width, int height, IUser user)
@@ -157,7 +157,7 @@ namespace MasterMind.Modules
             }
             userCache.CurrentGameRunning = false;
             
-            _serv.GetMMDBUser(user).wins++;
+            _serv.GetMMDBUser(user).Wins++;
             return true;
         }
 
@@ -180,7 +180,7 @@ namespace MasterMind.Modules
             {
                 userCache.Lines[userCache.CurrentLine].RedAmount = _functions.RedNum(userCache.Lines[userCache.CurrentLine].ColorGuessNumber, userCache.SecretPattern);
                 userCache.Lines[userCache.CurrentLine].WhiteAmount = _functions.WhiteNum(userCache.Lines[userCache.CurrentLine].ColorGuessNumber, userCache.SecretPattern, userCache.DotsInWidth);
-                userCache.bitPicture = _functions.RedAndWhiteDotEditor(userCache.ImageGraphics, userCache.bitPicture, userCache.DotsInWidth, userCache.Lines[userCache.CurrentLine].RedAmount, userCache.Lines[userCache.CurrentLine].WhiteAmount, userCache.CurrentLine);
+                userCache.BitPicture = _functions.RedAndWhiteDotEditor(userCache.ImageGraphics, userCache.BitPicture, userCache.DotsInWidth, userCache.Lines[userCache.CurrentLine].RedAmount, userCache.Lines[userCache.CurrentLine].WhiteAmount, userCache.CurrentLine);
                 userCache.CurrentLine += 1;
                 userCache.DotColumnPostion = 0;
             }
@@ -199,7 +199,7 @@ namespace MasterMind.Modules
                 CurrentLinee.ColorGuessColor[CurrentColumnPosition] = ColorEmoji;
                 CurrentLinee.ColorGuessNumber[CurrentColumnPosition] = _functions.ColorToNumber(ColorEmoji);
 
-                userCache.bitPicture = _functions.SingleDotColorEditor(userCache.ImageGraphics, userCache.bitPicture, userCache.CurrentLine, CurrentColumnPosition, ColorEmoji, userCache.DotsInWidth);
+                userCache.BitPicture = _functions.SingleDotColorEditor(userCache.ImageGraphics, userCache.BitPicture, userCache.CurrentLine, CurrentColumnPosition, ColorEmoji, userCache.DotsInWidth);
 
                 userCache.DotColumnPostion += 1;
             } 
@@ -207,32 +207,36 @@ namespace MasterMind.Modules
             
             _mMCache.RemoveCache(user.Id.ToString()); //just makes sure that there is something to cache
             _mMCache.StoreItems(userCache, user.Id.ToString());
-            return userCache.bitPicture;
+            return userCache.BitPicture;
         }
 
         
 
         public Bitmap StartGame(int width, int height, IUser user, System.Drawing.Color colorIndicator)
         {
-            MMUserCache userCache = new MMUserCache();
-            userCache.Messages = new List<RestUserMessage>();
-            userCache.DotIndicator = colorIndicator;
-            userCache.CurrentGameRunning = true;
-            userCache.DotsInHeight = height;
-            userCache.DotsInWidth = width;
-            userCache.DotColumnPostion = 0;
-            userCache.SecretPattern = _functions.NumberPattern(width);
+            MMUserCache userCache = new MMUserCache
+            {
+                Messages = new List<RestUserMessage>(),
+                DotIndicator = colorIndicator,
+                CurrentGameRunning = true,
+                DotsInHeight = height,
+                DotsInWidth = width,
+                DotColumnPostion = 0,
+                SecretPattern = _functions.NumberPattern(width)
+            };
 
             Bitmap bitpicture = _functions.Emptyboard(height, width);
             userCache.ImageGraphics = Graphics.FromImage(bitpicture);
-            userCache.bitPicture = _functions.AddGrayCircles(userCache.ImageGraphics, bitpicture, height, width, user.Username);
+            userCache.BitPicture = _functions.AddGrayCircles(userCache.ImageGraphics, bitpicture, height, width, user.Username);
             userCache.Lines = new List<Line>();
             for (int i = 0; i < height; i++)
             {
-                Line line = new Line();
-                line.LineNum = i;
-                line.ColorGuessColor = new List<Color>();
-                line.ColorGuessNumber = new List<int>();
+                Line line = new Line
+                {
+                    LineNum = i,
+                    ColorGuessColor = new List<Color>(),
+                    ColorGuessNumber = new List<int>()
+                };
                 for (int q = 0; q < width; q++)
                 {
                     Color color = new Color();
@@ -245,7 +249,7 @@ namespace MasterMind.Modules
             }
             if (_mMCache.CacheExists(user.Id.ToString())) _mMCache.RemoveCache(user.Id.ToString());
             _mMCache.StoreItems(userCache, user.Id.ToString());
-            return userCache.bitPicture;
+            return userCache.BitPicture;
         }
         
         public bool IsSecondReactionAdded(ISocketMessageChannel socketMessage, SocketReaction socketReaction)
@@ -271,9 +275,11 @@ namespace MasterMind.Modules
                     return true;
                 }
             }
-            ReactionMemory reactionMemory = new ReactionMemory();
-            reactionMemory.socketMessages = socketMessage;
-            reactionMemory.socketReactions = socketReaction;
+            ReactionMemory reactionMemory = new ReactionMemory
+            {
+                socketMessages = socketMessage,
+                socketReactions = socketReaction
+            };
             reactionMemories.Add(reactionMemory);
             return false;
         }
