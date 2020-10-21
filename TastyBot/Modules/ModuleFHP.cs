@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using Interfaces.Contracts.BusinessLogicLayer;
 using Interfaces.Entities.Models;
 using Utilities.LoggingService;
+using Interfaces.Entities.ViewModels;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     /// <summary>
     /// The Module that handles all FHP related interactions
@@ -20,13 +21,12 @@ namespace TastyBot.Modules
     public class ModuleFHP : ModuleBase<SocketCommandContext>
     {
         private readonly IFhpModule _module;
-        private readonly IUserRepository _repo;
+        private readonly IUserService _serv;
 
-        public ModuleFHP(IFhpModule module, IUserRepository repo)
+        public ModuleFHP(IFhpModule module, IUserService serv)
         {
             _module = module;
-            _repo = repo; 
-            Logging.LogReadyMessage(this);
+            _serv = serv; 
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace TastyBot.Modules
         [Summary("Hands out headpats to the user")]
         public async Task Give(IUser userReceive, long amount)
         {
-            User user = _repo.ByDiscordId(Context.User.Id);
+            UserVM user = new UserVM(_serv.ByDiscordId(Context.User.Id));
             if (user != null && user.HasPermission(Permissions.FutureHeadPatsGive))
             {
                 _module.Give(userReceive, amount);
@@ -58,7 +58,7 @@ namespace TastyBot.Modules
         [Summary("Deletes the wallet of the tagged user, if the user has a wallet")]
         public async Task Delete(IUser userDelete)
         {
-            User user = _repo.ByDiscordId(Context.User.Id);
+            UserVM user = new UserVM(_serv.ByDiscordId(Context.User.Id));
             if (user != null && user.HasPermission(Permissions.FutureHeadPatsDelete))
             {
                 await ReplyAsync(_module.Delete(userDelete));
@@ -76,7 +76,7 @@ namespace TastyBot.Modules
         [Summary("Instantly saves the current users")]
         public async Task Save()
         {
-            User user = _repo.ByDiscordId(Context.User.Id);
+            UserVM user = new UserVM(_serv.ByDiscordId(Context.User.Id));
             if (user.Administrator || user.HasPermission(Permissions.FutureHeadPatsSave))
             {
                 await ReplyAsync(_module.Save());

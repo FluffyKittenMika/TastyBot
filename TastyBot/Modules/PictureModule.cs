@@ -1,97 +1,85 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
 using Enums.PictureServices;
-using HeadpatPictures.Contracts;
 using System;
 using System.Linq;
 using System.Globalization;
-using Utilities.LoggingService;
+using System.IO;
+using Utilities.PictureUtilities;
+using System.Collections.Generic;
+using DiscordUI.Contracts;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     [Name("Picture Commands")]
     public class PictureModule : ModuleBase<SocketCommandContext>
     {
-        private readonly ICatModule _catModule;
-        private readonly INekoClientModule _nekoClientModule;
-        private readonly Random _R;
+        private readonly IPictureCacheService _pic;
 
-        public PictureModule(ICatModule catModule, INekoClientModule nekoClientModule)
+        public PictureModule(IPictureCacheService pic)
         {
-            _catModule = catModule;
-            _nekoClientModule = nekoClientModule;
-            _R = new Random();
-
-            Logging.LogReadyMessage(this);
+            _pic = pic;
         }
 
         #region Cat meow meow region
-        [Command("cat")]
-        public async Task CatAsync(int textsize = 32, string Colour = "white", [Remainder] string text = " ")
-        {
-            var s = await _catModule.CatPictureAsync(textsize, Colour, text);
-            await Context.Channel.SendFileAsync(s, "cat.png");
-        }
-
 
         [Command("cat")]
-        public async Task CatAsync(string Colour = "white", [Remainder] string text = " ")
+        public async Task CatAsync([Remainder] string text = "")
         {
-            if (Colour.ToLower() != "gif")
-            {
-                var stream = await _catModule.CatPictureAsync(32, Colour, text);
-                await Context.Channel.SendFileAsync(stream, "cat.png");
-            }
-            else
-            {
-                var stream = await _catModule.CatGifAsync();
-                await Context.Channel.SendFileAsync(stream, "cat.gif");
-            }
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, "Cat");
+            stream = TextStreamWriter.WriteOnStream(stream, text);
+            var image = await Context.Channel.SendFileAsync(stream, "cat.png");
         }
 
-        [Command("cat")]
-        public async Task CatAsync([Remainder] string text = " ")
+        [Command("catgif")]
+        public async Task CatGifAsync()
         {
-            var stream = await _catModule.CatPictureAsync(32, "white", text);
-            await Context.Channel.SendFileAsync(stream, "cat.png");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, "CatGif");
+            await Context.Channel.SendFileAsync(stream, "cat.gif");
         }
+
         #endregion 
 
         #region Nekos
 
         [Command("neko")]
-		public async Task NekoAsync([Remainder]string text = "")
-		{
-			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Neko, text);
-			await Context.Channel.SendFileAsync(s, "Neko.png");
-		}
+        public async Task NekoAsync([Remainder] string text = "")
+        {
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Neko);
+            stream = TextStreamWriter.WriteOnStream(stream, text);            
+            await Context.Channel.SendFileAsync(stream, "Neko.png");
+        }
 
-		[Command("nekoavatar")]
-		public async Task NekoAvatarAsync([Remainder]string text = "")
-		{
-			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Avatar, text);
-			await Context.Channel.SendFileAsync(s, "Avatar.png");
-		}
+        [Command("nekoavatar")]
+        public async Task NekoAvatarAsync([Remainder] string text = "")
+        {
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Avatar);
+            stream = TextStreamWriter.WriteOnStream(stream, text);            
+            await Context.Channel.SendFileAsync(stream, "Avatar.png");
+        }
 
-		[Command("nekowallpaper")]
-		public async Task NekoWallpaperAsync([Remainder]string text = "")
-		{
-			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Wallpaper, text);
-			await Context.Channel.SendFileAsync(s, "Wallpaper.png");
-		}
+        [Command("nekowallpaper")]
+        public async Task NekoWallpaperAsync([Remainder] string text = "")
+        {
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Wallpaper);
+            stream = TextStreamWriter.WriteOnStream(stream, text);    
+            await Context.Channel.SendFileAsync(stream, "Wallpaper.png");
+        }
 
-		[Command("fox")]
-		public async Task FoxAsync([Remainder]string text = "")
-		{
-			var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Fox, text);
-			await Context.Channel.SendFileAsync(s, "Fox.png");
-		}
+        [Command("fox")]
+        public async Task FoxAsync([Remainder] string text = "")
+        {
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Fox);
+            stream = TextStreamWriter.WriteOnStream(stream, text);            
+            await Context.Channel.SendFileAsync(stream, "Fox.png");
+        }
 
         [Command("waifu")]
         public async Task WaifuAsync([Remainder] string text = "")
         {
-            var s = await _nekoClientModule.SFWNekoClientPictureAsync(RegularNekos.Waifu, text);
-            await Context.Channel.SendFileAsync(s, "Waifu.png");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, SFWNekos.Waifu);
+            stream = TextStreamWriter.WriteOnStream(stream, text);
+            await Context.Channel.SendFileAsync(stream, "Waifu.png");
         }
 
         #endregion
@@ -106,18 +94,19 @@ namespace TastyBot.Modules
         /// <returns>Lewd imagery directly to the discord</returns>
         [Command("NSFW")]
         [RequireNsfw]
-        public async Task NSFWAsync([Remainder]string text = "")
+        public async Task NSFWAsync([Remainder] string text = "")
         {
             NSFWNekos res;
 
             if (text == "")
-                res = RandomEnumValue<NSFWNekos>();
+                res = Utilities.Enum.Enum.RandomEnumValue<NSFWNekos>();
             else
                 res = GetNSFWNekoFromString(text);
 
             text = string.Join(' ', text.Split(' ').Skip(1));
-            var s = await _nekoClientModule.NSFWNekoClientPictureAsync(res, text);
-            await Context.Channel.SendFileAsync(s, "OwO.png");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, res);
+            stream = TextStreamWriter.WriteOnStream(stream, text);            
+            await Context.Channel.SendFileAsync(stream, "OwO.png");
         }
 
         /// <summary>
@@ -129,8 +118,10 @@ namespace TastyBot.Modules
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             string NekoStringToParse = textInfo.ToTitleCase(nekoString.Split(' ').FirstOrDefault());
-            Console.WriteLine(NekoStringToParse);
-            Enum.TryParse(NekoStringToParse, out NSFWNekos neko);
+            if (!Enum.TryParse(NekoStringToParse, out NSFWNekos neko))
+            {
+                neko = Utilities.Enum.Enum.RandomEnumValue<NSFWNekos>();
+            }
             return neko;
         }
 
@@ -149,12 +140,12 @@ namespace TastyBot.Modules
             AnimatedNSFWNekos res;
 
             if (text == "")
-                res = RandomEnumValue<AnimatedNSFWNekos>();
+                res = Utilities.Enum.Enum.RandomEnumValue<AnimatedNSFWNekos>();
             else
                 res = GetNSFWGifFromString(text);
 
-            var s = await _nekoClientModule.NSFWNekoClientGifAsync(res);
-            await Context.Channel.SendFileAsync(s, "OwO.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, res);
+            await Context.Channel.SendFileAsync(stream, "OwO.gif");
         }
 
 
@@ -167,84 +158,75 @@ namespace TastyBot.Modules
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             string NekoStringToParse = textInfo.ToTitleCase(nekoString.Split(' ').FirstOrDefault());
-            Console.WriteLine(NekoStringToParse);
-            Enum.TryParse(NekoStringToParse, out AnimatedNSFWNekos neko);
+            if (!Enum.TryParse(NekoStringToParse, out AnimatedNSFWNekos neko))
+            {
+                neko = Utilities.Enum.Enum.RandomEnumValue<AnimatedNSFWNekos>();
+            }
             return neko;
         }
         #endregion
+
         #endregion
 
         #region Action Nekos
+
         [Command("Cuddle")]
         public async Task CuddleAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Cuddlegif);
-            await Context.Channel.SendFileAsync(s, "Cuffle.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Cuddlegif);
+            await Context.Channel.SendFileAsync(stream, "Cuffle.gif");
         }
 
         [Command("Feed")]
         public async Task FeedAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Feedgif);
-            await Context.Channel.SendFileAsync(s, "Feed.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Feedgif);
+            await Context.Channel.SendFileAsync(stream, "Feed.gif");
         }
 
         [Command("Hug")]
         public async Task HugAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Huggif);
-            await Context.Channel.SendFileAsync(s, "Hug.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Huggif);
+            await Context.Channel.SendFileAsync(stream, "Hug.gif");
         }
 
         [Command("Kiss")]
         public async Task KissAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Kissgif);
-            await Context.Channel.SendFileAsync(s, "Kiss.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Kissgif);
+            await Context.Channel.SendFileAsync(stream, "Kiss.gif");
         }
 
         [Command("Pat")]
         public async Task PatAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Patgif);
-            await Context.Channel.SendFileAsync(s, "Pat.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Patgif);
+            await Context.Channel.SendFileAsync(stream, "Pat.gif");
         }
 
         [Command("Poke")]
         public async Task PokeAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Pokegif);
-            await Context.Channel.SendFileAsync(s, "Poke.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Pokegif);
+            await Context.Channel.SendFileAsync(stream, "Poke.gif");
         }
 
         [Command("Slap")]
         public async Task SlapAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Slapgif);
-            await Context.Channel.SendFileAsync(s, "Slap.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Slapgif);
+            await Context.Channel.SendFileAsync(stream, "Slap.gif");
         }
 
         [Command("Tickle")]
         public async Task TickleAsync()
         {
-            var s = await _nekoClientModule.ActionNekoClientGifAsync(ActionNekos.Ticklegif);
-            await Context.Channel.SendFileAsync(s, "Tickle.gif");
+            Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, ActionNekos.Ticklegif);
+            await Context.Channel.SendFileAsync(stream, "Tickle.gif");
         }
 
         #endregion
-
-
-        /// <summary>
-        /// Gets a random enum from a Enum Collection
-        /// </summary>
-        /// <typeparam name="T">Enum Type</typeparam>
-        /// <returns>Random Enum from specified collection</returns>
-        private T RandomEnumValue<T>()
-        {
-            var v = Enum.GetValues(typeof(T));
-            return (T)v.GetValue(_R.Next(v.Length));
-        }
-
     }
 
 }

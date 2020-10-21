@@ -20,7 +20,7 @@ namespace BusinessLogicLayer.Repositories
             _context = context;
         }
 
-        public void Create(UserCreate userCreate)
+        public void Create(User userCreate)
         {
             UserDTO userDTO = UserCreateDTOFromUserCreate(userCreate);
             _context.Create(userDTO);
@@ -52,12 +52,15 @@ namespace BusinessLogicLayer.Repositories
         {
             if (userDTO == null) return null;
             List<Permissions> permissions = userDTO.Permissions.Select(x => Enum.Parse<Permissions>(x)).ToList();
-            return new User(
-                userDTO.Id,
-                userDTO.Name,
-                userDTO.DiscordId,
-                userDTO.Administrator,
-                permissions);
+            User user = new User
+            {
+                Id = userDTO.Id,
+                Name = userDTO.Name,
+                DiscordId = userDTO.DiscordId,
+                Administrator = userDTO.Administrator,
+                Permissions = permissions
+            };
+            return user;
         }
 
         private UserDTO UserDTOFromUser(User user)
@@ -72,7 +75,7 @@ namespace BusinessLogicLayer.Repositories
                 permissions);
         }
 
-        private UserDTO UserCreateDTOFromUserCreate(UserCreate userCreate)
+        private UserDTO UserCreateDTOFromUserCreate(User userCreate)
         {
             if (userCreate == null) return null;
             List<string> permissions = userCreate.Permissions.Select(x => x.ToString()).ToList();

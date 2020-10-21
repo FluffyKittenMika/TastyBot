@@ -1,7 +1,5 @@
-﻿using TastyBot.Extensions;
-using TastyBot.Utility;
-
-using Utilities.LoggingService;
+﻿using DiscordUI.Extensions;
+using DiscordUI.Utility;
 
 using System;
 using System.Threading.Tasks;
@@ -9,9 +7,10 @@ using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Utilities.RainbowUtilities;
+using Utilities.RestAPI;
+using System.Net.Http;
 
-namespace TastyBot.Services
+namespace DiscordUI.Services
 {
     class Startup
     {
@@ -19,21 +18,20 @@ namespace TastyBot.Services
 
         public Startup()
         {
-            string time = DateTime.UtcNow.ToString("hh:mm:ss");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Starting up bot...");
             try
             {
-                Console.WriteLine($"{time} [StartUp - Info] Base Directory: {AppContext.BaseDirectory}");
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Base Directory: {AppContext.BaseDirectory}");
                 _botconfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(AppContext.BaseDirectory + "config.json"));
             }
             catch (Exception)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"{time} [StartUp - Critical] No configuration file found, please create one, or the bot simply will not work.");
+                Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Critical] No configuration file found, please create one from the given template.");
             }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine($"{time} [StartUp - Info] Prefix: '{_botconfig.Prefix}'");
+            Console.WriteLine($"{DateTime.UtcNow:hh:mm:ss} [StartUp - Info] Prefix: '{_botconfig.Prefix}'");
         }
 
         public static async Task RunAsync(string[] args)
@@ -55,65 +53,25 @@ namespace TastyBot.Services
             var provider = services.BuildServiceProvider();                         // Build the service provider
             provider.GetRequiredService<CommandHandlingService>();                  // Start the command handler service
 
-            await Logging.LogReadyMessage(typeof(Logging));
-            Logging.LogRainbowMessage(typeof(RainbowUtilities).Name, "Ready");
-
             await provider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
             await Task.Delay(-1);                                                   // Keep the program alive
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
-            #region Discord
-            services.ConfigureDiscordSocketClient();
-            services.ConfigureCommandService();
-            services.ConfigureBotConfig(_botconfig);
-            #endregion
+            int MaximumCachedPicturesPerCache = 3;
 
-            #region TastyBot
-            services.ConfigureCommandHandlingService();
-            services.ConfigureStartupService();
-            #endregion
-
-            #region BusinessLogicLayer
-            services.ConfigureUserRepository();
-            #endregion
-
-            #region DataAccessLayer
-            services.ConfigureUserContext();
-            #endregion
-
-            #region Database
-            services.ConfigureLiteDB();
-            #endregion
-
-            #region HeadpatPictures
-            services.ConfigureTextStreamWriter();
-            services.ConfigurePictureCacheContainer();
-            services.ConfigureCatModule();
-            services.ConfigureCatService();
-            services.ConfigureNekoClientModule();
-            services.ConfigureNekoClientService();
-            #endregion
-
-            #region FutureHeadPats
-            services.ConfigureFileManagerFPH();
-            services.ConfigureHeadpatService();
-            services.ConfigureHeadPatModule();
-            #endregion
-
-
-            #region HeadPatDungeon
-            services.ConfigureHPDCrafting();
-            services.ConfigureHPDEntityContainer();
-            services.ConfigureHPDItemContainer();
-            services.ConfigureHPDRecipeContainer();
-            services.ConfigureHPDModule();
-            #endregion
-
-            #region Mastermind
-            services.ConfigureMasterMindModule();
-            #endregion
+            services.ConfigureDiscord(_botconfig);
+            services.ConfigureTastyBot(MaximumCachedPicturesPerCache);
+            services.ConfigureBusinessLogicLayer();
+            services.ConfigureDataAccessLayer();
+            services.ConfigureDatabases();
+            services.ConfigureFutureHeadPats();
+            services.ConfigureMasterMind();
+            services.ConfigureHttpClient();
+            services.ConfigurePictureAPIs();
+            services.ConfigureMusicPlayer();
+            services.ConfigureMultipurposeDataBase();
         }
     }
 }

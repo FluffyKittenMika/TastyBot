@@ -6,7 +6,7 @@ namespace Interfaces.Contracts.BusinessLogicLayer
     {
         User ByDiscordId(ulong discordId);
         User ById(ulong id);
-        void Create(UserCreate userCreate);
+        void Create(User userCreate);
         bool Delete(User user);
         bool Update(User user);
     }

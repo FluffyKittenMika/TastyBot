@@ -1,21 +1,13 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using Utilities.LoggingService;
 
-namespace TastyBot.Modules
+namespace DiscordUI.Modules
 {
     // Modules must be public and inherit from an IModuleBase
     [Name("General Commands")]
     public class PublicModule : ModuleBase<SocketCommandContext>
     {
-
-        public PublicModule()
-        {
-            Logging.LogReadyMessage(this);
-        }
-
-
         // Ban a user
         [Command("ban")]
         [RequireContext(ContextType.Guild)]

@@ -1,5 +1,9 @@
-﻿using TastyBot.Utility;
+﻿using DiscordUI.Utility;
+
 using Utilities.RainbowUtilities;
+using Utilities.LoggingService;
+
+using Interfaces.Contracts.HeadpatPictures;
 
 using Discord;
 using Discord.Commands;
@@ -8,10 +12,13 @@ using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using HeadpatPictures.Contracts;
-using Utilities.LoggingService;
+using Utilities.TasksUtilities;
+using System.IO;
+using Utilities.PictureUtilities;
+using System.Collections.Generic;
+using DiscordUI.Contracts;
 
-namespace TastyBot.Services
+namespace DiscordUI.Services
 {
     public class CommandHandlingService
     {
@@ -19,15 +26,15 @@ namespace TastyBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly Config _config;
         private readonly IServiceProvider _services;
-        private readonly ICatModule _catModule;
+        private readonly IPictureCacheService _pic;
 
-        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, ICatModule catModule)
+        public CommandHandlingService(DiscordSocketClient discord, CommandService commands, Config config, IServiceProvider services, IPictureCacheService pic)
         {
             _discord = discord;
             _commands = commands;
             _config = config;
             _services = services;
-            _catModule = catModule;
+            _pic = pic;
 
             //Hook Messages so we can process them if they're commands.
             _discord.MessageReceived += OnMessageReceivedAsync;
@@ -54,6 +61,7 @@ namespace TastyBot.Services
 
             await ExecuteCommand(userMessage);
             await RainbowChannelChangeColor(socketMessage);
+            await BlueChannelChangeColor(socketMessage);
             await CatifyMessage(userMessage);
         }
 
@@ -67,7 +75,7 @@ namespace TastyBot.Services
                 var result = await _commands.ExecuteAsync(context, argPos, _services);      // Execute the command
                 if (!result.IsSuccess)
                 {
-                    await Logging.LogAsync(new LogMessage(LogSeverity.Error, GetType().Name, result.ErrorReason));
+                    Logging.LogErrorMessage(GetType().Name, result.ErrorReason).PerformAsyncTaskWithoutAwait();
                 }
             }
         }
@@ -95,7 +103,34 @@ namespace TastyBot.Services
             }
             catch (Exception e)
             {
-                await Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}");
+                Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}").PerformAsyncTaskWithoutAwait();
+            }
+        }
+
+        private async Task BlueChannelChangeColor(SocketMessage socketMessage)
+        {
+            // Ignore system messages, or messages from other bots
+            if (!(socketMessage is SocketUserMessage message)) return;
+            if (message.Source != MessageSource.User) return;
+            if (message.Channel.GetType() == typeof(SocketDMChannel)) return; //drop direct messages aswell.
+            Random rnd = new Random();
+            //The try is here to ignore anything that we don't give a shit about :)
+            try
+            {
+                foreach (IRole role in ((IGuildChannel)socketMessage.Channel).Guild.Roles)
+                {
+                    if (role.Name.ToLower() == "team blue")
+                    {
+                        await role.ModifyAsync(x =>
+                        {
+                            x.Color = new Color(0,0,rnd.Next(1, 255));
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.LogCriticalMessage(GetType().Name, $"Unable to change blue role Color {e.Message}").PerformAsyncTaskWithoutAwait();
             }
         }
 
@@ -105,7 +140,7 @@ namespace TastyBot.Services
             if (userMessage.Channel.Name.ToLower() == "botcat") //More generic
             {
                 string logMessage = $"catbot:{userMessage.Author} - {userMessage.Content.ToLower()} - cattified :3";
-                await Logging.LogDebugMessage(GetType().Name, logMessage);
+                Logging.LogDebugMessage(GetType().Name, logMessage).PerformAsyncTaskWithoutAwait();
 
                 //remove the evicence
                 await userMessage.DeleteAsync();
@@ -118,7 +153,7 @@ namespace TastyBot.Services
                     {
                         content = Regex.Replace(content, @"[^a-zA-Z0-9 ]+", "", RegexOptions.None, TimeSpan.FromSeconds(5));
                         logMessage = $"Regexed into: {content}";
-                        await Logging.LogDebugMessage(GetType().Name, logMessage);
+                        Logging.LogDebugMessage(GetType().Name, logMessage).PerformAsyncTaskWithoutAwait();
                     }
                     catch (TimeoutException)
                     {
@@ -128,7 +163,9 @@ namespace TastyBot.Services
                     // Get a stream containing an image of a cat
                     if (content == "" || content.Length == 0)
                         content = "error :)";
-                    var stream = await _catModule.CatPictureAsync(32, "", content);
+                    Stream stream = await _pic.ReturnFastestStream(Cache.RetrieveItems<List<Stream>>, Cache.StoreItems, Cache.CacheExists, "Cat");
+                    stream = TextStreamWriter.WriteOnStream(stream, content);
+                    
                     await userMessage.Channel.SendFileAsync(stream, "cat.png");
                 }
             }

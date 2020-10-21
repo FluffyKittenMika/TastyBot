@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
+using DiscordUI.Utility;
+using HeadpatDungeon.Contracts;
 using HeadpatDungeon.Models.Entities;
 using Utilities.FileManager;
 using Utilities.LoggingService;
 using Interfaces.Contracts.BusinessLogicLayer;
 using HeadpatDungeon.Strategies;
 
-namespace TastyBot.HpDungeon
+namespace DiscordUI.HpDungeon
 {
 
 	[Name("HpDungeon")]
