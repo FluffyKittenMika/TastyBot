@@ -261,7 +261,7 @@ namespace MasterMind.Modules
                 if (message.socketMessages == socketMessage && message.socketReactions == socketReaction)
                 {
                     reactionMemories.RemoveAt(PosOfMessage);
-                    if (reactionMemories.Count < 25)
+                    if (reactionMemories.Count > 40)
                     {
                         for (int i = 0; i < reactionMemories.Count; i++)
                         {
