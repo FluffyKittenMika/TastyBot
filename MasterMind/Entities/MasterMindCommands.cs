@@ -121,8 +121,7 @@ namespace MasterMind.Entities
             SecretPattern = new List<int>();
             for (int i = 0; i < widthX; i++)
             {
-                int Number = new int();
-                Number = random.Next(1, 8); // gray isnt a color
+                int Number = random.Next(1, 8); // gray isnt a color
                 SecretPattern.Add(Number);
             }
         }
@@ -254,8 +253,10 @@ namespace MasterMind.Entities
             lines = new List<Line>();
             for (int i = 0; i < heightY; i++)
             {
-                Line line = new Line();
-                line.LineNum = i;
+                Line line = new Line
+                {
+                    LineNum = i
+                };
                 lines.Add(line);
             }
         }

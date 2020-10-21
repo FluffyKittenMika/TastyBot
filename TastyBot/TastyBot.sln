@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordUI", "DiscordUI.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutureHeadPats", "..\FutureHeadPats\FutureHeadPats.csproj", "{A674C6A7-9612-4F6E-8969-708C7A37DF6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeadpatDungeon", "..\HeadpatDungeon\HeadpatDungeon.csproj", "{3144D937-5CED-4F55-B6E6-CA6713EEB99C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "..\Enums\Enums.csproj", "{4EB242F2-7F86-4F37-877C-89D827B69E58}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MasterMind", "..\MasterMind\MasterMind.csproj", "{1485329D-08A4-4495-88FF-112A007D376B}"
@@ -27,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PictureHub", "..\PictureAPI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicPlayer", "..\MusicPlayer\MusicPlayer.csproj", "{BCCD06A7-B7B0-4C91-B8FD-084E0B6BEE42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipurposeDataBase", "..\MultipurposeDataBase\MultipurposeDataBase.csproj", "{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultipurposeDataBase", "..\MultipurposeDataBase\MultipurposeDataBase.csproj", "{921DF7F4-7EE0-4F40-BAD0-969B959ABC55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +41,6 @@ Global
 		{A674C6A7-9612-4F6E-8969-708C7A37DF6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A674C6A7-9612-4F6E-8969-708C7A37DF6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A674C6A7-9612-4F6E-8969-708C7A37DF6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3144D937-5CED-4F55-B6E6-CA6713EEB99C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3144D937-5CED-4F55-B6E6-CA6713EEB99C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3144D937-5CED-4F55-B6E6-CA6713EEB99C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3144D937-5CED-4F55-B6E6-CA6713EEB99C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB242F2-7F86-4F37-877C-89D827B69E58}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -16,6 +16,7 @@ namespace DiscordUI.Modules
     /// <summary>
     /// The Module that handles all music player Things
     /// </summary>
+    /*
     [Name("MusicPlayer")]
     public class MusicPlayerModule : ModuleBase<SocketCommandContext>
     {
@@ -48,4 +49,5 @@ namespace DiscordUI.Modules
 
         }
     }
+    */
 }

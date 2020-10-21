@@ -15,7 +15,7 @@ namespace MasterMind.HelperClasses
         public int DotsInWidth { get; set; }
         public int DotsInHeight { get; set; }
         public List<Line> Lines { get; set; }
-        public Bitmap bitPicture { get; set; }
+        public Bitmap BitPicture { get; set; }
         public int DotColumnPostion { get; set; }
         public int CurrentLine { get; set; }
         public System.Drawing.Color DotIndicator { get; set; }

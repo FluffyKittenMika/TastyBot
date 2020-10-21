@@ -61,7 +61,6 @@ namespace DiscordUI.Services
 
             await ExecuteCommand(userMessage);
             await RainbowChannelChangeColor(socketMessage);
-            await BlueChannelChangeColor(socketMessage);
             await CatifyMessage(userMessage);
         }
 
@@ -104,33 +103,6 @@ namespace DiscordUI.Services
             catch (Exception e)
             {
                 Logging.LogCriticalMessage(GetType().Name, $"Unable to change rainbow role Color {e.Message}").PerformAsyncTaskWithoutAwait();
-            }
-        }
-
-        private async Task BlueChannelChangeColor(SocketMessage socketMessage)
-        {
-            // Ignore system messages, or messages from other bots
-            if (!(socketMessage is SocketUserMessage message)) return;
-            if (message.Source != MessageSource.User) return;
-            if (message.Channel.GetType() == typeof(SocketDMChannel)) return; //drop direct messages aswell.
-            Random rnd = new Random();
-            //The try is here to ignore anything that we don't give a shit about :)
-            try
-            {
-                foreach (IRole role in ((IGuildChannel)socketMessage.Channel).Guild.Roles)
-                {
-                    if (role.Name.ToLower() == "team blue")
-                    {
-                        await role.ModifyAsync(x =>
-                        {
-                            x.Color = new Color(0,0,rnd.Next(1, 255));
-                        });
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.LogCriticalMessage(GetType().Name, $"Unable to change blue role Color {e.Message}").PerformAsyncTaskWithoutAwait();
             }
         }
 
