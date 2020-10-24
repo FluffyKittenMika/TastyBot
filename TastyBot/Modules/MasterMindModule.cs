@@ -38,16 +38,16 @@ namespace TastyBot.Modules
             
             if (arg3.Channel.Name.ToLower() != "master-mind") return;
             if (arg3.User.Value.IsBot) return;
+            if (_module.IsSecondReactionAdded(arg2, arg3))
+            {
+                return;
+            }
             if (!_module.IsEmojiAllowed(new Emoji(arg3.Emote.Name.ToString())))
             {
                 RestUserMessage message = await arg3.Channel.SendMessageAsync($"Very much error has occurred, <@{arg3.UserId}> the emote inserted was not recognised. Please insert a valid emote");
                 _module.DeleteMessage(5, message).PerformAsyncTaskWithoutAwait();
                 var rMessage = await message.Channel.GetMessageAsync(arg3.MessageId);
                 rMessage.RemoveReactionAsync(arg3.Emote, arg3.User.Value.Id).PerformAsyncTaskWithoutAwait();
-                return;
-            }
-            if (_module.IsSecondReactionAdded(arg2, arg3))
-            {
                 return;
             }
             if (!_module.ReactionOnRightMessage(arg3.MessageId, arg3.User.Value))
@@ -102,6 +102,23 @@ namespace TastyBot.Modules
             }
 
         }
+        
+        [Command("enablemm")]
+        [Alias("emm")]
+        [Summary("Creates a channel named master-mind, to use mastermind on")]
+        public async Task EnableMm()
+        {
+
+            foreach (var channel in Context.Guild.Channels)
+            {
+                if (channel.Name.ToLower() == "master-mind")
+                {
+                    await Context.Channel.SendMessageAsync($"<@{Context.User.Id}> channel already exists");
+                    return;
+                }
+            }
+            await Context.Guild.CreateTextChannelAsync("master-mind");
+        }
         [Command("wins")]
         [Alias("w")]
         [Summary("Shows the amount of wins a user has achieved on mastermind")]
@@ -111,8 +128,8 @@ namespace TastyBot.Modules
             if (user == null)
             {
                 win = _module.GetUserWins(Context.User);
-
-            }
+                    
+            } 
             else
             {
                 win = _module.GetUserWins(user);

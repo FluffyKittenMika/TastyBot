@@ -18,8 +18,7 @@ namespace MultipurposeDataBase.Modules
         }
         public MasterMindDBUser GetMMDBUser(IUser user)
         {
-            MDBUser MDBUser = _DbService.GetUser(user);
-            return MDBUser.MMGame;
+            return _DbService.GetUser(user).MMGame;
         }
         public bool Deleteuser(IUser user)
         {

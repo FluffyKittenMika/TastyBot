@@ -34,7 +34,7 @@ namespace MasterMind.Modules
     {
         private readonly IMasterMindCacheService _mMCache;
         private readonly IMasterMindFunctions _functions;
-        internal List<ReactionMemory> reactionMemories;
+        private List<ReactionMemory> reactionMemories;
         private readonly IMasterMindDataBase _serv;
         //MMuserService Doest work
         public MasterMindModule(IMasterMindCacheService mMCache, IMasterMindFunctions functions, IMasterMindDataBase service)
@@ -68,6 +68,7 @@ namespace MasterMind.Modules
         {
             return _serv.GetMMDBUser(user).wins;
         }
+
         /*
         public Bitmap StartGame(int width, int height, IUser user)
         {
@@ -255,21 +256,28 @@ namespace MasterMind.Modules
             {
                 reactionMemories = new List<ReactionMemory>();
             }
+            bool hasWork = false;
             foreach (var message in reactionMemories)
             {
                 PosOfMessage++;
                 if (message.socketMessages == socketMessage && message.socketReactions == socketReaction)
                 {
-                    reactionMemories.RemoveAt(PosOfMessage);
-                    if (reactionMemories.Count > 40)
-                    {
-                        for (int i = 0; i < reactionMemories.Count; i++)
-                        {
-                            reactionMemories.RemoveAt(i);
-                        }
-                    }
-                    return true;
+                    hasWork =true;
+                    break;
+                    
                 }
+            }
+            if (hasWork)
+            {
+                reactionMemories.RemoveAt(PosOfMessage);
+                if (reactionMemories.Count > 40)
+                {
+                    for (int i = 0; i < reactionMemories.Count; i++)
+                    {
+                        reactionMemories.RemoveAt(i);
+                    }
+                }
+                return true;
             }
             ReactionMemory reactionMemory = new ReactionMemory();
             reactionMemory.socketMessages = socketMessage;

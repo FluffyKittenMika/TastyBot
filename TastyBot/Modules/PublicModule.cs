@@ -1,5 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordUI.Modules
@@ -25,9 +29,77 @@ namespace DiscordUI.Modules
         // Throw Back Thursday, Tasty Specified command.
         [Command("tbt")]
         [Summary("Use this command once every thursday :D")]
-        public Task ThrowBackThrsday()
+        public Task ThrowBackThursday()
             => ReplyAsync("<:Tastyderp:669202378095984640> Throwback Thursday! Post an old picture of you and your friends in #Photos!");
+        
+        [Command("inrole")]
+        [Summary("Find out the users that have a specified role\t!inrole {role}")]
+        public async Task Inrole([Remainder] string roleName)
+        {
+            
+            bool Exist = false;
+            List<SocketGuildUser> Lusers = new List<SocketGuildUser>();
+            if (roleName == null)
+            {
+                await Context.Channel.SendMessageAsync($"<@{Context.User.Id}> Please specify a role");
+                return;
+            }
+            foreach (IRole role in ((IGuildChannel)Context.Message.Channel).Guild.Roles)
+            {
+                if (role.Name.ToLower() == roleName)
+                {
+                    Exist = true;
+                    var users = Context.Guild.Users;
+                    foreach (var user in Context.Guild.Users)
+                    {
+                        foreach (var rrole in user.Roles)
+                        {
+                            if (rrole.Name.ToLower() == roleName)
+                            {
+                                Lusers.Add(user);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!Exist)
+            {
+                await Context.Channel.SendMessageAsync($"<@{Context.User.Id}> Specified role doesnt exist");
+                return;
+            }
+            Random rnd = new Random();
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(rnd.Next(1,255), rnd.Next(1, 255), rnd.Next(1, 255)),
+                Title = $"Users in {roleName}",
+                Description = $"Users in {roleName}",
+            };
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < Lusers.Count; i++)
+            {
+                var current = $"<@{Lusers[i].Id}>";
+                stringBuilder.AppendLine(current);
+            }
+            builder.AddField((builder.Fields.Count + 1).ToString(), stringBuilder.ToString().TrimEnd('\n', '\r'));
+            await ReplyAsync(embed: builder.Build());
 
+        }
+        /*
+         for (int i = 0; i < users.Count; i++)
+            {
+                current = $"{i + 1}. {users[i].Name} {users[i].Wallet} FHP";
+                if (leaderboard.Length + current.Length >= 1024)
+                {
+                    builder.AddField((builder.Fields.Count + 1).ToString(), leaderboard.ToString().TrimEnd('\n', '\r'));
+                    leaderboard.Clear();
+                }
+                leaderboard.AppendLine(current);
+            }
+            builder.AddField((builder.Fields.Count + 1).ToString(), leaderboard.ToString().TrimEnd('\n', '\r'));
+            return builder.Build();
+         */
+        //foreach (IRole role in ((IGuildChannel)socketMessage.Channel).Guild.Roles)
         [Command("nnm")]
         [Summary("Use this command once very monday :D")]
         public Task NomNomMonday()
