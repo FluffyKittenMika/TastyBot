@@ -267,16 +267,17 @@ namespace MasterMind.Modules
                     
                 }
             }
+            if (reactionMemories.Count > 20)
+            {
+                int i;
+                for (i = 0; i < reactionMemories.Count - 1; i++)
+                {
+                    reactionMemories.RemoveAt(i);
+                }
+                reactionMemories[0] = reactionMemories.ElementAt(i + 1);
+            }
             if (hasWork)
             {
-                reactionMemories.RemoveAt(PosOfMessage);
-                if (reactionMemories.Count > 40)
-                {
-                    for (int i = 0; i < reactionMemories.Count; i++)
-                    {
-                        reactionMemories.RemoveAt(i);
-                    }
-                }
                 return true;
             }
             ReactionMemory reactionMemory = new ReactionMemory();

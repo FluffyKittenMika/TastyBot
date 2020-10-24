@@ -124,19 +124,9 @@ namespace TastyBot.Modules
         [Summary("Shows the amount of wins a user has achieved on mastermind")]
         public async Task GetUserWins(IUser user = null)
         {
-            long win;
-            if (user == null)
-            {
-                win = _module.GetUserWins(Context.User);
-                    
-            } 
-            else
-            {
-                win = _module.GetUserWins(user);
-            }
             
-            await Context.Channel.SendMessageAsync($"The user has {win} win[s]");
-            
+            _ = user == null ? await Context.Channel.SendMessageAsync($"The user has {_module.GetUserWins(Context.User)} win[s]") : await Context.Channel.SendMessageAsync($"The user has {_module.GetUserWins(user)} win[s]");
+
         }
 
         [Command("start")]
