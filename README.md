@@ -1,0 +1,5 @@
+# TastyBot
+Discord Bot
+
+
+Retired
